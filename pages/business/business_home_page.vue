@@ -22,7 +22,7 @@ export default {
           label: "全部业务",
           onTap: () => {
             uni.navigateTo({
-              url: "/subpackages/contract/contract_home_page",
+              url: "/subpackages/event/event_home_page",
             });
           },
         },

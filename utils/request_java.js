@@ -1,9 +1,9 @@
 const request_java = (options) => {
   if (process.env.NODE_ENV === 'development') {
     // options.url = "https://dev.ncpgz.com/test/app" + options.url
-    options.url = "https://dev.ncpgz.com/api/app" + options.url
+    options.url = "https://dev.ncpgz.com/test/business" + options.url
   } else {
-    options.url = "https://dev.ncpgz.com/api/app" + options.url
+    options.url = "https://dev.ncpgz.com/api/business" + options.url
   }
   return new Promise((resolve, reject) => {
     let payload = {
@@ -15,9 +15,10 @@ const request_java = (options) => {
       ),
     }
     if (options.token) {
-      const userinfo = uni.getStorageSync('userinfo');
-      if (userinfo) {
-        payload.data.token = userinfo.token
+      const token = uni.getStorageSync('token');
+      if (token) {
+        payload.header["token_type"] = "user"
+        payload.header["Authorization"] = token
       }
     }
     uni.request(payload).then(responses => {

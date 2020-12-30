@@ -27,7 +27,7 @@ const objectToQuery = (obj) => {
       query += toQuery(key, value);
     }
   }
-  return query
+  return query.replace("&", "?")
 }
 
 export { findObjectInArrayWithKey, objectToQuery } 

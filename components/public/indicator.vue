@@ -15,7 +15,7 @@
       <view class="loading-empty-content">
         <image
           class="loading-empty-image"
-          src="https://dev.ncpgz.com/assets/images/public_empty_result.png"
+          src="https://dev.ncpgz.com/assets/management/images/public_empty_list.png"
         />
         <view class="empty-text" v-if="emptyText">{{ emptyText }}</view>
       </view>
@@ -111,6 +111,7 @@ export default {
 .loading-empty-image {
   width: 400rpx;
   height: 400rpx;
+  margin-bottom: 24rpx;
 }
 .loading-text,
 .no-more-text,

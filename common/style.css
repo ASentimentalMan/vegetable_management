@@ -145,3 +145,45 @@ uni-video {
   height: 1px;
   margin: 0;
 }
+
+.form-container {
+  margin: 24rpx 24rpx 0 24rpx;
+  background-color: #ffffff;
+  border-radius: 10rpx;
+}
+.form-item {
+  margin: 0 32rpx;
+  padding: 24rpx 0;
+}
+.form-item:not(:last-child) {
+  border-bottom: 1px solid #efefef;
+}
+.form-item-required {
+  color: red;
+  margin-right: 12rpx;
+}
+.form-item-label {
+  margin-right: 24rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333333;
+}
+.form-item-input {
+  flex: 1;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.form-input {
+  font-size: 28rpx;
+  line-height: 1;
+  flex: 1;
+  font-weight: normal;
+}
+.form-item-placeholder {
+  color: grey;
+}
+.form-unit-title {
+  margin: 24rpx 24rpx 0 24rpx;
+}

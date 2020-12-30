@@ -1,11 +1,18 @@
 // getters
-const state = () => ({})
+const state = () => ({
+  token: null
+})
 
 // getters
 const getters = {}
 
 // mutations
-const mutations = {}
+const mutations = {
+  setToken(state, token) {
+    state.token = token;
+    console.log(token)
+  }
+}
 
 // actions
 const actions = {}

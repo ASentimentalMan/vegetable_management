@@ -1,10 +1,10 @@
 <script>
+import { mapMutations } from "vuex";
 export default {
   onLaunch: (e) => {
     console.log("App Launch");
-    console.log(e.query);
     if (e.query.token) {
-      console.log(e.query.token)
+      uni.setStorageSync("token", e.query.token);
     } else {
       uni.getStorage({
         key: "userinfo",
@@ -26,6 +26,16 @@ export default {
   },
   onHide: () => {
     console.log("App Hide");
+  },
+  mounted() {
+    const token = uni.getStorageSync("token");
+    this.setToken(token);
+  },
+  beforeDestroy() {
+    uni.removeStorageSync("token");
+  },
+  methods: {
+    ...mapMutations("user", ["setToken"]),
   },
 };
 </script>
