@@ -25,7 +25,11 @@
       <indicator :status="status" emptyText="暂无业务" />
     </view>
     <view class="unscrollable">
-      <view class="button-container" @tap="onCreate"> 新增业务 </view>
+      <view class="bottom-button-container">
+        <view class="button-container" @tap="onCreate">
+          <view class="bottom-button"> 新增业务 </view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -162,26 +166,5 @@ export default {
   color: #8b8c8b;
   text-align: left;
   line-height: 1;
-}
-.scrollable {
-  margin-bottom: 160rpx;
-}
-.unscrollable {
-  width: 100%;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  padding: 24rpx 24rpx 40rpx 24rpx;
-  background-color: #fff;
-}
-.button-container {
-  text-align: center;
-  background-color: #2c7cf6;
-  border-radius: 44rpx;
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #ffffff;
-  height: 88rpx;
-  line-height: 88rpx;
 }
 </style>

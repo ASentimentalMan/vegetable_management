@@ -7,12 +7,12 @@
             <view class="item-cover">
               <image
                 class="cover"
-                src="https://dev.ncpgz.com/assets/management/icons/business_contract_icon.png"
+                src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
               />
             </view>
             <view class="flex-vertical">
               <view class="item-label">
-                {{ item.businessName }}
+                {{ item.contractName }}
               </view>
               <view class="item-text">
                 {{ item.createTime }}
@@ -25,7 +25,11 @@
       <indicator :status="status" emptyText="暂无合同" />
     </view>
     <view class="unscrollable">
-      <view class="button-container" @tap="onCreate"> 新增合同 </view>
+      <view class="bottom-button-container">
+        <view class="button-container" @tap="onCreate">
+          <view class="bottom-button"> 新增合同 </view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -40,6 +44,7 @@ export default {
   },
   data() {
     return {
+      eventId: "",
       list: [],
       payload: {},
       page: 1,
@@ -60,7 +65,11 @@ export default {
       return "loading";
     },
   },
-  onLoad() {
+  onLoad(e) {
+    if (e.eventId) {
+      this.eventId = e.eventId;
+    }
+    console.log(this.eventId);
     this.fetch();
   },
   onShow() {
@@ -109,12 +118,16 @@ export default {
     },
     goEvent(item) {
       uni.navigateTo({
-        url: "/subpackages/event/contract/contract_detail_page" + objectToQuery(item),
+        url:
+          "/subpackages/event/contract/contract_detail_page" +
+          objectToQuery(item),
       });
     },
     onCreate() {
       uni.navigateTo({
-        url: "/subpackages/event/contract/create_contract_page",
+        url:
+          "/subpackages/event/contract/create_contract_page?eventId=" +
+          this.eventId,
       });
     },
   },
@@ -138,8 +151,8 @@ export default {
   margin-right: 24rpx;
 }
 .cover {
-  width: 60rpx;
-  height: 50rpx;
+  width: 42rpx;
+  height: 42rpx;
 }
 .item-label {
   width: 100%;
@@ -162,26 +175,5 @@ export default {
   color: #8b8c8b;
   text-align: left;
   line-height: 1;
-}
-.scrollable {
-  margin-bottom: 160rpx;
-}
-.unscrollable {
-  width: 100%;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  padding: 24rpx 24rpx 40rpx 24rpx;
-  background-color: #fff;
-}
-.button-container {
-  text-align: center;
-  background-color: #2c7cf6;
-  border-radius: 44rpx;
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #ffffff;
-  height: 88rpx;
-  line-height: 88rpx;
 }
 </style>

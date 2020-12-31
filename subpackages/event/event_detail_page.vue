@@ -14,7 +14,7 @@ export default {
   },
   data() {
     return {
-      id: null,
+      eventId: null,
       list2: [
         {
           leading:
@@ -23,7 +23,8 @@ export default {
           onTap: () => {
             uni.navigateTo({
               url:
-                "/subpackages/event/contract/contract_list_page?id=" + this.id,
+                "/subpackages/event/contract/contract_list_page?eventId=" +
+                this.eventId,
             });
           },
         },
@@ -35,7 +36,9 @@ export default {
           label: "发票",
           onTap: () => {
             uni.navigateTo({
-              url: "/subpackages/event/receipt/receipt_list_page?id=" + this.id,
+              url:
+                "/subpackages/event/receipt/receipt_list_page?eventId=" +
+                this.eventId,
             });
           },
         },
@@ -45,7 +48,9 @@ export default {
           label: "物流",
           onTap: () => {
             uni.navigateTo({
-              url: "/subpackages/event/express/express_list_page?id=" + this.id,
+              url:
+                "/subpackages/event/express/express_list_page?eventId=" +
+                this.eventId,
             });
           },
         },
@@ -55,7 +60,9 @@ export default {
           label: "会议",
           onTap: () => {
             uni.navigateTo({
-              url: "/subpackages/event/meeting/meeting_list_page?id=" + this.id,
+              url:
+                "/subpackages/event/meeting/meeting_list_page?eventId=" +
+                this.eventId,
             });
           },
         },
@@ -67,7 +74,9 @@ export default {
           label: "供应商采购单",
           onTap: () => {
             uni.navigateTo({
-              url: "/subpackages/event/order/order_list_page?id=" + this.id,
+              url:
+                "/subpackages/event/order/order_list_page?eventId=" +
+                this.eventId,
             });
           },
         },
@@ -77,7 +86,9 @@ export default {
           label: "销售单",
           onTap: () => {
             uni.navigateTo({
-              url: "/subpackages/event/sale/sale_list_page?id=" + this.id,
+              url:
+                "/subpackages/event/sale/sale_list_page?eventId=" +
+                this.eventId,
             });
           },
         },
@@ -85,10 +96,10 @@ export default {
     };
   },
   onLoad(e) {
-    console.log(e);
     if (e.id) {
-      this.id = e.id;
+      this.eventId = e.id;
     }
+    console.log(this.eventId);
     if (e.businessName) {
       uni.setNavigationBarTitle({
         title: e.businessName,

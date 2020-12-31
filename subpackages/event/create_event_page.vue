@@ -64,7 +64,11 @@
       </view>
     </view>
     <view class="unscrollable">
-      <view class="button-container" @tap="onHandle"> 完成 </view>
+      <view class="bottom-button-container">
+        <view class="button-container" @tap="onCreate">
+          <view class="bottom-button"> 完成 </view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -191,28 +195,4 @@ export default {
 </script>
 
 <style scoped>
-/* .page-container {
-  margin-top: 24rpx;
-} */
-/* .scrollable {
-  margin-bottom: 160rpx;
-} */
-.unscrollable {
-  width: 100%;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  padding: 24rpx 24rpx 40rpx 24rpx;
-  background-color: #fff;
-}
-.button-container {
-  text-align: center;
-  background-color: #2c7cf6;
-  border-radius: 44rpx;
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #ffffff;
-  height: 88rpx;
-  line-height: 88rpx;
-}
 </style>
