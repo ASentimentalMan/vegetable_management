@@ -7,12 +7,12 @@
             <view class="item-cover">
               <image
                 class="cover"
-                src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
+                src="https://dev.ncpgz.com/assets/management/icons/business_contract_icon.png"
               />
             </view>
             <view class="flex-vertical">
               <view class="item-label">
-                {{ item.contractName }}
+                {{ item.businessName }}
               </view>
               <view class="item-text">
                 {{ item.createTime }}
@@ -22,12 +22,12 @@
         </block>
       </view>
       <view style="height: 200rpx" v-if="status === 'empty'"> </view>
-      <indicator :status="status" emptyText="暂无合同" />
+      <indicator :status="status" emptyText="暂无业务" />
     </view>
     <view class="unscrollable">
       <view class="bottom-button-container">
         <view class="button-container" @tap="onCreate">
-          <view class="bottom-button"> 新增合同 </view>
+          <view class="bottom-button"> 新增业务 </view>
         </view>
       </view>
     </view>
@@ -36,7 +36,7 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getContractListApi } from "@/apis/event_apis";
+import { getEventListApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -44,7 +44,6 @@ export default {
   },
   data() {
     return {
-      eventId: "",
       list: [],
       payload: {},
       page: 1,
@@ -65,11 +64,7 @@ export default {
       return "loading";
     },
   },
-  onLoad(e) {
-    if (e.eventId) {
-      this.eventId = e.eventId;
-    }
-    console.log(this.eventId);
+  onLoad() {
     this.fetch();
   },
   onShow() {
@@ -91,7 +86,7 @@ export default {
           size: this.pageSize,
         };
         this.onNetworking = true;
-        const response = await getContractListApi(payload);
+        const response = await getEventListApi(payload);
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
@@ -119,15 +114,12 @@ export default {
     goEvent(item) {
       uni.navigateTo({
         url:
-          "/subpackages/event/contract/contract_detail_page" +
-          objectToQuery(item),
+          "/subpackages/events/event/event_detail_page" + objectToQuery(item),
       });
     },
     onCreate() {
       uni.navigateTo({
-        url:
-          "/subpackages/event/contract/create_contract_page?eventId=" +
-          this.eventId,
+        url: "/subpackages/events/event/create_event_page",
       });
     },
   },
@@ -151,8 +143,8 @@ export default {
   margin-right: 24rpx;
 }
 .cover {
-  width: 42rpx;
-  height: 42rpx;
+  width: 60rpx;
+  height: 50rpx;
 }
 .item-label {
   width: 100%;

@@ -1,7 +1,7 @@
 {
 	"pages": [
 		{
-			"path": "pages/event/event_home_page",
+			"path": "pages/events/events_home_page",
 			"style": {
 				"navigationBarTitleText": "业务清单",
 				"navigationBarBackgroundColor": "#ffffff",
@@ -51,10 +51,10 @@
 		// 	]
 		// },
 		{
-			"root": "subpackages/event",
+			"root": "subpackages/events",
 			"pages": [
 				{
-					"path": "event_detail_page",
+					"path": "event/event_detail_page",
 					"style": {
 						"navigationBarTitleText": "业务清单",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -63,7 +63,7 @@
 					}
 				},
 				{
-					"path": "create_event_page",
+					"path": "event/create_event_page",
 					"style": {
 						"navigationBarTitleText": "新增业务",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -193,10 +193,10 @@
 		// }
 	],
 	"preloadRule": {
-		"subpackages/event/event_detail_page": {
+		"subpackages/events/event/event_detail_page": {
 			"network": "all",
 			"packages": [
-				"subpackages/event"
+				"subpackages/events"
 			]
 		}
 		// "subpackages/login/login_home_page": {

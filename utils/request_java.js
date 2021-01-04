@@ -3,7 +3,8 @@ const request_java = (options) => {
     // options.url = "https://dev.ncpgz.com/test/app" + options.url
     options.url = "https://dev.ncpgz.com/test/business" + options.url
   } else {
-    options.url = "https://dev.ncpgz.com/api/business" + options.url
+    options.url = "https://dev.ncpgz.com/test/business" + options.url
+    // options.url = "https://dev.ncpgz.com/api/business" + options.url
   }
   return new Promise((resolve, reject) => {
     let payload = {
