@@ -23,7 +23,7 @@ export default {
           onTap: () => {
             uni.navigateTo({
               url:
-                "/subpackages/events/contract/contract_list_page?eventId=" +
+                "/subpackages/events/pages/contract/contract_list_page?eventId=" +
                 this.eventId,
             });
           },
@@ -37,7 +37,7 @@ export default {
           onTap: () => {
             uni.navigateTo({
               url:
-                "/subpackages/events/receipt/receipt_list_page?eventId=" +
+                "/subpackages/events/pages/receipt/receipt_list_page?eventId=" +
                 this.eventId,
             });
           },
@@ -49,7 +49,7 @@ export default {
           onTap: () => {
             uni.navigateTo({
               url:
-                "/subpackages/events/express/express_list_page?eventId=" +
+                "/subpackages/events/pages/express/express_list_page?eventId=" +
                 this.eventId,
             });
           },
@@ -61,7 +61,7 @@ export default {
           onTap: () => {
             uni.navigateTo({
               url:
-                "/subpackages/events/meeting/meeting_list_page?eventId=" +
+                "/subpackages/events/pages/meeting/meeting_list_page?eventId=" +
                 this.eventId,
             });
           },
@@ -75,7 +75,7 @@ export default {
           onTap: () => {
             uni.navigateTo({
               url:
-                "/subpackages/events/order/order_list_page?eventId=" +
+                "/subpackages/events/pages/order/order_list_page?eventId=" +
                 this.eventId,
             });
           },
@@ -87,7 +87,7 @@ export default {
           onTap: () => {
             uni.navigateTo({
               url:
-                "/subpackages/events/sale/sale_list_page?eventId=" +
+                "/subpackages/events/pages/sale/sale_list_page?eventId=" +
                 this.eventId,
             });
           },

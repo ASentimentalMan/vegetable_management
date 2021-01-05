@@ -45,6 +45,9 @@ uni-video {
 .uni-scroll-view-refresher {
   z-index: 1;
 }
+.uni-label-pointer {
+  padding-right: 0;
+}
 .page-container {
   display: flex;
   flex-direction: column;
@@ -186,6 +189,16 @@ uni-video {
 }
 .form-unit-title {
   margin: 24rpx 24rpx 0 24rpx;
+}
+.add-form-item {
+  width: 48rpx;
+  height: 48rpx;
+  border: 1px solid #2c7cf6;
+  border-radius: 50%;
+  color: #2c7cf6;
+  font-size: 36rpx;
+  text-align: center;
+  line-height: 40rpx;
 }
 .form-attachment-container {
   margin: 24rpx 24rpx 0 24rpx;

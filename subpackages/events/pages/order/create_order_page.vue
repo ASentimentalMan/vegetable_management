@@ -6,51 +6,113 @@
     <view class="scrollable">
       <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label">
-            <text class="form-item-required">*</text>合同名称
-          </view>
+          <view class="form-item-label"> 基地名称 </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入合同名称"
+              placeholder="请输入基地名称"
               v-model="name"
             />
           </view>
         </view>
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同编号 </view>
+          <view class="form-item-label"> 基地面积（亩） </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入合同编号"
-              v-model="number"
+              placeholder="请输入基地面积"
+              v-model="area"
             />
           </view>
         </view>
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同类型 </view>
+          <view class="form-item-label"> 联系人 </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入合同类型"
-              v-model="type"
+              placeholder="请输入基地联系人"
+              v-model="contact"
             />
           </view>
         </view>
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同金额（元） </view>
+          <view class="form-item-label"> 联系电话 </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入合同金额"
+              placeholder="请输入基地联系电话"
+              v-model="tel"
+            />
+          </view>
+        </view>
+      </view>
+      <!-- <view class="form-container">
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 采购品类 </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择采购品类"
+              v-model="partyA"
+            />
+          </view>
+        </view>
+      </view> -->
+      <view class="form-container">
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 采购日期 </view>
+          <view class="form-item-input">
+            <biao-fun-date-picker
+              placeholder="请选择采购日期"
+              start="2019-07-19 09:00"
+              :end="timePickerEndTime"
+              fields="day"
+              @change="onTimeSet"
+            />
+          </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 采购数量（吨） </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入采购数量"
+              v-model="amount"
+            />
+          </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 采购单价（元） </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入采购单价"
+              v-model="unitPrice"
+            />
+          </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 采购总价（元） </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入采购总价"
               v-model="price"
             />
           </view>
@@ -58,93 +120,15 @@
       </view>
       <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 甲方公司名称 </view>
+          <view class="form-item-label"> 货源提供客户 </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入甲方公司名称"
-              v-model="partyA"
+              placeholder="请输入货源提供客户"
+              v-model="provider"
             />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 甲方签订人 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入甲方签订人"
-              v-model="partyARepresent"
-            />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 乙方公司名称 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入乙方公司名称"
-              v-model="partyB"
-            />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 乙方签订人 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入乙方签订人"
-              v-model="partyBRepresent"
-            />
-          </view>
-        </view>
-      </view>
-      <view class="form-container">
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同签订日期 </view>
-          <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择合同签订日期"
-              :start="signTimePickerStartTime"
-              :end="signTimePickerEndTime"
-              fields="day"
-              @change="onSignTimeSet"
-            />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同开始日期 </view>
-          <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择合同开始日期"
-              :start="startTimePickerStartTime"
-              :end="startTimePickerEndTime"
-              fields="day"
-              @change="onStartTimeSet"
-            />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同结束日期 </view>
-          <view class="form-item-input">
-            <biao-fun-date-picker
-              v-if="endTimePickerStartTime"
-              placeholder="请选择合同结束日期"
-              :start="endTimePickerStartTime"
-              :end="endTimePickerEndTime"
-              fields="day"
-              @change="onEndTimeSet"
-            />
-            <view v-else class="form-item-placeholder" @tap="onWarning">
-              请选择合同结束日期
-            </view>
           </view>
         </view>
       </view>
@@ -209,22 +193,16 @@ export default {
     return {
       eventId: "",
       name: "",
-      number: "",
-      type: "",
+      area: "",
+      contact: "",
+      tel: "",
+      type: [{}],
+      time: "",
+      timePickerEndTime: "",
+      amount: "",
+      unitPrice: "",
       price: "",
-      partyA: "",
-      partyARepresent: "",
-      partyB: "",
-      partyBRepresent: "",
-      signTime: "",
-      signTimePickerStartTime: "2019-07-19 09:00",
-      signTimePickerEndTime: "",
-      startTime: "",
-      startTimePickerStartTime: "2019-07-19 09:00",
-      startTimePickerEndTime: "",
-      endTime: "",
-      endTimePickerStartTime: "",
-      endTimePickerEndTime: "",
+      provider: "",
       description: "",
       attachments: [],
     };
@@ -233,14 +211,14 @@ export default {
     if (e.eventId) {
       this.eventId = e.eventId;
     }
-    console.log(this.eventId);
-    this.setSignTimePickerEndTime();
+    this.setTimePickerEndTime();
   },
   methods: {
-    setSignTimePickerEndTime() {
+    setTimePickerEndTime() {
       const time = new Date();
-      this.signTimePickerEndTime =
+      this.timePickerEndTime =
         time.getFullYear() +
+        1 +
         "-" +
         (time.getMonth() + 1 > 9
           ? time.getMonth() + 1
@@ -252,52 +230,8 @@ export default {
         ":" +
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
-    setEndTimePickerTime(time) {
-      this.endTimePickerStartTime =
-        time.getFullYear() +
-        "-" +
-        (time.getMonth() + 1 > 9
-          ? time.getMonth() + 1
-          : "0" + (time.getMonth() + 1)) +
-        "-" +
-        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
-        " " +
-        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
-        ":" +
-        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
-      this.endTimePickerEndTime =
-        time.getFullYear() +
-        50 +
-        "-" +
-        (time.getMonth() + 1 > 9
-          ? time.getMonth() + 1
-          : "0" + (time.getMonth() + 1)) +
-        "-" +
-        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
-        " " +
-        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
-        ":" +
-        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
-    },
-    onSignTimeSet(e) {
-      this.signTime = e.f2;
-    },
-    onStartTimeSet(e) {
-      this.startTime = e.f2;
-      this.endTime = "";
-      this.endTimePickerStartTime = "";
-      setTimeout(() => {
-        this.setEndTimePickerTime(new Date(e.f3));
-      }, 10);
-    },
-    onEndTimeSet(e) {
-      this.endTime = e.f1 + " " + e.hh + ":" + e.mm + ":" + e.ss;
-    },
-    onWarning() {
-      uni.showToast({
-        title: "请先选择合同开始日期",
-        icon: "none",
-      });
+    onTimeSet(e) {
+      this.time = e.f2;
     },
     onAttachmentRemove(index) {
       this.attachments.splice(index, 1);

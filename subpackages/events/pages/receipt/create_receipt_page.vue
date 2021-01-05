@@ -6,145 +6,170 @@
     <view class="scrollable">
       <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label">
-            <text class="form-item-required">*</text>合同名称
-          </view>
+          <view class="form-item-label"> 发票类型 </view>
           <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入合同名称"
-              v-model="name"
-            />
+            <receipt-type-picker @onTypeChange="onTypeChange" />
           </view>
         </view>
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同编号 </view>
+          <view class="form-item-label"> 发票业务类型 </view>
+          <radio-group @change="oneventTypeChange" class="form-item-input">
+            <label class="radio"><radio value="procure" />采购发票</label>
+            <label class="radio"><radio value="sale" />销售发票</label>
+          </radio-group>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 发票编号 </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入合同编号"
+              placeholder="请输入发票编号"
               v-model="number"
             />
           </view>
         </view>
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同类型 </view>
+          <view class="form-item-label"> 发票金额（元） </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入合同类型"
-              v-model="type"
-            />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同金额（元） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入合同金额"
-              v-model="price"
+              placeholder="请输入发票金额"
+              v-model="money"
             />
           </view>
         </view>
       </view>
       <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 甲方公司名称 </view>
-          <view class="form-item-input">
+          <view class="form-item-label"> 开票单位 </view>
+          <view class="form-item-input" @tap="onSelectFrom">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入甲方公司名称"
-              v-model="partyA"
+              placeholder="请选择开票单位"
+              v-model="fromString"
+              disabled
             />
           </view>
         </view>
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 甲方签订人 </view>
+          <view class="form-item-label"> 开票时间 </view>
           <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入甲方签订人"
-              v-model="partyARepresent"
+            <biao-fun-date-picker
+              placeholder="请选择开票时间"
+              :start="timePickerStartTime"
+              :end="timePickerEndTime"
+              fields="day"
+              @change="onTimeSet"
             />
           </view>
         </view>
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 乙方公司名称 </view>
-          <view class="form-item-input">
+          <view class="form-item-label"> 收票单位 </view>
+          <view class="form-item-input" @tap="onSelectTo">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入乙方公司名称"
-              v-model="partyB"
-            />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 乙方签订人 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入乙方签订人"
-              v-model="partyBRepresent"
+              placeholder="请选择收票单位"
+              v-model="toString"
+              disabled
             />
           </view>
         </view>
       </view>
       <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同签订日期 </view>
+          <view class="form-item-label"> 纳税人识别号 </view>
           <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择合同签订日期"
-              :start="signTimePickerStartTime"
-              :end="signTimePickerEndTime"
-              fields="day"
-              @change="onSignTimeSet"
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入纳税人识别号"
+              v-model="recognizeNumber"
             />
           </view>
         </view>
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同开始日期 </view>
+          <view class="form-item-label"> 地址 </view>
           <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择合同开始日期"
-              :start="startTimePickerStartTime"
-              :end="startTimePickerEndTime"
-              fields="day"
-              @change="onStartTimeSet"
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入地址"
+              v-model="address"
             />
           </view>
         </view>
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同结束日期 </view>
+          <view class="form-item-label"> 开户银行 </view>
           <view class="form-item-input">
-            <biao-fun-date-picker
-              v-if="endTimePickerStartTime"
-              placeholder="请选择合同结束日期"
-              :start="endTimePickerStartTime"
-              :end="endTimePickerEndTime"
-              fields="day"
-              @change="onEndTimeSet"
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入开户银行"
+              v-model="bank"
             />
-            <view v-else class="form-item-placeholder" @tap="onWarning">
-              请选择合同结束日期
-            </view>
+          </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 银行账号 </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入银行账号"
+              v-model="bankNumber"
+            />
+          </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 电话 </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入电话"
+              v-model="tel"
+            />
+          </view>
+        </view>
+      </view>
+      <view class="form-container">
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 关联合同 </view>
+          <view class="form-item-input" @tap="onSelectRelateContract">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择关联合同"
+              v-model="relateContractString"
+              disabled
+            />
+          </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 关联客户 </view>
+          <view class="form-item-input" @tap="onSelectCustomer">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择关联客户"
+              v-model="relateCustomerString"
+              disabled
+            />
           </view>
         </view>
       </view>
@@ -199,32 +224,37 @@
 </template>
 
 <script>
+import ReceiptTypePicker from "@/subpackages/events/components/receipt_type_picker.vue";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import { createContractApi } from "@/apis/event_apis";
 export default {
   components: {
+    ReceiptTypePicker,
     BiaoFunDatePicker,
   },
   data() {
     return {
       eventId: "",
-      name: "",
+      type: {},
+      eventType: "",
       number: "",
-      type: "",
-      price: "",
-      partyA: "",
-      partyARepresent: "",
-      partyB: "",
-      partyBRepresent: "",
-      signTime: "",
-      signTimePickerStartTime: "2019-07-19 09:00",
-      signTimePickerEndTime: "",
-      startTime: "",
-      startTimePickerStartTime: "2019-07-19 09:00",
-      startTimePickerEndTime: "",
-      endTime: "",
-      endTimePickerStartTime: "",
-      endTimePickerEndTime: "",
+      money: "",
+      from: {},
+      fromString: "",
+      time: "",
+      timePickerStartTime: "2019-07-19 09:00",
+      timePickerEndTime: "",
+      to: {},
+      toString: "",
+      recognizeNumber: "",
+      address: "",
+      bank: "",
+      bankNumber: "",
+      tel: "",
+      relateContract: {},
+      relateContractString: "",
+      relateCustomer: {},
+      relateCustomerString: "",
       description: "",
       attachments: [],
     };
@@ -234,12 +264,18 @@ export default {
       this.eventId = e.eventId;
     }
     console.log(this.eventId);
-    this.setSignTimePickerEndTime();
+    this.setTimePickerEndTime();
   },
   methods: {
-    setSignTimePickerEndTime() {
+    onTypeChange(e) {
+      this.type = e;
+    },
+    oneventTypeChange(e) {
+      this.eventType = e.target.value;
+    },
+    setTimePickerEndTime() {
       const time = new Date();
-      this.signTimePickerEndTime =
+      this.timePickerEndTime =
         time.getFullYear() +
         "-" +
         (time.getMonth() + 1 > 9
@@ -252,46 +288,32 @@ export default {
         ":" +
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
-    setEndTimePickerTime(time) {
-      this.endTimePickerStartTime =
-        time.getFullYear() +
-        "-" +
-        (time.getMonth() + 1 > 9
-          ? time.getMonth() + 1
-          : "0" + (time.getMonth() + 1)) +
-        "-" +
-        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
-        " " +
-        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
-        ":" +
-        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
-      this.endTimePickerEndTime =
-        time.getFullYear() +
-        50 +
-        "-" +
-        (time.getMonth() + 1 > 9
-          ? time.getMonth() + 1
-          : "0" + (time.getMonth() + 1)) +
-        "-" +
-        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
-        " " +
-        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
-        ":" +
-        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
+    onTimeSet(e) {
+      this.time = e.f2;
     },
-    onSignTimeSet(e) {
-      this.signTime = e.f2;
+    onSelectFrom() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/customer/customer_list_page?mode=select",
+      });
     },
-    onStartTimeSet(e) {
-      this.startTime = e.f2;
-      this.endTime = "";
-      this.endTimePickerStartTime = "";
-      setTimeout(() => {
-        this.setEndTimePickerTime(new Date(e.f3));
-      }, 10);
+    onSelectTo() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/customer/customer_list_page?mode=select",
+      });
     },
-    onEndTimeSet(e) {
-      this.endTime = e.f1 + " " + e.hh + ":" + e.mm + ":" + e.ss;
+    onSelectCustomer() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/customer/customer_list_page?mode=select",
+      });
+    },
+    onSelectRelateContract() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/contract/contract_list_page?mode=select",
+      });
     },
     onWarning() {
       uni.showToast({
@@ -391,4 +413,7 @@ export default {
 </script>
 
 <style scoped>
+.radio {
+  margin-left: 24rpx;
+}
 </style>

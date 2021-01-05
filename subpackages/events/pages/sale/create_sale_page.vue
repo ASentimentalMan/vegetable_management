@@ -6,51 +6,63 @@
     <view class="scrollable">
       <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label">
-            <text class="form-item-required">*</text>合同名称
-          </view>
+          <view class="form-item-label"> 收货人 </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入合同名称"
+              placeholder="请输入收货人"
               v-model="name"
             />
           </view>
         </view>
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同编号 </view>
+          <view class="form-item-label"> 收货联系电话 </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入合同编号"
+              placeholder="请输入收货联系电话"
               v-model="number"
             />
           </view>
         </view>
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同类型 </view>
+          <view class="form-item-label"> 销售地 </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入合同类型"
+              placeholder="请选择销售地"
               v-model="type"
             />
           </view>
         </view>
+      </view>
+      <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同金额（元） </view>
+          <view class="form-item-label"> 预计回款日期 </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入合同金额"
+              placeholder="请选择预计回款日期"
+              v-model="price"
+            />
+          </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 预计新回款日期 </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择预计新回款日期"
               v-model="price"
             />
           </view>
@@ -58,93 +70,24 @@
       </view>
       <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 甲方公司名称 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入甲方公司名称"
-              v-model="partyA"
-            />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 甲方签订人 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入甲方签订人"
-              v-model="partyARepresent"
-            />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 乙方公司名称 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入乙方公司名称"
-              v-model="partyB"
-            />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 乙方签订人 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入乙方签订人"
-              v-model="partyBRepresent"
-            />
-          </view>
+          <view class="form-item-label"> 是否按合同执行 </view>
+          <radio-group @change="onRadioChange" class="form-item-input">
+            <label class="radio"><radio value="yes" />是</label>
+            <label class="radio"><radio value="no" />否</label>
+          </radio-group>
         </view>
       </view>
       <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同签订日期 </view>
+          <view class="form-item-label"> 签收日期 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
-              placeholder="请选择合同签订日期"
-              :start="signTimePickerStartTime"
-              :end="signTimePickerEndTime"
-              fields="day"
-              @change="onSignTimeSet"
-            />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同开始日期 </view>
-          <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择合同开始日期"
+              placeholder="请选择签收日期"
               :start="startTimePickerStartTime"
               :end="startTimePickerEndTime"
               fields="day"
               @change="onStartTimeSet"
             />
-          </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 合同结束日期 </view>
-          <view class="form-item-input">
-            <biao-fun-date-picker
-              v-if="endTimePickerStartTime"
-              placeholder="请选择合同结束日期"
-              :start="endTimePickerStartTime"
-              :end="endTimePickerEndTime"
-              fields="day"
-              @change="onEndTimeSet"
-            />
-            <view v-else class="form-item-placeholder" @tap="onWarning">
-              请选择合同结束日期
-            </view>
           </view>
         </view>
       </view>
@@ -299,6 +242,7 @@ export default {
         icon: "none",
       });
     },
+    onRadioChange() {},
     onAttachmentRemove(index) {
       this.attachments.splice(index, 1);
     },
@@ -391,4 +335,7 @@ export default {
 </script>
 
 <style scoped>
+.radio {
+  margin-left: 24rpx;
+}
 </style>

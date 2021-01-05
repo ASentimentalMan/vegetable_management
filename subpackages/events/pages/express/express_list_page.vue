@@ -33,12 +33,12 @@
         </block>
       </view>
       <view style="height: 200rpx" v-if="status === 'empty'"> </view>
-      <indicator :status="status" emptyText="暂无采购" />
+      <indicator :status="status" emptyText="暂无物流" />
     </view>
     <view class="unscrollable">
       <view class="bottom-button-container">
         <view class="button-container" @tap="onCreate">
-          <view class="bottom-button"> 新增采购 </view>
+          <view class="bottom-button"> 新增物流 </view>
         </view>
       </view>
     </view>
@@ -47,7 +47,7 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getOrderListApi } from "@/apis/event_apis";
+import { getExpressListApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -79,7 +79,7 @@ export default {
   },
   methods: {
     async fetch() {
-      const response = await getOrderListApi();
+      const response = await getExpressListApi();
       if (response) {
         this.list = response.data.records;
       }
@@ -91,7 +91,7 @@ export default {
     },
     onCreate() {
       uni.navigateTo({
-        url: "/subpackages/contract/create_contract_page",
+        url: "/subpackages/events/pages/express/create_express_page",
       });
     },
   },

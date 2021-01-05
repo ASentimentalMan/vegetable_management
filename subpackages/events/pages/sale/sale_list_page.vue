@@ -33,12 +33,12 @@
         </block>
       </view>
       <view style="height: 200rpx" v-if="status === 'empty'"> </view>
-      <indicator :status="status" emptyText="暂无发票" />
+      <indicator :status="status" emptyText="暂无销售" />
     </view>
     <view class="unscrollable">
       <view class="bottom-button-container">
         <view class="button-container" @tap="onCreate">
-          <view class="bottom-button"> 新增发票 </view>
+          <view class="bottom-button"> 新增销售 </view>
         </view>
       </view>
     </view>
@@ -47,7 +47,7 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getReceiptListApi } from "@/apis/event_apis";
+import { getSaleListApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -79,7 +79,7 @@ export default {
   },
   methods: {
     async fetch() {
-      const response = await getReceiptListApi();
+      const response = await getSaleListApi();
       if (response) {
         this.list = response.data.records;
       }
@@ -90,9 +90,8 @@ export default {
       });
     },
     onCreate() {
-      console.log("ok");
       uni.navigateTo({
-        url: "/subpackages/events/receipt/create_receipt_page",
+        url: "/subpackages/events/pages/sale/create_sale_page",
       });
     },
   },

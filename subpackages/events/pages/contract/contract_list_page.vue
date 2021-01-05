@@ -3,16 +3,16 @@
     <view class="scrollable">
       <view class="list-container flex-vertical flex-jcsb">
         <block v-for="(item, index) in list" :key="index">
-          <view class="list-item flex-horizontal flex-aic" @tap="goEvent(item)">
+          <view class="list-item flex-horizontal flex-aic" @tap="onEvent(item)">
             <view class="item-cover">
               <image
                 class="cover"
-                src="https://dev.ncpgz.com/assets/management/icons/business_contract_icon.png"
+                src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
               />
             </view>
             <view class="flex-vertical">
               <view class="item-label">
-                {{ item.businessName }}
+                {{ item.contractName }}
               </view>
               <view class="item-text">
                 {{ item.createTime }}
@@ -22,12 +22,12 @@
         </block>
       </view>
       <view style="height: 200rpx" v-if="status === 'empty'"> </view>
-      <indicator :status="status" emptyText="暂无业务" />
+      <indicator :status="status" emptyText="暂无合同" />
     </view>
-    <view class="unscrollable">
+    <view class="unscrollable" v-if="!selectMode">
       <view class="bottom-button-container">
         <view class="button-container" @tap="onCreate">
-          <view class="bottom-button"> 新增业务 </view>
+          <view class="bottom-button"> 新增合同 </view>
         </view>
       </view>
     </view>
@@ -36,7 +36,7 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getEventListApi } from "@/apis/event_apis";
+import { getContractListApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -44,6 +44,7 @@ export default {
   },
   data() {
     return {
+      eventId: "",
       list: [],
       payload: {},
       page: 1,
@@ -52,6 +53,7 @@ export default {
       onNetworking: false,
       onRefreshing: false,
       needRefresh: false,
+      selectMode: false,
     };
   },
   computed: {
@@ -64,7 +66,14 @@ export default {
       return "loading";
     },
   },
-  onLoad() {
+  onLoad(e) {
+    if (e.eventId) {
+      this.eventId = e.eventId;
+    }
+    if (e.mode && e.mode === "select") {
+      this.selectMode = true;
+    }
+    console.log(this.eventId);
     this.fetch();
   },
   onShow() {
@@ -86,7 +95,7 @@ export default {
           size: this.pageSize,
         };
         this.onNetworking = true;
-        const response = await getEventListApi(payload);
+        const response = await getContractListApi(payload);
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
@@ -111,15 +120,27 @@ export default {
       this.onRefreshing = true;
       this.fetch();
     },
-    goEvent(item) {
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/event/event_detail_page" + objectToQuery(item),
-      });
+    onEvent(item) {
+      if (this.selectMode) {
+        let pages = getCurrentPages();
+        let prevPage = pages[pages.length - 2];
+        prevPage.$vm.relateContract = item;
+        prevPage.$vm.relateContractString = item.contractName;
+        console.log(item);
+        uni.navigateBack();
+      } else {
+        uni.navigateTo({
+          url:
+            "/subpackages/events/pages/contract/contract_detail_page" +
+            objectToQuery(item),
+        });
+      }
     },
     onCreate() {
       uni.navigateTo({
-        url: "/subpackages/events/pages/event/create_event_page",
+        url:
+          "/subpackages/events/pages/contract/create_contract_page?eventId=" +
+          this.eventId,
       });
     },
   },
@@ -143,8 +164,8 @@ export default {
   margin-right: 24rpx;
 }
 .cover {
-  width: 60rpx;
-  height: 50rpx;
+  width: 42rpx;
+  height: 42rpx;
 }
 .item-label {
   width: 100%;

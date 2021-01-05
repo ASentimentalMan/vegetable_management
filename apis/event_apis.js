@@ -92,3 +92,53 @@ export const getSaleListApi = payload => {
     token: true
   })
 }
+
+// 业务单位清单
+export const getCompanyListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/customer-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 发票类型列表
+export const getReceiptTypeListApi = () => {
+  return request_java({
+    method: "GET",
+    url: "/params/dict-data/sys-invoice-type"
+  })
+}
+
+// 客户类型列表
+export const getCustomerTypeListApi = () => {
+  return request_java({
+    method: "GET",
+    url: "/params/dict-data/sys-customer-type"
+  })
+}
+
+// 客户来源列表
+export const getCustomerSourceListApi = () => {
+  return request_java({
+    method: "GET",
+    url: "/params/dict-data/sys-customer-source"
+  })
+}
+
+// 客户等级列表
+export const getCustomerLevelListApi = () => {
+  return request_java({
+    method: "GET",
+    url: "/params/dict-data/sys-customer-level"
+  })
+}
+
+// 客户行业列表
+export const getCustomerIndustryListApi = () => {
+  return request_java({
+    method: "GET",
+    url: "/params/dict-data/sys-customer-industry"
+  })
+}

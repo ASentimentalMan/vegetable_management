@@ -91,7 +91,7 @@ export default {
     },
     onCreate() {
       uni.navigateTo({
-        url: "/subpackages/contract/create_contract_page",
+        url: "/subpackages/events/pages/meeting/create_meeting_page",
       });
     },
   },

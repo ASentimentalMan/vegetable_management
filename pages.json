@@ -54,7 +54,7 @@
 			"root": "subpackages/events",
 			"pages": [
 				{
-					"path": "event/event_detail_page",
+					"path": "pages/event/event_detail_page",
 					"style": {
 						"navigationBarTitleText": "业务清单",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -63,7 +63,7 @@
 					}
 				},
 				{
-					"path": "event/create_event_page",
+					"path": "pages/event/create_event_page",
 					"style": {
 						"navigationBarTitleText": "新增业务",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -72,7 +72,7 @@
 					}
 				},
 				{
-					"path": "contract/contract_list_page",
+					"path": "pages/contract/contract_list_page",
 					"style": {
 						"navigationBarTitleText": "合同清单",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -81,7 +81,7 @@
 					}
 				},
 				{
-					"path": "contract/create_contract_page",
+					"path": "pages/contract/create_contract_page",
 					"style": {
 						"navigationBarTitleText": "新增合同",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -90,7 +90,7 @@
 					}
 				},
 				{
-					"path": "receipt/receipt_list_page",
+					"path": "pages/receipt/receipt_list_page",
 					"style": {
 						"navigationBarTitleText": "发票清单",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -99,7 +99,7 @@
 					}
 				},
 				{
-					"path": "receipt/create_receipt_page",
+					"path": "pages/receipt/create_receipt_page",
 					"style": {
 						"navigationBarTitleText": "新增发票",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -108,7 +108,7 @@
 					}
 				},
 				{
-					"path": "express/express_list_page",
+					"path": "pages/express/express_list_page",
 					"style": {
 						"navigationBarTitleText": "物流清单",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -117,7 +117,16 @@
 					}
 				},
 				{
-					"path": "meeting/meeting_list_page",
+					"path": "pages/express/create_express_page",
+					"style": {
+						"navigationBarTitleText": "新增物流",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5"
+					}
+				},
+				{
+					"path": "pages/meeting/meeting_list_page",
 					"style": {
 						"navigationBarTitleText": "会议清单",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -126,7 +135,16 @@
 					}
 				},
 				{
-					"path": "order/order_list_page",
+					"path": "pages/meeting/create_meeting_page",
+					"style": {
+						"navigationBarTitleText": "新增会议",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5"
+					}
+				},
+				{
+					"path": "pages/order/order_list_page",
 					"style": {
 						"navigationBarTitleText": "采购清单",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -135,9 +153,45 @@
 					}
 				},
 				{
-					"path": "sale/sale_list_page",
+					"path": "pages/order/create_order_page",
+					"style": {
+						"navigationBarTitleText": "新增采购",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5"
+					}
+				},
+				{
+					"path": "pages/sale/sale_list_page",
 					"style": {
 						"navigationBarTitleText": "销售清单",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5"
+					}
+				},
+				{
+					"path": "pages/sale/create_sale_page",
+					"style": {
+						"navigationBarTitleText": "新增销售",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5"
+					}
+				},
+				{
+					"path": "pages/customer/customer_list_page",
+					"style": {
+						"navigationBarTitleText": "客户清单",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5"
+					}
+				},
+				{
+					"path": "pages/customer/create_customer_page",
+					"style": {
+						"navigationBarTitleText": "新增客户",
 						"navigationBarBackgroundColor": "#ffffff",
 						"backgroundColorTop": "#f5f5f5",
 						"backgroundColor": "#f5f5f5"
@@ -193,7 +247,7 @@
 		// }
 	],
 	"preloadRule": {
-		"subpackages/events/event/event_detail_page": {
+		"subpackages/events/pages/event/event_detail_page": {
 			"network": "all",
 			"packages": [
 				"subpackages/events"
