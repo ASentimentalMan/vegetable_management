@@ -91,6 +91,7 @@ export default {
       endPickerStartTime: "",
       endPickerEndTime: "",
       pickerEndTime: "",
+      onNetworking: false,
     };
   },
   onLoad() {
@@ -167,26 +168,31 @@ export default {
       }
       return true;
     },
-    async onHandle() {
-      if (this.onValidate()) {
-        const payload = {
-          businessName: this.name,
-          businessStartDate: this.startTime,
-          businessEndDate: this.endTime,
-          remark: this.description,
-        };
-        const response = await createEventApi(payload);
-        if (response) {
-          let pages = getCurrentPages();
-          let prevPage = pages[pages.length - 2];
-          prevPage.$vm.needRefresh = true;
-          uni.showToast({
-            title: "创建成功",
-            icon: "none",
-          });
-          setTimeout(() => {
-            uni.navigateBack();
-          }, 600);
+    async onCreate() {
+      if (!this.onNetworking) {
+        if (this.onValidate()) {
+          const payload = {
+            businessName: this.name,
+            businessStartDate: this.startTime,
+            businessEndDate: this.endTime,
+            remark: this.description,
+          };
+          this.onNetworking = true;
+          const response = await createEventApi(payload);
+          this.onNetworking = false;
+          if (response) {
+            let pages = getCurrentPages();
+            let prevPage = pages[pages.length - 2];
+            prevPage.$vm.needRefresh = true;
+            uni.showToast({
+              title: "创建成功",
+              icon: "none",
+            });
+            this.onNetworking = true;
+            setTimeout(() => {
+              uni.navigateBack();
+            }, 600);
+          }
         }
       }
     },

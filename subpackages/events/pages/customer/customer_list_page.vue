@@ -79,6 +79,7 @@ export default {
   onShow() {
     if (this.needRefresh) {
       this.onRefresh();
+      this.needRefresh = false;
     }
   },
   onPullDownRefresh() {

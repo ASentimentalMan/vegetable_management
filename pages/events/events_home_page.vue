@@ -70,6 +70,7 @@ export default {
   onShow() {
     if (this.needRefresh) {
       this.onRefresh();
+      this.needRefresh = false;
     }
   },
   onPullDownRefresh() {
@@ -114,7 +115,8 @@ export default {
     goEvent(item) {
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/event/event_detail_page" + objectToQuery(item),
+          "/subpackages/events/pages/event/event_detail_page" +
+          objectToQuery(item),
       });
     },
     onCreate() {

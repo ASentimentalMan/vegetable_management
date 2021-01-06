@@ -79,6 +79,7 @@ export default {
   onShow() {
     if (this.needRefresh) {
       this.onRefresh();
+      this.needRefresh = false;
     }
   },
   onPullDownRefresh() {
@@ -93,6 +94,7 @@ export default {
         const payload = {
           current: this.page,
           size: this.pageSize,
+          businessId: this.eventId
         };
         this.onNetworking = true;
         const response = await getContractListApi(payload);
