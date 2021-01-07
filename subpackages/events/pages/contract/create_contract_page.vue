@@ -112,7 +112,7 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择合同签订日期"
-              :start="signTimePickerStartTime"
+              start="2019-07-19 09:00"
               :end="signTimePickerEndTime"
               fields="day"
               @change="onSignTimeSet"
@@ -124,7 +124,7 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择合同开始日期"
-              :start="startTimePickerStartTime"
+              start="2019-07-19 09:00"
               :end="startTimePickerEndTime"
               fields="day"
               @change="onStartTimeSet"
@@ -135,16 +135,12 @@
           <view class="form-item-label"> 合同结束日期 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
-              v-if="endTimePickerStartTime"
               placeholder="请选择合同结束日期"
-              :start="endTimePickerStartTime"
+              start="2019-07-19 09:00"
               :end="endTimePickerEndTime"
               fields="day"
               @change="onEndTimeSet"
             />
-            <view v-else class="form-item-placeholder" @tap="onWarning">
-              请选择合同结束日期
-            </view>
           </view>
         </view>
       </view>
@@ -173,7 +169,7 @@
     </view>
     <view class="unscrollable">
       <view class="bottom-button-container">
-        <view class="button-container" @tap="onHandle">
+        <view class="button-container" @tap="onCreate">
           <view class="bottom-button"> 完成 </view>
         </view>
       </view>
@@ -202,16 +198,34 @@ export default {
       partyB: "",
       partyBRepresent: "",
       signTime: "",
-      signTimePickerStartTime: "2019-07-19 09:00",
+      signTimeString: "",
       signTimePickerEndTime: "",
       startTime: "",
-      startTimePickerStartTime: "2019-07-19 09:00",
+      startTimeString: "",
       startTimePickerEndTime: "",
       endTime: "",
-      endTimePickerStartTime: "",
+      endTimeString: "",
       endTimePickerEndTime: "",
       description: "",
-      attachments: [],
+      attachments: [
+        {
+          url: "",
+          blob:
+            "blob:http://localhost:8080/5065bea2-727d-4255-ac17-663620408de3",
+          text: "100%",
+          originalname: "store_icon_remove.png",
+          id: "1347100115804676097",
+          createTime: "2021-01-07 16:37:50",
+          updateTime: "2021-01-07 16:37:50",
+          fileUrl:
+            "https://dev.ncpgz.com/upload/business/images/f79a7f5b-3072-4eb5-9c17-fa62b57945d1.png",
+          fileName: "f79a7f5b-3072-4eb5-9c17-fa62b57945d1.png",
+          subFileUrl:
+            "https://dev.ncpgz.com/upload/business/images/sub_19f2c11a-1f7a-4a01-9e19-c62659f3c934.jpg",
+          originalFileName: "store_icon_remove.png",
+          fileType: "images",
+        },
+      ],
       onNetworking: false,
     };
   },
@@ -220,13 +234,14 @@ export default {
       this.eventId = e.eventId;
     }
     console.log(this.eventId);
-    this.setSignTimePickerEndTime();
+    this.initTimePicker();
   },
   methods: {
-    setSignTimePickerEndTime() {
+    initTimePicker() {
       const time = new Date();
       this.signTimePickerEndTime =
         time.getFullYear() +
+        1 +
         "-" +
         (time.getMonth() + 1 > 9
           ? time.getMonth() + 1
@@ -237,10 +252,9 @@ export default {
         (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
         ":" +
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
-    },
-    setEndTimePickerTime(time) {
-      this.endTimePickerStartTime =
+      this.startTimePickerEndTime =
         time.getFullYear() +
+        5 +
         "-" +
         (time.getMonth() + 1 > 9
           ? time.getMonth() + 1
@@ -253,7 +267,7 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
       this.endTimePickerEndTime =
         time.getFullYear() +
-        50 +
+        20 +
         "-" +
         (time.getMonth() + 1 > 9
           ? time.getMonth() + 1
@@ -266,29 +280,19 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onSignTimeSet(e) {
-      console.log(e);
-      this.signTime = e.f1;
+      this.signTime = new Date(e.f3);
+      this.signTimeString = e.f1;
     },
     onStartTimeSet(e) {
-      this.startTime = e.f1;
-      this.endTime = "";
-      this.endTimePickerStartTime = "";
-      setTimeout(() => {
-        this.setEndTimePickerTime(new Date(e.f3));
-      }, 10);
+      this.startTime = new Date(e.f3);
+      this.startTimeString = e.f1;
     },
     onEndTimeSet(e) {
-      this.endTime = e.f1;
-    },
-    onWarning() {
-      uni.showToast({
-        title: "请先选择合同开始日期",
-        icon: "none",
-      });
+      this.endTime = new Date(e.f3);
+      this.endTimeString = e.f1;
     },
     onAttachmentAdd(attachments) {
       this.attachments = this.attachments.concat(attachments);
-      console.log(this.attachments);
     },
     onAttachmentRemove(index) {
       this.attachments.splice(index, 1);
@@ -311,43 +315,68 @@ export default {
         });
         return false;
       }
-      return true;
-    },
-    async onHandle() {
-      if (!this.onNetworking) {
-        if (this.onValidate()) {
-          const payload = {
-            businessId: this.eventId,
-            contractName: this.name,
-            contractNumber: this.number,
-            contractType: this.type,
-            contractAmount: this.price,
-            partyA: this.partyA,
-            partySignatoryA: this.partyARepresent,
-            partyB: this.partyB,
-            partySignatoryB: this.partyBRepresent,
-            signingDate: this.signTime,
-            startDate: this.startTime,
-            endDate: this.endTime,
-            remark: this.description,
-            files: [],
-          };
-          this.onNetworking = true;
-          const response = await createContractApi(payload);
-          this.onNetworking = false;
-          if (response) {
-            let pages = getCurrentPages();
-            let prevPage = pages[pages.length - 2];
-            prevPage.$vm.needRefresh = true;
+      if (this.startTime && this.endTime && this.startTime > this.endTime) {
+        uni.showToast({
+          title: "合同结束日期不能早于合同开始日期",
+          icon: "none",
+          duration: 3000,
+        });
+        return false;
+      }
+      if (this.attachments.length) {
+        for (let item of this.attachments) {
+          if (!item.subFileUrl) {
             uni.showToast({
-              title: "创建成功",
+              title: "请等待文件上传完成",
               icon: "none",
             });
-            this.onNetworking = true;
-            setTimeout(() => {
-              uni.navigateBack();
-            }, 600);
+            return false;
           }
+        }
+      }
+      return true;
+    },
+    async onCreate() {
+      if (!this.onNetworking && this.onValidate()) {
+        const payload = {
+          businessId: this.eventId,
+          contractName: this.name,
+          contractNumber: this.number,
+          contractType: this.type,
+          contractAmount: this.price,
+          partyA: this.partyA,
+          partySignatoryA: this.partyARepresent,
+          partyB: this.partyB,
+          partySignatoryB: this.partyBRepresent,
+          signingDate: this.signTimeString,
+          startDate: this.startTimeString,
+          endDate: this.endTimeString,
+          remark: this.description,
+          files: this.attachments.map((e) => {
+            return {
+              fileName: e.fileName,
+              fileOriginalName: e.originalname,
+              fileSubUrl: e.subFileUrl,
+              fileUrl: e.fileUrl,
+              remark: "",
+            };
+          }),
+        };
+        this.onNetworking = true;
+        const response = await createContractApi(payload);
+        this.onNetworking = false;
+        if (response) {
+          let pages = getCurrentPages();
+          let prevPage = pages[pages.length - 2];
+          prevPage.$vm.needRefresh = true;
+          uni.showToast({
+            title: "创建成功",
+            icon: "none",
+          });
+          this.onNetworking = true;
+          setTimeout(() => {
+            uni.navigateBack();
+          }, 600);
         }
       }
     },

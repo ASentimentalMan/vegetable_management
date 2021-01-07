@@ -39,12 +39,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
-  data() {
-    return {
-      token: null,
-    };
-  },
   props: {
     title: {
       type: String,
@@ -65,9 +61,10 @@ export default {
       ],
     },
   },
-  created() {
-    const token = uni.getStorageSync("token");
-    this.token = token;
+  computed: {
+    ...mapState("user", {
+      token: (state) => state.token,
+    }),
   },
   methods: {
     onAttachmentRemove(index) {
@@ -78,20 +75,22 @@ export default {
         count: 9 - this.attachments.length,
         success: (chooseImageRes) => {
           const tempFilePaths = chooseImageRes.tempFilePaths;
+          const tempFiles = chooseImageRes.tempFiles;
+          console.log(tempFilePaths);
+          console.log(tempFiles);
           this.$emit(
             "onAttachmentAdd",
-            tempFilePaths.map((e) => {
+            tempFilePaths.map((e, index) => {
               return {
                 url: "",
                 blob: e,
                 text: "等待上传",
+                originalname: tempFiles[index]["name"],
               };
             })
           );
           setTimeout(() => {
-            console.log(this.attachments);
             for (let i = 0; i < this.attachments.length; i++) {
-              console.log(this.attachments);
               if (!this.attachments[i]["subFileUrl"]) {
                 this.$emit("onAttachmentProgress", {
                   index: i,
@@ -102,10 +101,11 @@ export default {
                     process.env.NODE_ENV === "development"
                       ? "https://dev.ncpgz.com/test/file/basis-file/upload"
                       : "https://dev.ncpgz.com/test/file/basis-file/upload",
-                  filePath: tempFilePaths[i],
+                  filePath: this.attachments[i]["blob"],
                   name: "file",
                   formData: {
                     type: "business",
+                    originalname: this.attachments[i]["originalname"],
                   },
                   header: {
                     token_type: "user",
@@ -127,7 +127,7 @@ export default {
                 });
               }
             }
-          }, 10);
+          }, 600);
         },
       });
     },

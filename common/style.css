@@ -207,7 +207,7 @@ uni-video {
   bottom: 0;
   padding: 24rpx 24rpx 40rpx 24rpx;
   background-color: #fff;  
-  z-index: 999;
+  z-index: 9;
 }
 .bottom-button {
   text-align: center;

@@ -1,9 +1,10 @@
-import request_node from "@/utils/request_node"
+import request_java from "@/utils/request_java"
 
-// 轮播图
-export const getHomeBanners = () => {
-  return request_node({
-    url: "/config/banner?type=home_banner&platform=flutter",
+// 行政区域列表
+export const getLocationListApi = payload => {
+  return request_java({
+    url: "/params/region/city-one",
+    data: payload,
     method: "GET"
   })
 }

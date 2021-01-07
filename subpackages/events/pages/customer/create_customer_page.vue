@@ -6,7 +6,9 @@
     <view class="scrollable">
       <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 客户名称 </view>
+          <view class="form-item-label">
+            <text class="form-item-required">*</text>客户名称
+          </view>
           <view class="form-item-input">
             <input
               class="form-input"
@@ -45,8 +47,14 @@
         </view> -->
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 所属区域 </view>
-          <view class="form-item-input">
-            <receipt-type-picker @onAreaChange="onAreaChange" />
+          <view class="form-item-input" @click="onLocationPick">
+            <view
+              :class="{
+                'form-item-placeholder': locationString === '请选择所属区域',
+              }"
+            >
+              {{ locationString }}
+            </view>
           </view>
         </view>
         <view class="form-item flex-horizontal">
@@ -135,56 +143,23 @@
           </view>
         </view>
       </view>
-      <view class="form-unit-title"> 营业执照 </view>
-      <view class="form-attachment-container">
-        <block v-for="(item, index) in attachments" :key="index">
-          <view class="form-attachment attachment-size">
-            <image class="attachment-size" :src="item" mode="aspectFill" />
-            <view
-              class="attachment-remove-container"
-              @click="onAttachmentRemove(index)"
-            >
-              <image
-                class="attachment-remove"
-                src="https://mall.ncpgz.com/ftp/suberQcw/assets/icons/store_icon_remove.png"
-                mode="aspectFill"
-              />
-            </view>
-          </view>
-        </block>
-        <view
-          class="attachment-add-container attachment-size"
-          v-if="attachments.length < 9"
-          @click="onAttachmentAdd"
-        >
-          <text class="attachment-add">+</text>
-        </view>
-      </view>
-      <view class="form-unit-title"> 开户许可证 </view>
-      <view class="form-attachment-container">
-        <block v-for="(item, index) in attachments" :key="index">
-          <view class="form-attachment attachment-size">
-            <image class="attachment-size" :src="item" mode="aspectFill" />
-            <view
-              class="attachment-remove-container"
-              @click="onAttachmentRemove(index)"
-            >
-              <image
-                class="attachment-remove"
-                src="https://mall.ncpgz.com/ftp/suberQcw/assets/icons/store_icon_remove.png"
-                mode="aspectFill"
-              />
-            </view>
-          </view>
-        </block>
-        <view
-          class="attachment-add-container attachment-size"
-          v-if="attachments.length < 9"
-          @click="onAttachmentAdd"
-        >
-          <text class="attachment-add">+</text>
-        </view>
-      </view>
+      <add-media-attachment
+        title="营业执照"
+        :attachments="licenses"
+        @onAttachmentAdd="onLicensesAdd"
+        @onAttachmentRemove="onLicensesRemove"
+        @onAttachmentProgress="onLicensesProgress"
+        @onAttachmentUploaded="onLicensesUploaded"
+      />
+      <add-media-attachment
+        title="开户许可证"
+        :attachments="accountOpeningLicenses"
+        @onAttachmentAdd="onLicensesAdd"
+        @onAttachmentRemove="onLicensesRemove"
+        @onAttachmentProgress="onLicensesProgress"
+        @onAttachmentUploaded="onLicensesUploaded"
+      />
+
       <view class="form-unit-title"> 征信证明 </view>
       <view class="form-attachment-container">
         <block v-for="(item, index) in attachments" :key="index">
@@ -368,6 +343,7 @@
         </view>
       </view>
     </view>
+    <location-picker ref="location" :level="3" @onLocationSet="onLocationSet" />
   </view>
 </template>
 
@@ -375,18 +351,22 @@
 import CustomerTypePicker from "@/subpackages/events/components/costumer_type_picker";
 import CustomerSourcePicker from "@/subpackages/events/components/costumer_source_picker";
 import CustomerLevelPicker from "@/subpackages/events/components/costumer_level_picker";
+import LocationPicker from "@/components/public/location_picker";
 import CustomerIndustryPicker from "@/subpackages/events/components/costumer_industry_picker";
 import ReceiptTypePicker from "@/subpackages/events/components/receipt_type_picker";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker";
+import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
 import { createContractApi } from "@/apis/event_apis";
 export default {
   components: {
     CustomerTypePicker,
     CustomerSourcePicker,
     CustomerLevelPicker,
+    LocationPicker,
     CustomerIndustryPicker,
     ReceiptTypePicker,
     BiaoFunDatePicker,
+    AddMediaAttachment,
   },
   data() {
     return {
@@ -395,6 +375,8 @@ export default {
       type: {},
       source: "",
       level: {},
+      location: [],
+      locationString: "请选择所属区域",
       apartment: {},
       area: {},
       industry: "",
@@ -404,7 +386,9 @@ export default {
       mobile: "",
       creator: "",
       description: "",
-      attachments: [],
+      licenses: [],
+      accountOpeningLicenses: [],
+      attachments: []
     };
   },
   onLoad(e) {
@@ -412,7 +396,6 @@ export default {
       this.eventId = e.eventId;
     }
     console.log(this.eventId);
-    this.setTimePickerEndTime();
   },
   methods: {
     onCustomerTypeChange(e) {
@@ -424,27 +407,20 @@ export default {
     onCustomerLevelChange(e) {
       this.level = e;
     },
+    onLocationPick() {
+      this.$refs.location.popup();
+    },
+    onLocationSet(location) {
+      if (location.length) {
+        this.location = location;
+        this.locationString = location.map((e) => e.name).join("/");
+      }
+    },
     onCustomerIndustryChange(e) {
       this.industry = e;
     },
-    setTimePickerEndTime() {
-      const time = new Date();
-      this.timePickerEndTime =
-        time.getFullYear() +
-        "-" +
-        (time.getMonth() + 1 > 9
-          ? time.getMonth() + 1
-          : "0" + (time.getMonth() + 1)) +
-        "-" +
-        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
-        " " +
-        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
-        ":" +
-        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
-    },
-    onTimeSet(e) {
-      this.time = e.f2;
-    },
+    
+    
     onSelectFrom() {
       uni.navigateTo({
         url:
@@ -457,54 +433,21 @@ export default {
           "/subpackages/events/pages/contract/contract_list_page?mode=select",
       });
     },
-    onWarning() {
-      uni.showToast({
-        title: "请先选择合同开始日期",
-        icon: "none",
-      });
+    onLicensesAdd(attachments) {
+      this.licenses = this.licenses.concat(attachments);
     },
-    onAttachmentRemove(index) {
-      this.attachments.splice(index, 1);
+    onLicensesRemove(index) {
+      this.licenses.splice(index, 1);
     },
-    onAttachmentAdd() {
-      uni.chooseImage({
-        count: 9 - this.attachments.length,
-        success: (chooseImageRes) => {
-          // const tempFilePaths = chooseImageRes.tempFilePaths;
-          // const userinfo = uni.getStorageSync("userinfo");
-          // for (let i = 0; i < tempFilePaths.length; i++) {
-          //   uni.uploadFile({
-          //     url:
-          //       process.env.NODE_ENV === "development"
-          //         ? "https://mall.ncpgz.com/test/applets/image/upload"
-          //         : "https://mall.ncpgz.com/suberqcw/applets/image/upload",
-          //     filePath: tempFilePaths[i],
-          //     name: "files",
-          //     formData: {
-          //       imgPath: "portal/goods",
-          //       token: userinfo.token,
-          //     },
-          //     success: (uploadFileRes) => {
-          //       const response = JSON.parse(uploadFileRes.data);
-          //       if (response.code === 601) {
-          //         uni.navigateBack();
-          //         store.commit("user/logOut");
-          //         uni.reLaunch({
-          //           url: "/pages/home/home_page",
-          //         });
-          //         uni.showToast({
-          //           title: response.data,
-          //           icon: "none",
-          //         });
-          //       } else {
-          //         console.log(response.data.imgUrl);
-          //         this.images.push(response.data.imgUrl);
-          //       }
-          //     },
-          //   });
-          // }
-        },
-      });
+    onLicensesProgress(params) {
+      this.licenses[params.index]["text"] = params.progress + "%";
+    },
+    onLicensesUploaded(params) {
+      this.$set(
+        this.licenses,
+        params.index,
+        Object.assign(this.licenses[params.index], params.response)
+      );
     },
     onValidate() {
       if (!this.name) {
