@@ -145,196 +145,76 @@
       </view>
       <add-media-attachment
         title="营业执照"
-        :attachments="licenses"
-        @onAttachmentAdd="onLicensesAdd"
-        @onAttachmentRemove="onLicensesRemove"
-        @onAttachmentProgress="onLicensesProgress"
-        @onAttachmentUploaded="onLicensesUploaded"
+        :attachments="businessLicenses"
+        @onAttachmentAdd="onBusinessLicenseAdd"
+        @onAttachmentRemove="onBusinessLicenseRemove"
+        @onAttachmentProgress="onBusinessLicenseProgress"
+        @onAttachmentUploaded="onBusinessLicenseUploaded"
       />
       <add-media-attachment
         title="开户许可证"
         :attachments="accountOpeningLicenses"
-        @onAttachmentAdd="onLicensesAdd"
-        @onAttachmentRemove="onLicensesRemove"
-        @onAttachmentProgress="onLicensesProgress"
-        @onAttachmentUploaded="onLicensesUploaded"
+        @onAttachmentAdd="onAccountOpeningLicenseAdd"
+        @onAttachmentRemove="onAccountOpeningLicenseRemove"
+        @onAttachmentProgress="onAccountOpeningLicenseProgress"
+        @onAttachmentUploaded="onAccountOpeningLicenseUploaded"
       />
-
-      <view class="form-unit-title"> 征信证明 </view>
-      <view class="form-attachment-container">
-        <block v-for="(item, index) in attachments" :key="index">
-          <view class="form-attachment attachment-size">
-            <image class="attachment-size" :src="item" mode="aspectFill" />
-            <view
-              class="attachment-remove-container"
-              @click="onAttachmentRemove(index)"
-            >
-              <image
-                class="attachment-remove"
-                src="https://mall.ncpgz.com/ftp/suberQcw/assets/icons/store_icon_remove.png"
-                mode="aspectFill"
-              />
-            </view>
-          </view>
-        </block>
-        <view
-          class="attachment-add-container attachment-size"
-          v-if="attachments.length < 9"
-          @click="onAttachmentAdd"
-        >
-          <text class="attachment-add">+</text>
-        </view>
-      </view>
-      <view class="form-unit-title"> 银行流水 </view>
-      <view class="form-attachment-container">
-        <block v-for="(item, index) in attachments" :key="index">
-          <view class="form-attachment attachment-size">
-            <image class="attachment-size" :src="item" mode="aspectFill" />
-            <view
-              class="attachment-remove-container"
-              @click="onAttachmentRemove(index)"
-            >
-              <image
-                class="attachment-remove"
-                src="https://mall.ncpgz.com/ftp/suberQcw/assets/icons/store_icon_remove.png"
-                mode="aspectFill"
-              />
-            </view>
-          </view>
-        </block>
-        <view
-          class="attachment-add-container attachment-size"
-          v-if="attachments.length < 9"
-          @click="onAttachmentAdd"
-        >
-          <text class="attachment-add">+</text>
-        </view>
-      </view>
-      <view class="form-unit-title"> 财务报表 </view>
-      <view class="form-attachment-container">
-        <block v-for="(item, index) in attachments" :key="index">
-          <view class="form-attachment attachment-size">
-            <image class="attachment-size" :src="item" mode="aspectFill" />
-            <view
-              class="attachment-remove-container"
-              @click="onAttachmentRemove(index)"
-            >
-              <image
-                class="attachment-remove"
-                src="https://mall.ncpgz.com/ftp/suberQcw/assets/icons/store_icon_remove.png"
-                mode="aspectFill"
-              />
-            </view>
-          </view>
-        </block>
-        <view
-          class="attachment-add-container attachment-size"
-          v-if="attachments.length < 9"
-          @click="onAttachmentAdd"
-        >
-          <text class="attachment-add">+</text>
-        </view>
-      </view>
-      <view class="form-unit-title"> 食品经营许可证 </view>
-      <view class="form-attachment-container">
-        <block v-for="(item, index) in attachments" :key="index">
-          <view class="form-attachment attachment-size">
-            <image class="attachment-size" :src="item" mode="aspectFill" />
-            <view
-              class="attachment-remove-container"
-              @click="onAttachmentRemove(index)"
-            >
-              <image
-                class="attachment-remove"
-                src="https://mall.ncpgz.com/ftp/suberQcw/assets/icons/store_icon_remove.png"
-                mode="aspectFill"
-              />
-            </view>
-          </view>
-        </block>
-        <view
-          class="attachment-add-container attachment-size"
-          v-if="attachments.length < 9"
-          @click="onAttachmentAdd"
-        >
-          <text class="attachment-add">+</text>
-        </view>
-      </view>
-      <view class="form-unit-title"> 风控材料 </view>
-      <view class="form-attachment-container">
-        <block v-for="(item, index) in attachments" :key="index">
-          <view class="form-attachment attachment-size">
-            <image class="attachment-size" :src="item" mode="aspectFill" />
-            <view
-              class="attachment-remove-container"
-              @click="onAttachmentRemove(index)"
-            >
-              <image
-                class="attachment-remove"
-                src="https://mall.ncpgz.com/ftp/suberQcw/assets/icons/store_icon_remove.png"
-                mode="aspectFill"
-              />
-            </view>
-          </view>
-        </block>
-        <view
-          class="attachment-add-container attachment-size"
-          v-if="attachments.length < 9"
-          @click="onAttachmentAdd"
-        >
-          <text class="attachment-add">+</text>
-        </view>
-      </view>
-      <view class="form-unit-title"> 实勘照片/视频 </view>
-      <view class="form-attachment-container">
-        <block v-for="(item, index) in attachments" :key="index">
-          <view class="form-attachment attachment-size">
-            <image class="attachment-size" :src="item" mode="aspectFill" />
-            <view
-              class="attachment-remove-container"
-              @click="onAttachmentRemove(index)"
-            >
-              <image
-                class="attachment-remove"
-                src="https://mall.ncpgz.com/ftp/suberQcw/assets/icons/store_icon_remove.png"
-                mode="aspectFill"
-              />
-            </view>
-          </view>
-        </block>
-        <view
-          class="attachment-add-container attachment-size"
-          v-if="attachments.length < 9"
-          @click="onAttachmentAdd"
-        >
-          <text class="attachment-add">+</text>
-        </view>
-      </view>
-      <view class="form-unit-title"> 其它附件 </view>
-      <view class="form-attachment-container">
-        <block v-for="(item, index) in attachments" :key="index">
-          <view class="form-attachment attachment-size">
-            <image class="attachment-size" :src="item" mode="aspectFill" />
-            <view
-              class="attachment-remove-container"
-              @click="onAttachmentRemove(index)"
-            >
-              <image
-                class="attachment-remove"
-                src="https://mall.ncpgz.com/ftp/suberQcw/assets/icons/store_icon_remove.png"
-                mode="aspectFill"
-              />
-            </view>
-          </view>
-        </block>
-        <view
-          class="attachment-add-container attachment-size"
-          v-if="attachments.length < 9"
-          @click="onAttachmentAdd"
-        >
-          <text class="attachment-add">+</text>
-        </view>
-      </view>
+      <add-media-attachment
+        title="征信证明"
+        :attachments="creditReports"
+        @onAttachmentAdd="onCreditReportAdd"
+        @onAttachmentRemove="onCreditReportRemove"
+        @onAttachmentProgress="onCreditReportProgress"
+        @onAttachmentUploaded="onCreditReportUploaded"
+      />
+      <add-media-attachment
+        title="银行流水"
+        :attachments="bankStatements"
+        @onAttachmentAdd="onBankStatementAdd"
+        @onAttachmentRemove="onBankStatementRemove"
+        @onAttachmentProgress="onBankStatementProgress"
+        @onAttachmentUploaded="onBankStatementUploaded"
+      />
+      <add-media-attachment
+        title="财务报表"
+        :attachments="financialStatements"
+        @onAttachmentAdd="onFinancialStatementAdd"
+        @onAttachmentRemove="onFinancialStatementRemove"
+        @onAttachmentProgress="onFinancialStatementProgress"
+        @onAttachmentUploaded="onFinancialStatementUploaded"
+      />
+      <add-media-attachment
+        title="食品经营许可证"
+        :attachments="foodLicenses"
+        @onAttachmentAdd="onFoodLicenseAdd"
+        @onAttachmentRemove="onFoodLicenseRemove"
+        @onAttachmentProgress="onFoodLicenseProgress"
+        @onAttachmentUploaded="onFoodLicenseUploaded"
+      />
+      <add-media-attachment
+        title="风控材料"
+        :attachments="riskControlData"
+        @onAttachmentAdd="onRiskControlDataAdd"
+        @onAttachmentRemove="onRiskControlDataRemove"
+        @onAttachmentProgress="onRiskControlDataProgress"
+        @onAttachmentUploaded="onRiskControlDataUploaded"
+      />
+      <add-media-attachment
+        title="实勘照片/视频"
+        :attachments="realMedia"
+        @onAttachmentAdd="onRealMediaAdd"
+        @onAttachmentRemove="onRealMediaRemove"
+        @onAttachmentProgress="onRealMediaProgress"
+        @onAttachmentUploaded="onRealMediaUploaded"
+      />
+      <add-media-attachment
+        title="其它附件"
+        :attachments="attachments"
+        @onAttachmentAdd="onAttachmentAdd"
+        @onAttachmentRemove="onAttachmentRemove"
+        @onAttachmentProgress="onAttachmentProgress"
+        @onAttachmentUploaded="onAttachmentUploaded"
+      />
     </view>
     <view class="unscrollable">
       <view class="bottom-button-container">
@@ -348,6 +228,7 @@
 </template>
 
 <script>
+import UniDataPicker from "@/components/uni-data-picker/uni-data-picker";
 import CustomerTypePicker from "@/subpackages/events/components/costumer_type_picker";
 import CustomerSourcePicker from "@/subpackages/events/components/costumer_source_picker";
 import CustomerLevelPicker from "@/subpackages/events/components/costumer_level_picker";
@@ -356,9 +237,10 @@ import CustomerIndustryPicker from "@/subpackages/events/components/costumer_ind
 import ReceiptTypePicker from "@/subpackages/events/components/receipt_type_picker";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createContractApi } from "@/apis/event_apis";
+import { createCustomerApi } from "@/apis/event_apis";
 export default {
   components: {
+    UniDataPicker,
     CustomerTypePicker,
     CustomerSourcePicker,
     CustomerLevelPicker,
@@ -373,29 +255,35 @@ export default {
       eventId: "",
       name: "",
       type: {},
-      source: "",
+      source: {},
       level: {},
       location: [],
       locationString: "请选择所属区域",
       apartment: {},
       area: {},
-      industry: "",
+      industry: {},
       dimension: "",
       manager: "",
       tel: "",
       mobile: "",
       creator: "",
       description: "",
-      licenses: [],
+      businessLicenses: [],
       accountOpeningLicenses: [],
-      attachments: []
+      creditReports: [],
+      bankStatements: [],
+      financialStatements: [],
+      foodLicenses: [],
+      riskControlData: [],
+      realMedia: [],
+      attachments: [],
     };
   },
   onLoad(e) {
     if (e.eventId) {
       this.eventId = e.eventId;
     }
-    console.log(this.eventId);
+    // console.log(this.eventId);
   },
   methods: {
     onCustomerTypeChange(e) {
@@ -419,8 +307,6 @@ export default {
     onCustomerIndustryChange(e) {
       this.industry = e;
     },
-    
-    
     onSelectFrom() {
       uni.navigateTo({
         url:
@@ -433,26 +319,159 @@ export default {
           "/subpackages/events/pages/contract/contract_list_page?mode=select",
       });
     },
-    onLicensesAdd(attachments) {
-      this.licenses = this.licenses.concat(attachments);
+    onBusinessLicenseAdd(attachments) {
+      this.businessLicenses = this.businessLicenses.concat(attachments);
     },
-    onLicensesRemove(index) {
-      this.licenses.splice(index, 1);
+    onBusinessLicenseRemove(index) {
+      this.businessLicenses.splice(index, 1);
     },
-    onLicensesProgress(params) {
-      this.licenses[params.index]["text"] = params.progress + "%";
+    onBusinessLicenseProgress(params) {
+      this.businessLicenses[params.index]["text"] = params.progress + "%";
     },
-    onLicensesUploaded(params) {
+    onBusinessLicenseUploaded(params) {
       this.$set(
-        this.licenses,
+        this.businessLicenses,
         params.index,
-        Object.assign(this.licenses[params.index], params.response)
+        Object.assign(this.businessLicenses[params.index], params.response)
+      );
+    },
+    onAccountOpeningLicenseAdd(attachments) {
+      this.accountOpeningLicenses = this.accountOpeningLicenses.concat(
+        attachments
+      );
+    },
+    onAccountOpeningLicenseRemove(index) {
+      this.accountOpeningLicenses.splice(index, 1);
+    },
+    onAccountOpeningLicenseProgress(params) {
+      this.accountOpeningLicenses[params.index]["text"] = params.progress + "%";
+    },
+    onAccountOpeningLicenseUploaded(params) {
+      this.$set(
+        this.accountOpeningLicenses,
+        params.index,
+        Object.assign(
+          this.accountOpeningLicenses[params.index],
+          params.response
+        )
+      );
+    },
+    onCreditReportAdd(attachments) {
+      this.creditReports = this.creditReports.concat(attachments);
+    },
+    onCreditReportRemove(index) {
+      this.creditReports.splice(index, 1);
+    },
+    onCreditReportProgress(params) {
+      this.creditReports[params.index]["text"] = params.progress + "%";
+    },
+    onCreditReportUploaded(params) {
+      this.$set(
+        this.creditReports,
+        params.index,
+        Object.assign(this.creditReports[params.index], params.response)
+      );
+    },
+    onBankStatementAdd(attachments) {
+      this.bankStatements = this.bankStatements.concat(attachments);
+    },
+    onBankStatementRemove(index) {
+      this.bankStatements.splice(index, 1);
+    },
+    onBankStatementProgress(params) {
+      this.bankStatements[params.index]["text"] = params.progress + "%";
+    },
+    onBankStatementUploaded(params) {
+      this.$set(
+        this.bankStatements,
+        params.index,
+        Object.assign(this.bankStatements[params.index], params.response)
+      );
+    },
+    onFinancialStatementAdd(attachments) {
+      this.financialStatements = this.financialStatements.concat(attachments);
+    },
+    onFinancialStatementRemove(index) {
+      this.financialStatements.splice(index, 1);
+    },
+    onFinancialStatementProgress(params) {
+      this.financialStatements[params.index]["text"] = params.progress + "%";
+    },
+    onFinancialStatementUploaded(params) {
+      this.$set(
+        this.financialStatements,
+        params.index,
+        Object.assign(this.financialStatements[params.index], params.response)
+      );
+    },
+    onFoodLicenseAdd(attachments) {
+      this.foodLicenses = this.foodLicenses.concat(attachments);
+    },
+    onFoodLicenseRemove(index) {
+      this.foodLicenses.splice(index, 1);
+    },
+    onFoodLicenseProgress(params) {
+      this.foodLicenses[params.index]["text"] = params.progress + "%";
+    },
+    onFoodLicenseUploaded(params) {
+      this.$set(
+        this.foodLicenses,
+        params.index,
+        Object.assign(this.foodLicenses[params.index], params.response)
+      );
+    },
+    onRiskControlDataAdd(attachments) {
+      this.riskControlData = this.riskControlData.concat(attachments);
+    },
+    onRiskControlDataRemove(index) {
+      this.riskControlData.splice(index, 1);
+    },
+    onRiskControlDataProgress(params) {
+      this.riskControlData[params.index]["text"] = params.progress + "%";
+    },
+    onRiskControlDataUploaded(params) {
+      this.$set(
+        this.riskControlData,
+        params.index,
+        Object.assign(this.riskControlData[params.index], params.response)
+      );
+    },
+    onRealMediaAdd(attachments) {
+      this.realMedia = this.realMedia.concat(attachments);
+    },
+    onRealMediaRemove(index) {
+      this.realMedia.splice(index, 1);
+    },
+    onRealMediaProgress(params) {
+      this.realMedia[params.index]["text"] = params.progress + "%";
+    },
+    onRealMediaUploaded(params) {
+      this.$set(
+        this.realMedia,
+        params.index,
+        Object.assign(this.realMedia[params.index], params.response)
+      );
+    },
+    onAttachmentAdd(attachments) {
+      this.attachments = this.attachments.concat(attachments);
+    },
+    onAttachmentRemove(index) {
+      this.attachments.splice(index, 1);
+    },
+    onAttachmentProgress(params) {
+      this.attachments[params.index]["text"] = params.progress + "%";
+    },
+    onAttachmentUploaded(params) {
+      this.$set(
+        this.attachments,
+        params.index,
+        Object.assign(this.attachments[params.index], params.response)
       );
     },
     onValidate() {
       if (!this.name) {
         uni.showToast({
-          title: "请输入合同名称",
+          title: "请输入客户名称",
           icon: "none",
         });
         return false;
@@ -461,24 +480,131 @@ export default {
     },
     async onHandle() {
       if (this.onValidate()) {
+        console.log(this.type);
+        console.log(this.source);
+        console.log(this.level);
+        console.log(this.industry);
+        console.log(this.area);
         const payload = {
-          businessId: this.eventId,
-          contractName: this.name,
-          contractNumber: this.number,
-          contractType: this.type,
-          contractAmount: this.price,
-          partyA: this.partyA,
-          partySignatoryA: this.partyARepresent,
-          partyB: this.partyB,
-          partySignatoryB: this.partyBRepresent,
-          signingDate: this.signTime,
-          startDate: this.startTime,
-          endDate: this.endTime,
+          customerName: this.name,
+          // customerNumber: "",
+          customerType: this.type.label,
+          customerTypeId: this.type.id,
+          customerSource: this.source.label,
+          customerSourceId: this.source.id,
+          customerLevel: this.level.label,
+          customerLevelId: this.level.id,
+          area: this.locationString,
+          industry: this.industry.label,
+          industryId: this.industry.id,
+          scale: this.dimension,
+          personInCharge: this.manager,
+          personInChargeId: "",
+          tel: this.tel,
+          mobile: this.mobile,
           remark: this.description,
-          files: [],
+          licenseFiles: this.businessLicenses.map((e) => {
+            return {
+              customerFileType: "",
+              fileName: e.fileName,
+              fileOriginalName: e.originalFileName,
+              fileSubUrl: e.subFileUrl,
+              fileType: e.fileType,
+              fileUrl: e.fileUrl,
+              remark: "",
+            };
+          }),
+          openAccountFiles: this.accountOpeningLicenses.map((e) => {
+            return {
+              customerFileType: "",
+              fileName: e.fileName,
+              fileOriginalName: e.originalFileName,
+              fileSubUrl: e.subFileUrl,
+              fileType: e.fileType,
+              fileUrl: e.fileUrl,
+              remark: "",
+            };
+          }),
+          creditFiles: this.creditReports.map((e) => {
+            return {
+              customerFileType: "",
+              fileName: e.fileName,
+              fileOriginalName: e.originalFileName,
+              fileSubUrl: e.subFileUrl,
+              fileType: e.fileType,
+              fileUrl: e.fileUrl,
+              remark: "",
+            };
+          }),
+          bankFiles: this.bankStatements.map((e) => {
+            return {
+              customerFileType: "",
+              fileName: e.fileName,
+              fileOriginalName: e.originalFileName,
+              fileSubUrl: e.subFileUrl,
+              fileType: e.fileType,
+              fileUrl: e.fileUrl,
+              remark: "",
+            };
+          }),
+          financeFiles: this.financialStatements.map((e) => {
+            return {
+              customerFileType: "",
+              fileName: e.fileName,
+              fileOriginalName: e.originalFileName,
+              fileSubUrl: e.subFileUrl,
+              fileType: e.fileType,
+              fileUrl: e.fileUrl,
+              remark: "",
+            };
+          }),
+          foodFiles: this.foodLicenses.map((e) => {
+            return {
+              customerFileType: "",
+              fileName: e.fileName,
+              fileOriginalName: e.originalFileName,
+              fileSubUrl: e.subFileUrl,
+              fileType: e.fileType,
+              fileUrl: e.fileUrl,
+              remark: "",
+            };
+          }),
+          riskFiles: this.riskControlData.map((e) => {
+            return {
+              customerFileType: "",
+              fileName: e.fileName,
+              fileOriginalName: e.originalFileName,
+              fileSubUrl: e.subFileUrl,
+              fileType: e.fileType,
+              fileUrl: e.fileUrl,
+              remark: "",
+            };
+          }),
+          surveyFiles: this.realMedia.map((e) => {
+            return {
+              customerFileType: "",
+              fileName: e.fileName,
+              fileOriginalName: e.originalFileName,
+              fileSubUrl: e.subFileUrl,
+              fileType: e.fileType,
+              fileUrl: e.fileUrl,
+              remark: "",
+            };
+          }),
+          otherFiles: this.attachments.map((e) => {
+            return {
+              customerFileType: "",
+              fileName: e.fileName,
+              fileOriginalName: e.originalFileName,
+              fileSubUrl: e.subFileUrl,
+              fileType: e.fileType,
+              fileUrl: e.fileUrl,
+              remark: "",
+            };
+          }),
         };
         console.log(payload);
-        const response = await createContractApi(payload);
+        const response = await createCustomerApi(payload);
         if (response) {
           let pages = getCurrentPages();
           let prevPage = pages[pages.length - 2];

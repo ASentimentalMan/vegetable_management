@@ -93,11 +93,22 @@ export const getSaleListApi = payload => {
   })
 }
 
-// 业务单位清单
+// 客户清单
 export const getCompanyListApi = payload => {
   return request_java({
     method: "GET",
     url: "/info/customer-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 新增客户
+export const createCustomerApi = payload => {
+  return request_java({
+    method: "POST",
+    url: "/info/customer",
+    contentType: "application/json",
     data: payload,
     token: true
   })

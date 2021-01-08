@@ -76,16 +76,14 @@ export default {
         success: (chooseImageRes) => {
           const tempFilePaths = chooseImageRes.tempFilePaths;
           const tempFiles = chooseImageRes.tempFiles;
-          console.log(tempFilePaths);
-          console.log(tempFiles);
+          // console.log(tempFilePaths);
+          // console.log(tempFiles);
           this.$emit(
             "onAttachmentAdd",
             tempFilePaths.map((e, index) => {
               return {
-                url: "",
                 blob: e,
                 text: "等待上传",
-                originalname: tempFiles[index]["name"],
               };
             })
           );
