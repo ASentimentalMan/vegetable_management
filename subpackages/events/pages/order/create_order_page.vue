@@ -8,6 +8,21 @@
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
             <text class="form-item-required">*</text>
+            采购单编号
+          </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入采购单编号,自定义标识"
+              v-model="num"
+            />
+          </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label">
+            <!-- <text class="form-item-required">*</text> -->
             基地名称
           </view>
           <view class="form-item-input">
@@ -57,7 +72,7 @@
           </view>
         </view>
       </view>
-      <!-- <view class="form-container">
+<!--      <view class="form-container">
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 采购品类 </view>
           <view class="form-item-input">
@@ -182,6 +197,7 @@ export default {
     return {
       eventId: "",
       name: "",
+      num: "",
       area: "",
       contact: "",
       tel: "",
@@ -222,7 +238,8 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onTimeSet(e) {
-      this.time = e.f2;
+      // this.time = e.f2;
+	  this.time = new Date(e.f2);
     },
     onSelectProvider() {
       uni.navigateTo({
@@ -247,9 +264,9 @@ export default {
       );
     },
     onValidate() {
-      if (!this.name) {
+      if (!this.num) {
         uni.showToast({
-          title: "请输入基地名称",
+          title: "请输入采购单编号",
           icon: "none",
         });
         return false;
@@ -260,6 +277,7 @@ export default {
       if (!this.onNetworking && this.onValidate()) {
         const payload = {
           businessId: this.eventId,
+          procureNumber: this.num,
           baseName: this.name,
           baseArea: this.area,
           contact: this.contact,

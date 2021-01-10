@@ -8,6 +8,21 @@
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
             <text class="form-item-required">*</text>
+            物流单编号
+          </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入物流单编号,自定义标识"
+              v-model="num"
+            />
+          </view>
+        </view>
+		<view class="form-item flex-horizontal">
+			<view class="form-item-label">
+            <!-- <text class="form-item-required">*</text> -->
             货物名称
           </view>
           <view class="form-item-input">
@@ -246,6 +261,7 @@ export default {
     return {
       eventId: "",
       name: "",
+      num: "",
       weight: "",
       distance: "",
       fee: "",
@@ -315,10 +331,12 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onStartTimeSet(e) {
-      this.startTime = e.f2;
+      // this.startTime = e.f2;
+	  this.startTime = new Date(e.f2);
     },
     onEndTimeSet(e) {
-      this.endTime = e.f2;
+      // this.endTime = e.f2;
+	  this.endTime = new Date(e.f2);
     },
     onAddOrder() {
       this.relateOrder.push({ id: "" });
@@ -363,9 +381,9 @@ export default {
       );
     },
     onValidate() {
-      if (!this.name) {
+      if (!this.num) {
         uni.showToast({
-          title: "请输入货物名称",
+          title: "请输入物流单编号,自定义标识",
           icon: "none",
         });
         return false;
@@ -376,6 +394,7 @@ export default {
       if (!this.onNetworking && this.onValidate()) {
         const payload = {
           businessId: this.eventId,
+          logisticsNumber: this.num,
           itemName: this.name,
           weight: this.weight,
           distance: this.distance,
@@ -389,10 +408,10 @@ export default {
           inputCustomerId: this.to.id,
           startDate: this.startTime,
           endDate: this.endTime,
-          procurementId: this.relateOrder.map((e) => {
+          procurementIds: this.relateOrder.map((e) => {
             return e.id;
           }),
-          saleId: this.relateSale.map((e) => {
+          saleIds: this.relateSale.map((e) => {
             return e.id;
           }),
           remark: this.description,

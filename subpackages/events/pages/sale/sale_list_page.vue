@@ -12,7 +12,7 @@
             </view>
             <view class="flex-vertical">
               <view class="item-label">
-                {{ item.businessName }}
+                {{ item.salesNumber }}
               </view>
               <view class="item-text">
                 {{ item.createTime }}

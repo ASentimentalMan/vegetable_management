@@ -150,7 +150,8 @@ export default {
       }, 10);
     },
     onEndTimeSet(e) {
-      this.endTime = e.f1;
+      // this.endTime = e.f1;
+	  this.endTime = new Date(e.f1);
     },
     onWarning() {
       uni.showToast({

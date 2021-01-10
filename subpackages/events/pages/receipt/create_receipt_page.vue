@@ -99,7 +99,7 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <!-- <view class="form-item flex-horizontal">
           <view class="form-item-label"> 地址 </view>
           <view class="form-item-input">
             <input
@@ -110,7 +110,19 @@
               v-model="address"
             />
           </view>
-        </view>
+        </view> -->
+		<view class="form-item flex-horizontal">
+		  <view class="form-item-label"> 开户行地址 </view>
+		  <view class="form-item-input" @click="onLocationPick">
+		    <view
+		      :class="{
+		        'form-item-placeholder': locationString === '请输入开户行地址',
+		      }"
+		    >
+		      {{ locationString }}
+				</view>
+			</view>
+		</view>
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 开户银行 </view>
           <view class="form-item-input">
@@ -206,16 +218,19 @@
         </view>
       </view>
     </view>
+	<location-picker ref="location" :level="3" @onLocationSet="onLocationSet" />
   </view>
 </template>
 
 <script>
+import LocationPicker from "@/components/public/location_picker";
 import ReceiptTypePicker from "@/subpackages/events/components/receipt_type_picker.vue";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
 import { createReceiptApi } from "@/apis/event_apis";
 export default {
   components: {
+    LocationPicker,
     ReceiptTypePicker,
     BiaoFunDatePicker,
     AddMediaAttachment,
@@ -245,6 +260,7 @@ export default {
       description: "",
       attachments: [],
       onNetworking: false,
+	  locationString: "请选择地址",
     };
   },
   onLoad(e) {
@@ -277,7 +293,8 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onTimeSet(e) {
-      this.time = e.f2;
+      // this.time = e.f2;
+	  this.time = new Date(e.f2);
     },
     onSelectFrom() {
       uni.navigateTo({
@@ -329,6 +346,15 @@ export default {
       }
       return true;
     },
+	onLocationSet(location) {
+	  if (location.length) {
+	    this.location = location;
+	    this.locationString = location.map((e) => e.name).join("/");
+	  }
+	},
+	onLocationPick() {
+	  this.$refs.location.popup();
+	},
     async onHandle() {
       if (!this.onNetworking && this.onValidate()) {
         // console.log(this.type);
@@ -349,7 +375,7 @@ export default {
           inputInvoiceUnit: this.to.customerName,
           inputInvoiceUnitId: this.to.id,
           identificationNumber: this.recognizeNumber,
-          address: this.address,
+          address: this.locationString,
           bankAccountNumber:
             this.bank + "," + this.bankNumber === ","
               ? ""
@@ -374,8 +400,8 @@ export default {
         this.onNetworking = false;
         if (response) {
           let pages = getCurrentPages();
-          let prevPage = pages[pages.length - 2];
-          prevPage.$vm.needRefresh = true;
+		  let prevPage = pages[pages.length - 2];
+		  prevPage.$vm.needRefresh = true;
           uni.showToast({
             title: "创建成功",
             icon: "none",

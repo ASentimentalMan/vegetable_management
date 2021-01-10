@@ -5,9 +5,24 @@
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
+		  <view class="form-item flex-horizontal">
+		    <view class="form-item-label">
+		      <text class="form-item-required">*</text>
+		      销售单编号
+		    </view>
+		    <view class="form-item-input">
+		      <input
+		        class="form-input"
+		        type="text"
+		        cursor-spacing="16"
+		        placeholder="请输入销售单编号,自定义标识"
+		        v-model="num"
+		      />
+		    </view>
+		  </view>
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
-            <text class="form-item-required">*</text>
+            <!-- <text class="form-item-required">*</text> -->
             收货人
           </view>
           <view class="form-item-input">
@@ -63,12 +78,12 @@
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 是否按合同执行 </view>
           <radio-group @change="onRadioChange" class="form-item-input">
-            <label class="radio"><radio value="yes" />是</label>
-            <label class="radio"><radio value="no" />否</label>
+            <label class="radio"><radio value="true" />是</label>
+            <label class="radio"><radio value="false" />否</label>
           </radio-group>
         </view>
       </view>
-      <view class="form-container" v-if="radio === 'yes'">
+      <view class="form-container" v-if="radio === 'false'">
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 预计新回款日期 </view>
           <view class="form-item-input">
@@ -145,6 +160,7 @@ export default {
     return {
       eventId: "",
       receiver: "",
+      num: "",
       tel: "",
       location: [],
       locationString: "请选择销售地",
@@ -183,13 +199,16 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onTimeSet(e) {
-      this.time = e.f2;
+      // this.time =e.f2;
+      this.time = new Date(e.f2);
     },
     onReTimeSet(e) {
-      this.reTime = e.f2;
+      // this.reTime =e.f2;
+      this.reTime = new Date(e.f2);
     },
     onRceiveTimeSet(e) {
-      this.receiveTime = e.f2;
+ // this.receiveTime =e.f2;
+      this.receiveTime = new Date(e.f2);
     },
     onLocationPick() {
       this.$refs.location.popup();
@@ -220,9 +239,9 @@ export default {
       );
     },
     onValidate() {
-      if (!this.receiver) {
+      if (!this.num) {
         uni.showToast({
-          title: "请输入收货人",
+          title: "请输入销售单编号",
           icon: "none",
         });
         return false;
@@ -233,6 +252,7 @@ export default {
       if (!this.onNetworking && this.onValidate()) {
         const payload = {
           businessId: this.eventId,
+          salesNumber: this.num,
           consignee: this.receiver,
           phone: this.tel,
           place:

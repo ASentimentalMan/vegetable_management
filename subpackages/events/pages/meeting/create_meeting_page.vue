@@ -8,6 +8,21 @@
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
             <text class="form-item-required">*</text>
+            标题
+          </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入会议标题"
+              v-model="topic"
+            />
+          </view>
+        </view>
+		<view class="form-item flex-horizontal">
+          <view class="form-item-label">
+            <!-- <text class="form-item-required">*</text> -->
             纪要
           </view>
           <view class="form-item-input">
@@ -76,6 +91,7 @@ export default {
   data() {
     return {
       eventId: "",
+      topic: "",
       brief: "",
       result: "",
       description: "",
@@ -107,9 +123,9 @@ export default {
       );
     },
     onValidate() {
-      if (!this.brief) {
+      if (!this.topic) {
         uni.showToast({
-          title: "请输入会议纪要",
+          title: "请输入会议标题",
           icon: "none",
         });
         return false;
@@ -121,6 +137,7 @@ export default {
         const payload = {
           businessId: this.eventId,
           summary: this.brief,
+          title: this.topic,
           consequence: this.result,
           remark: this.description,
           files: this.attachments.map((e) => {
