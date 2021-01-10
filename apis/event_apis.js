@@ -22,7 +22,7 @@ export const createEventApi = payload => {
   })
 }
 
-// 业务合同清单
+// 合同清单
 export const getContractListApi = payload => {
   return request_java({
     method: "GET",
@@ -32,7 +32,7 @@ export const getContractListApi = payload => {
   })
 }
 
-// 新增业务合同
+// 新增合同
 export const createContractApi = payload => {
   return request_java({
     method: "POST",
@@ -43,7 +43,7 @@ export const createContractApi = payload => {
   })
 }
 
-// 业务发票清单
+// 发票清单
 export const getReceiptListApi = payload => {
   return request_java({
     method: "GET",
@@ -53,7 +53,18 @@ export const getReceiptListApi = payload => {
   })
 }
 
-// 业务物流清单
+// 新增发票
+export const createReceiptApi = payload => {
+  return request_java({
+    method: "POST",
+    url: "/info/business-invoice",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 物流清单
 export const getExpressListApi = payload => {
   return request_java({
     method: "GET",
@@ -63,7 +74,7 @@ export const getExpressListApi = payload => {
   })
 }
 
-// 新增物流单
+// 新增物流
 export const createExpressApi = payload => {
   return request_java({
     method: "POST",
@@ -74,7 +85,7 @@ export const createExpressApi = payload => {
   })
 }
 
-// 业务会议清单
+// 会议清单
 export const getMeetingListApi = payload => {
   return request_java({
     method: "GET",
@@ -84,7 +95,7 @@ export const getMeetingListApi = payload => {
   })
 }
 
-// 新增会议单
+// 新增会议
 export const createMeetingApi = payload => {
   return request_java({
     method: "POST",
@@ -95,7 +106,7 @@ export const createMeetingApi = payload => {
   })
 }
 
-// 业务采购清单
+// 采购清单
 export const getOrderListApi = payload => {
   return request_java({
     method: "GET",
@@ -105,7 +116,7 @@ export const getOrderListApi = payload => {
   })
 }
 
-// 新增采购单
+// 新增采购
 export const createOrderApi = payload => {
   return request_java({
     method: "POST",
@@ -116,7 +127,7 @@ export const createOrderApi = payload => {
   })
 }
 
-// 业务销售清单
+// 销售清单
 export const getSaleListApi = payload => {
   return request_java({
     method: "GET",
@@ -126,7 +137,7 @@ export const getSaleListApi = payload => {
   })
 }
 
-// 新增销售单
+// 新增销售
 export const createSaleApi = payload => {
   return request_java({
     method: "POST",
@@ -138,7 +149,7 @@ export const createSaleApi = payload => {
 }
 
 // 客户清单
-export const getCompanyListApi = payload => {
+export const getCustomerListApi = payload => {
   return request_java({
     method: "GET",
     url: "/info/customer-page",

@@ -213,7 +213,7 @@
 import ReceiptTypePicker from "@/subpackages/events/components/receipt_type_picker.vue";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createContractApi } from "@/apis/event_apis";
+import { createReceiptApi } from "@/apis/event_apis";
 export default {
   components: {
     ReceiptTypePicker,
@@ -370,7 +370,7 @@ export default {
         };
         // console.log(payload);
         this.onNetworking = true;
-        const response = await createContractApi(payload);
+        const response = await createReceiptApi(payload);
         this.onNetworking = false;
         if (response) {
           let pages = getCurrentPages();

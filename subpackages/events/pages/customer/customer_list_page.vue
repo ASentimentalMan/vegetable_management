@@ -36,7 +36,7 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getCompanyListApi } from "@/apis/event_apis";
+import { getCustomerListApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -98,7 +98,7 @@ export default {
           size: this.pageSize,
         };
         this.onNetworking = true;
-        const response = await getCompanyListApi(payload);
+        const response = await getCustomerListApi(payload);
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
