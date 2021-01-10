@@ -277,6 +277,7 @@ export default {
       riskControlData: [],
       realMedia: [],
       attachments: [],
+      onNetworking: false,
     };
   },
   onLoad(e) {
@@ -494,7 +495,8 @@ export default {
           customerSourceId: this.source.id,
           customerLevel: this.level.label,
           customerLevelId: this.level.id,
-          area: this.locationString,
+          area:
+            this.locationString === "请选择所属区域" ? "" : this.locationString,
           industry: this.industry.label,
           industryId: this.industry.id,
           scale: this.dimension,
@@ -604,7 +606,9 @@ export default {
           }),
         };
         console.log(payload);
+        this.onNetworking = true;
         const response = await createCustomerApi(payload);
+        this.onNetworking = false;
         if (response) {
           let pages = getCurrentPages();
           let prevPage = pages[pages.length - 2];
@@ -613,6 +617,7 @@ export default {
             title: "创建成功",
             icon: "none",
           });
+          this.onNetworking = true;
           setTimeout(() => {
             uni.navigateBack();
           }, 600);

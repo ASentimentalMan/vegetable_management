@@ -205,31 +205,14 @@
           </view>
         </view>
       </view>
-      <view class="form-unit-title"> 附件 </view>
-      <view class="form-attachment-container">
-        <block v-for="(item, index) in attachments" :key="index">
-          <view class="form-attachment attachment-size">
-            <image class="attachment-size" :src="item" mode="aspectFill" />
-            <view
-              class="attachment-remove-container"
-              @click="onAttachmentRemove(index)"
-            >
-              <image
-                class="attachment-remove"
-                src="https://mall.ncpgz.com/ftp/suberQcw/assets/icons/store_icon_remove.png"
-                mode="aspectFill"
-              />
-            </view>
-          </view>
-        </block>
-        <view
-          class="attachment-add-container attachment-size"
-          v-if="attachments.length < 9"
-          @click="onAttachmentAdd"
-        >
-          <text class="attachment-add">+</text>
-        </view>
-      </view>
+      <add-media-attachment
+        title="附件"
+        :attachments="attachments"
+        @onAttachmentAdd="onAttachmentAdd"
+        @onAttachmentRemove="onAttachmentRemove"
+        @onAttachmentProgress="onAttachmentProgress"
+        @onAttachmentUploaded="onAttachmentUploaded"
+      />
     </view>
     <view class="unscrollable">
       <view class="bottom-button-container">
@@ -243,10 +226,12 @@
 
 <script>
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
+import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
 import { createContractApi } from "@/apis/event_apis";
 export default {
   components: {
     BiaoFunDatePicker,
+    AddMediaAttachment
   },
   data() {
     return {
@@ -269,6 +254,7 @@ export default {
       relateOrder: [{}],
       description: "",
       attachments: [],
+      onNetworking: false,
     };
   },
   onLoad(e) {
@@ -369,48 +355,21 @@ export default {
     onRemoveOrder(index) {
       this.relateOrder.splice(index, 1);
     },
+    onAttachmentAdd(attachments) {
+      this.attachments = this.attachments.concat(attachments);
+    },
     onAttachmentRemove(index) {
       this.attachments.splice(index, 1);
     },
-    onAttachmentAdd() {
-      uni.chooseImage({
-        count: 9 - this.attachments.length,
-        success: (chooseImageRes) => {
-          // const tempFilePaths = chooseImageRes.tempFilePaths;
-          // const userinfo = uni.getStorageSync("userinfo");
-          // for (let i = 0; i < tempFilePaths.length; i++) {
-          //   uni.uploadFile({
-          //     url:
-          //       process.env.NODE_ENV === "development"
-          //         ? "https://mall.ncpgz.com/test/applets/image/upload"
-          //         : "https://mall.ncpgz.com/suberqcw/applets/image/upload",
-          //     filePath: tempFilePaths[i],
-          //     name: "files",
-          //     formData: {
-          //       imgPath: "portal/goods",
-          //       token: userinfo.token,
-          //     },
-          //     success: (uploadFileRes) => {
-          //       const response = JSON.parse(uploadFileRes.data);
-          //       if (response.code === 601) {
-          //         uni.navigateBack();
-          //         store.commit("user/logOut");
-          //         uni.reLaunch({
-          //           url: "/pages/home/home_page",
-          //         });
-          //         uni.showToast({
-          //           title: response.data,
-          //           icon: "none",
-          //         });
-          //       } else {
-          //         console.log(response.data.imgUrl);
-          //         this.images.push(response.data.imgUrl);
-          //       }
-          //     },
-          //   });
-          // }
-        },
-      });
+    onAttachmentProgress(params) {
+      this.attachments[params.index]["text"] = params.progress + "%";
+    },
+    onAttachmentUploaded(params) {
+      this.$set(
+        this.attachments,
+        params.index,
+        Object.assign(this.attachments[params.index], params.response)
+      );
     },
     onValidate() {
       if (!this.name) {

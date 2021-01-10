@@ -7,7 +7,8 @@
       <view class="form-container">
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
-            <text class="form-item-required">*</text>合同名称
+            <text class="form-item-required">*</text>
+            合同名称
           </view>
           <view class="form-item-input">
             <input

@@ -6,20 +6,10 @@
     <view class="scrollable">
       <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 发票类型 </view>
-          <view class="form-item-input">
-            <receipt-type-picker @onTypeChange="onTypeChange" />
+          <view class="form-item-label">
+            <text class="form-item-required">*</text>
+            发票编号
           </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 发票业务类型 </view>
-          <radio-group @change="oneventTypeChange" class="form-item-input">
-            <label class="radio"><radio value="procure" />采购发票</label>
-            <label class="radio"><radio value="sale" />销售发票</label>
-          </radio-group>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 发票编号 </view>
           <view class="form-item-input">
             <input
               class="form-input"
@@ -29,6 +19,19 @@
               v-model="number"
             />
           </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 发票类型 </view>
+          <view class="form-item-input">
+            <receipt-type-picker @onReceiptTypeChange="onReceiptTypeChange" />
+          </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 发票业务类型 </view>
+          <radio-group @change="onEventTypeChange" class="form-item-input">
+            <label class="radio"><radio value="procure" />采购发票</label>
+            <label class="radio"><radio value="sale" />销售发票</label>
+          </radio-group>
         </view>
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 发票金额（元） </view>
@@ -62,7 +65,7 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择开票时间"
-              :start="timePickerStartTime"
+              start="2019-07-19 09:00"
               :end="timePickerEndTime"
               fields="day"
               @change="onTimeSet"
@@ -220,14 +223,13 @@ export default {
   data() {
     return {
       eventId: "",
+      number: "",
       type: {},
       eventType: "",
-      number: "",
       money: "",
       from: {},
       fromString: "",
       time: "",
-      timePickerStartTime: "2019-07-19 09:00",
       timePickerEndTime: "",
       to: {},
       toString: "",
@@ -253,10 +255,10 @@ export default {
     this.initTimePicker();
   },
   methods: {
-    onTypeChange(e) {
+    onReceiptTypeChange(e) {
       this.type = e;
     },
-    oneventTypeChange(e) {
+    onEventTypeChange(e) {
       this.eventType = e.target.value;
     },
     initTimePicker() {
@@ -280,25 +282,25 @@ export default {
     onSelectFrom() {
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select",
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=from",
       });
     },
     onSelectTo() {
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select",
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=to",
       });
     },
     onSelectCustomer() {
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select",
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=relateCustomer",
       });
     },
     onSelectRelateContract() {
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/contract/contract_list_page?mode=select",
+          "/subpackages/events/pages/contract/contract_list_page?mode=select&key=relateContract",
       });
     },
     onAttachmentAdd(attachments) {
@@ -318,9 +320,9 @@ export default {
       );
     },
     onValidate() {
-      if (!this.name) {
+      if (!this.number) {
         uni.showToast({
-          title: "请输入合同名称",
+          title: "请输入发票编号",
           icon: "none",
         });
         return false;
@@ -329,19 +331,32 @@ export default {
     },
     async onHandle() {
       if (!this.onNetworking && this.onValidate()) {
+        // console.log(this.type);
+        // console.log(this.from);
+        // console.log(this.to);
+        // console.log(this.relateContract);
+        // console.log(this.relateCustomer);
         const payload = {
           businessId: this.eventId,
-          contractName: this.name,
-          contractNumber: this.number,
-          contractType: this.type,
-          contractAmount: this.price,
-          partyA: this.partyA,
-          partySignatoryA: this.partyARepresent,
-          partyB: this.partyB,
-          partySignatoryB: this.partyBRepresent,
-          signingDate: this.signTime,
-          startDate: this.startTime,
-          endDate: this.endTime,
+          invoiceNumber: this.number,
+          invoiceType: this.type.label,
+          invoiceTypeId: this.type.id,
+          businessInvoiceType: this.eventType,
+          invoiceAmount: this.money,
+          outputInvoiceUnit: this.from.customerName,
+          outputInvoiceUnitId: this.from.id,
+          invoiceDate: this.time,
+          inputInvoiceUnit: this.to.customerName,
+          inputInvoiceUnitId: this.to.id,
+          identificationNumber: this.recognizeNumber,
+          address: this.address,
+          bankAccountNumber:
+            this.bank + "," + this.bankNumber === ","
+              ? ""
+              : this.bank + "," + this.bankNumber,
+          telephone: this.tel,
+          contractId: this.relateContract.id,
+          customerId: this.relateCustomer.id,
           remark: this.description,
           files: this.attachments.map((e) => {
             return {
@@ -353,7 +368,7 @@ export default {
             };
           }),
         };
-        console.log(payload);
+        // console.log(payload);
         this.onNetworking = true;
         const response = await createContractApi(payload);
         this.onNetworking = false;

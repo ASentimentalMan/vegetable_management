@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     async fetch() {
-      if (this.hasMore && !this.onLoading) {
+      if (this.hasMore && !this.onNetworking) {
         const payload = {
           current: this.page,
           size: this.pageSize,

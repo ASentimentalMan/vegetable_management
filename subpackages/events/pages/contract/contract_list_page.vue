@@ -54,6 +54,7 @@ export default {
       onRefreshing: false,
       needRefresh: false,
       selectMode: false,
+      key: ""
     };
   },
   computed: {
@@ -72,6 +73,7 @@ export default {
     }
     if (e.mode && e.mode === "select") {
       this.selectMode = true;
+      this.key = e.key;
     }
     console.log(this.eventId);
     this.fetch();
@@ -90,11 +92,11 @@ export default {
   },
   methods: {
     async fetch() {
-      if (this.hasMore && !this.onLoading) {
+      if (this.hasMore && !this.onNetworking) {
         const payload = {
           current: this.page,
           size: this.pageSize,
-          businessId: this.eventId
+          businessId: this.eventId,
         };
         this.onNetworking = true;
         const response = await getContractListApi(payload);
@@ -126,23 +128,23 @@ export default {
       if (this.selectMode) {
         let pages = getCurrentPages();
         let prevPage = pages[pages.length - 2];
-        prevPage.$vm.relateContract = item;
-        prevPage.$vm.relateContractString = item.contractName;
+        prevPage.$vm[this.key] = item;
+        prevPage.$vm[this.key + "String"] = item.contractName;
         console.log(item);
         uni.navigateBack();
       } else {
-        uni.navigateTo({
-          url:
-            "/subpackages/events/pages/contract/contract_detail_page" +
-            objectToQuery(item),
-        });
+        // uni.navigateTo({
+        //   url:
+        //     "/subpackages/events/pages/contract/contract_detail_page" +
+        //     objectToQuery(item),
+        // });
       }
     },
     onCreate() {
       uni.navigateTo({
         url:
           "/subpackages/events/pages/contract/create_contract_page?eventId=" +
-          this.eventId,
+          this.eventId
       });
     },
   },

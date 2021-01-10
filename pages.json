@@ -77,7 +77,8 @@
 						"navigationBarTitleText": "合同清单",
 						"navigationBarBackgroundColor": "#ffffff",
 						"backgroundColorTop": "#f5f5f5",
-						"backgroundColor": "#f5f5f5"
+						"backgroundColor": "#f5f5f5",
+						"enablePullDownRefresh": true
 					}
 				},
 				{
@@ -95,7 +96,8 @@
 						"navigationBarTitleText": "发票清单",
 						"navigationBarBackgroundColor": "#ffffff",
 						"backgroundColorTop": "#f5f5f5",
-						"backgroundColor": "#f5f5f5"
+						"backgroundColor": "#f5f5f5",
+						"enablePullDownRefresh": true
 					}
 				},
 				{
@@ -113,7 +115,8 @@
 						"navigationBarTitleText": "物流清单",
 						"navigationBarBackgroundColor": "#ffffff",
 						"backgroundColorTop": "#f5f5f5",
-						"backgroundColor": "#f5f5f5"
+						"backgroundColor": "#f5f5f5",
+						"enablePullDownRefresh": true
 					}
 				},
 				{
@@ -131,7 +134,8 @@
 						"navigationBarTitleText": "会议清单",
 						"navigationBarBackgroundColor": "#ffffff",
 						"backgroundColorTop": "#f5f5f5",
-						"backgroundColor": "#f5f5f5"
+						"backgroundColor": "#f5f5f5",
+						"enablePullDownRefresh": true
 					}
 				},
 				{
@@ -149,7 +153,8 @@
 						"navigationBarTitleText": "采购清单",
 						"navigationBarBackgroundColor": "#ffffff",
 						"backgroundColorTop": "#f5f5f5",
-						"backgroundColor": "#f5f5f5"
+						"backgroundColor": "#f5f5f5",
+						"enablePullDownRefresh": true
 					}
 				},
 				{
@@ -167,7 +172,8 @@
 						"navigationBarTitleText": "销售清单",
 						"navigationBarBackgroundColor": "#ffffff",
 						"backgroundColorTop": "#f5f5f5",
-						"backgroundColor": "#f5f5f5"
+						"backgroundColor": "#f5f5f5",
+						"enablePullDownRefresh": true
 					}
 				},
 				{
@@ -185,7 +191,8 @@
 						"navigationBarTitleText": "客户清单",
 						"navigationBarBackgroundColor": "#ffffff",
 						"backgroundColorTop": "#f5f5f5",
-						"backgroundColor": "#f5f5f5"
+						"backgroundColor": "#f5f5f5",
+						"enablePullDownRefresh": true
 					}
 				},
 				{

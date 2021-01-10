@@ -3,7 +3,7 @@
     <view class="scrollable">
       <view class="list-container flex-vertical flex-jcsb">
         <block v-for="(item, index) in list" :key="index">
-          <view class="list-item flex-horizontal flex-aic" @tap="goEvent(item)">
+          <view class="list-item flex-horizontal flex-aic" @tap="onEvent(item)">
             <view class="item-cover">
               <image
                 class="cover"
@@ -55,6 +55,7 @@ export default {
   },
   data() {
     return {
+      eventId: "",
       list: [],
       payload: {},
       page: 1,
@@ -62,6 +63,9 @@ export default {
       hasMore: true,
       onNetworking: false,
       onRefreshing: false,
+      needRefresh: false,
+      selectMode: false,
+      key: "",
     };
   },
   computed: {
@@ -74,24 +78,81 @@ export default {
       return "loading";
     },
   },
-  onLoad() {
+  onLoad(e) {
+    if (e.eventId) {
+      this.eventId = e.eventId;
+    }
+    if (e.mode && e.mode === "select") {
+      this.selectMode = true;
+      this.key = e.key;
+    }
+    this.fetch();
+  },
+  onShow() {
+    if (this.needRefresh) {
+      this.onRefresh();
+      this.needRefresh = false;
+    }
+  },
+  onPullDownRefresh() {
+    this.onRefresh();
+  },
+  onReachBottom() {
     this.fetch();
   },
   methods: {
     async fetch() {
-      const response = await getExpressListApi();
-      if (response) {
-        this.list = response.data.records;
+      if (this.hasMore && !this.onNetworking) {
+        const payload = {
+          current: this.page,
+          size: this.pageSize,
+          businessId: this.eventId,
+        };
+        this.onNetworking = true;
+        const response = await getExpressListApi(payload);
+        this.onNetworking = false;
+        if (response) {
+          if (this.onRefreshing || !this.list.length) {
+            this.list = response.data.records;
+          } else {
+            this.list = this.list.concat(response.data.records);
+          }
+          if (this.page >= response.data.pages) {
+            this.hasMore = false;
+          }
+          this.page++;
+        }
+        if (this.onRefreshing) {
+          this.onRefreshing = false;
+          uni.stopPullDownRefresh();
+        }
       }
     },
-    goEvent(item) {
-      uni.navigateTo({
-        url: "/subpackages/event/event_detail_page" + objectToQuery(item),
-      });
+    onRefresh() {
+      this.page = 1;
+      this.hasMore = true;
+      this.onRefreshing = true;
+      this.fetch();
+    },
+    onEvent(item) {
+      if (this.selectMode) {
+        let pages = getCurrentPages();
+        let prevPage = pages[pages.length - 2];
+        prevPage.$vm[this.key] = item;
+        prevPage.$vm[this.key + "String"] = item.contractName;
+        console.log(item);
+        uni.navigateBack();
+      } else {
+        uni.navigateTo({
+          url: "/subpackages/event/event_detail_page" + objectToQuery(item),
+        });
+      }
     },
     onCreate() {
       uni.navigateTo({
-        url: "/subpackages/events/pages/express/create_express_page",
+        url:
+          "/subpackages/events/pages/express/create_express_page?eventId=" +
+          this.eventId,
       });
     },
   },

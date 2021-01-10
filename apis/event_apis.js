@@ -83,11 +83,33 @@ export const getOrderListApi = payload => {
   })
 }
 
+// 新增采购单
+export const createOrderApi = payload => {
+  return request_java({
+    method: "POST",
+    url: "/info/business-procure",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
 // 业务销售清单
 export const getSaleListApi = payload => {
   return request_java({
     method: "GET",
     url: "/info/business-logistics-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 新增销售单
+export const createSaleApi = payload => {
+  return request_java({
+    method: "POST",
+    url: "/info/business-sales",
+    contentType: "application/json",
     data: payload,
     token: true
   })
