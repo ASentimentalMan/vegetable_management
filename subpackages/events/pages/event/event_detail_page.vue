@@ -1,103 +1,123 @@
 <template>
   <view class="page-container">
-    <list-options :list="list2" />
-    <list-options :list="list3" />
-    <list-options :list="list4" />
+    <view class="options-container">
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goContract">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
+            />
+          </view>
+          <view class="options-text"> 合同 </view>
+          <view class="options-count">
+            {{ event.businessCount.contract }}
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="options-container">
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goReceipt">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_receipt.png"
+            />
+          </view>
+          <view class="options-text"> 发票 </view>
+          <view class="options-count">
+            {{ event.businessCount.invoice }}
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goExpress">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_express.png"
+            />
+          </view>
+          <view class="options-text"> 物流 </view>
+          <view class="options-count">
+            {{ event.businessCount.logistics }}
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goMeeting">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_meeting.png"
+            />
+          </view>
+          <view class="options-text"> 会议 </view>
+          <view class="options-count">
+            {{ event.businessCount.meeting }}
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="options-container">
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goOrder">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_order.png"
+            />
+          </view>
+          <view class="options-text"> 供应商采购单 </view>
+          <view class="options-count">
+            {{ event.businessCount.procure }}
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goSale">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_sale.png"
+            />
+          </view>
+          <view class="options-text"> 销售单 </view>
+          <view class="options-count">
+            {{ event.businessCount.sales }}
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
 <script>
-import ListOptions from "@/components/public/list_options";
 export default {
-  components: {
-    ListOptions,
-  },
   data() {
     return {
       eventId: null,
-      list2: [
-        {
-          leading:
-            "https://dev.ncpgz.com/assets/management/icons/business_contract.png",
-          label: "合同",
-          onTap: () => {
-            uni.navigateTo({
-              url:
-                "/subpackages/events/pages/contract/contract_list_page?eventId=" +
-                this.eventId,
-            });
-          },
-        },
-      ],
-      list3: [
-        {
-          leading:
-            "https://dev.ncpgz.com/assets/management/icons/business_receipt.png",
-          label: "发票",
-          onTap: () => {
-            uni.navigateTo({
-              url:
-                "/subpackages/events/pages/receipt/receipt_list_page?eventId=" +
-                this.eventId,
-            });
-          },
-        },
-        {
-          leading:
-            "https://dev.ncpgz.com/assets/management/icons/business_express.png",
-          label: "物流",
-          onTap: () => {
-            uni.navigateTo({
-              url:
-                "/subpackages/events/pages/express/express_list_page?eventId=" +
-                this.eventId,
-            });
-          },
-        },
-        {
-          leading:
-            "https://dev.ncpgz.com/assets/management/icons/business_meeting.png",
-          label: "会议",
-          onTap: () => {
-            uni.navigateTo({
-              url:
-                "/subpackages/events/pages/meeting/meeting_list_page?eventId=" +
-                this.eventId,
-            });
-          },
-        },
-      ],
-      list4: [
-        {
-          leading:
-            "https://dev.ncpgz.com/assets/management/icons/business_order.png",
-          label: "供应商采购单",
-          onTap: () => {
-            uni.navigateTo({
-              url:
-                "/subpackages/events/pages/order/order_list_page?eventId=" +
-                this.eventId,
-            });
-          },
-        },
-        {
-          leading:
-            "https://dev.ncpgz.com/assets/management/icons/business_sale.png",
-          label: "销售单",
-          onTap: () => {
-            uni.navigateTo({
-              url:
-                "/subpackages/events/pages/sale/sale_list_page?eventId=" +
-                this.eventId,
-            });
-          },
-        },
-      ],
+      event: {},
     };
   },
   onLoad(e) {
-    if (e.id) {
-      this.eventId = e.id;
+    if (e.item) {
+      const item = JSON.parse(e.item);
+      this.eventId = item.id;
+      this.event = item;
     }
     console.log(this.eventId);
     if (e.businessName) {
@@ -106,8 +126,79 @@ export default {
       });
     }
   },
+  methods: {
+    goContract() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/contract/contract_list_page?eventId=" +
+          this.eventId,
+      });
+    },
+    goReceipt() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/receipt/receipt_list_page?eventId=" +
+          this.eventId,
+      });
+    },
+    goExpress() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/express/express_list_page?eventId=" +
+          this.eventId,
+      });
+    },
+    goMeeting() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/meeting/meeting_list_page?eventId=" +
+          this.eventId,
+      });
+    },
+    goOrder() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/order/order_list_page?eventId=" +
+          this.eventId,
+      });
+    },
+    goSale() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/sale/sale_list_page?eventId=" +
+          this.eventId,
+      });
+    },
+  },
 };
 </script>
 
 <style scoped>
+.options-container {
+  margin-top: 24rpx;
+}
+.options-item-container {
+  padding: 0 24rpx;
+  background-color: #fff;
+}
+.options-item {
+  padding: 24rpx 0;
+}
+.options-item-container:not(:last-child) .options-item {
+  border-bottom: 1px solid #edeeef;
+}
+.options-icon-container {
+  margin-right: 24rpx;
+}
+.options-icon {
+  width: 42rpx;
+  height: 42rpx;
+}
+.options-text {
+  flex: 1;
+}
+.options-count {
+  color: grey;
+  font-size: 28rpx;
+}
 </style>

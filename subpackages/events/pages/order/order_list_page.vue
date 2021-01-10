@@ -7,12 +7,12 @@
             <view class="item-cover">
               <image
                 class="cover"
-                src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
+                src="https://dev.ncpgz.com/assets/management/icons/business_order.png"
               />
             </view>
             <view class="flex-vertical">
               <view class="item-label">
-                {{ item.businessName }}
+                {{ item.baseName }}
               </view>
               <view class="item-text">
                 {{ item.createTime }}
@@ -66,6 +66,7 @@ export default {
       needRefresh: false,
       selectMode: false,
       key: "",
+      index: ""
     };
   },
   computed: {
@@ -85,6 +86,7 @@ export default {
     if (e.mode && e.mode === "select") {
       this.selectMode = true;
       this.key = e.key;
+      this.index = e.index
     }
     this.fetch();
   },
@@ -138,9 +140,12 @@ export default {
       if (this.selectMode) {
         let pages = getCurrentPages();
         let prevPage = pages[pages.length - 2];
-        prevPage.$vm[this.key] = item;
-        prevPage.$vm[this.key + "String"] = item.contractName;
-        console.log(item);
+        this.$set(
+          prevPage.$vm[this.key],
+          this.index,
+          item
+        );
+        // console.log(item);
         uni.navigateBack();
       } else {
         // uni.navigateTo({
@@ -164,6 +169,7 @@ export default {
 <style scoped>
 .list-container {
   margin-top: 24rpx;
+  background-color: #fff;
 }
 .list-item {
   flex: 1;

@@ -6,35 +6,10 @@
     <view class="scrollable">
       <view class="form-container">
         <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 物流发货方 </view>
-          <view class="form-item-input" @tap="onSelectFrom">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择物流发货方"
-              v-model="fromString"
-              disabled
-            />
+          <view class="form-item-label">
+            <text class="form-item-required">*</text>
+            货物名称
           </view>
-        </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 物流接收方 </view>
-          <view class="form-item-input" @tap="onSelectTo">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择物流接收方"
-              v-model="toString"
-              disabled
-            />
-          </view>
-        </view>
-      </view>
-      <view class="form-container">
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 货物名称 </view>
           <view class="form-item-input">
             <input
               class="form-input"
@@ -81,6 +56,8 @@
             />
           </view>
         </view>
+      </view>
+      <view class="form-container">
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 支付方 </view>
           <view class="form-item-input" @tap="onSelectPayer">
@@ -89,12 +66,48 @@
               type="text"
               cursor-spacing="16"
               placeholder="请选择运费支付方"
-              v-model="payer"
+              v-model="payerString"
+              disabled
+            />
+          </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 支付状态 </view>
+          <radio-group @change="onRadioChange" class="form-item-input">
+            <label class="radio"><radio value="0" />未支付</label>
+            <label class="radio"><radio value="1" />已支付</label>
+          </radio-group>
+        </view>
+      </view>
+      <view class="form-container">
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 物流发货方 </view>
+          <view class="form-item-input" @tap="onSelectFrom">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择物流发货方"
+              v-model="fromString"
+              disabled
+            />
+          </view>
+        </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 物流接收方 </view>
+          <view class="form-item-input" @tap="onSelectTo">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择物流接收方"
+              v-model="toString"
               disabled
             />
           </view>
         </view>
       </view>
+
       <view class="form-container">
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 物流开始时间 </view>
@@ -102,7 +115,7 @@
             <biao-fun-date-picker
               placeholder="请选择物流开始时间"
               start="2019-07-19 09:00"
-              :end="startTimePickerEndTime"
+              :end="timePickerEndTime"
               fields="day"
               @change="onStartTimeSet"
             />
@@ -112,16 +125,12 @@
           <view class="form-item-label"> 物流结束时间 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
-              v-if="endTimePickerStartTime"
               placeholder="请选择物流结束时间"
-              :start="endTimePickerStartTime"
-              :end="endTimePickerEndTime"
+              start="2019-07-19 09:00"
+              :end="timePickerEndTime"
               fields="day"
               @change="onEndTimeSet"
             />
-            <view v-else class="form-item-placeholder" @tap="onWarning">
-              请先选择物流开始时间
-            </view>
           </view>
         </view>
       </view>
@@ -138,7 +147,7 @@
                 type="text"
                 cursor-spacing="16"
                 placeholder="请选择对应采购单"
-                v-model="description"
+                v-model="item.id"
                 disabled
               />
               <view
@@ -171,7 +180,7 @@
                 type="text"
                 cursor-spacing="16"
                 placeholder="请选择对应销售单"
-                v-model="description"
+                v-model="item.id"
                 disabled
               />
               <view
@@ -227,31 +236,31 @@
 <script>
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createContractApi } from "@/apis/event_apis";
+import { createExpressApi } from "@/apis/event_apis";
 export default {
   components: {
     BiaoFunDatePicker,
-    AddMediaAttachment
+    AddMediaAttachment,
   },
   data() {
     return {
       eventId: "",
-      from: {},
-      fromString: "",
-      to: {},
-      toString: "",
       name: "",
       weight: "",
       distance: "",
       fee: "",
       payer: "",
+      payerString: "",
+      radio: "",
+      from: {},
+      fromString: "",
+      to: {},
+      toString: "",
       startTime: "",
-      startTimePickerEndTime: "",
+      timePickerEndTime: "",
       endTime: "",
-      endTimePickerStartTime: "",
-      endTimePickerEndTime: "",
-      relateSale: [{}],
-      relateOrder: [{}],
+      relateOrder: [{ id: "" }],
+      relateSale: [{ id: "" }],
       description: "",
       attachments: [],
       onNetworking: false,
@@ -262,9 +271,21 @@ export default {
       this.eventId = e.eventId;
     }
     console.log(this.eventId);
-    this.setStartTimePickerEndTime();
+    this.setTimePickerEndTime();
+  },
+  onShow() {
+    console.log(this.relateSale);
   },
   methods: {
+    onSelectPayer() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=payer",
+      });
+    },
+    onRadioChange(e) {
+      this.radio = e.target.value;
+    },
     onSelectFrom() {
       uni.navigateTo({
         url:
@@ -277,15 +298,9 @@ export default {
           "/subpackages/events/pages/customer/customer_list_page?mode=select&key=to",
       });
     },
-    onSelectPayer() {
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=payer",
-      });
-    },
-    setStartTimePickerEndTime() {
+    setTimePickerEndTime() {
       const time = new Date();
-      this.startTimePickerEndTime =
+      this.timePickerEndTime =
         time.getFullYear() +
         1 +
         "-" +
@@ -301,59 +316,35 @@ export default {
     },
     onStartTimeSet(e) {
       this.startTime = e.f2;
-      this.endTime = "";
-      this.endTimePickerStartTime = "";
-      setTimeout(() => {
-        this.setEndTimePickerTime(new Date(e.f3));
-      }, 10);
-    },
-    setEndTimePickerTime(time) {
-      this.endTimePickerStartTime =
-        time.getFullYear() +
-        "-" +
-        (time.getMonth() + 1 > 9
-          ? time.getMonth() + 1
-          : "0" + (time.getMonth() + 1)) +
-        "-" +
-        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
-        " " +
-        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
-        ":" +
-        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
-      this.endTimePickerEndTime =
-        time.getFullYear() +
-        1 +
-        "-" +
-        (time.getMonth() + 1 > 9
-          ? time.getMonth() + 1
-          : "0" + (time.getMonth() + 1)) +
-        "-" +
-        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
-        " " +
-        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
-        ":" +
-        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onEndTimeSet(e) {
-      this.endTime = e.f1 + " " + e.hh + ":" + e.mm + ":" + e.ss;
+      this.endTime = e.f2;
     },
-    onWarning() {
-      uni.showToast({
-        title: "请先选择物流开始时间",
-        icon: "none",
+    onAddOrder() {
+      this.relateOrder.push({ id: "" });
+    },
+    onRemoveOrder(index) {
+      this.relateOrder.splice(index, 1);
+    },
+    onSelectOrder(index) {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/order/order_list_page?mode=select&key=relateOrder&index=" +
+          index,
       });
     },
     onAddSale() {
-      this.relateSale.push({});
+      this.relateSale.push({ id: "" });
     },
     onRemoveSale(index) {
       this.relateSale.splice(index, 1);
     },
-    onAddOrder() {
-      this.relateOrder.push({});
-    },
-    onRemoveOrder(index) {
-      this.relateOrder.splice(index, 1);
+    onSelectSale(index) {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/sale/sale_list_page?mode=select&key=relateSale&index=" +
+          index,
+      });
     },
     onAttachmentAdd(attachments) {
       this.attachments = this.attachments.concat(attachments);
@@ -374,7 +365,7 @@ export default {
     onValidate() {
       if (!this.name) {
         uni.showToast({
-          title: "请输入合同名称",
+          title: "请输入货物名称",
           icon: "none",
         });
         return false;
@@ -382,25 +373,43 @@ export default {
       return true;
     },
     async onHandle() {
-      if (this.onValidate()) {
+      if (!this.onNetworking && this.onValidate()) {
         const payload = {
           businessId: this.eventId,
-          contractName: this.name,
-          contractNumber: this.number,
-          contractType: this.type,
-          contractAmount: this.price,
-          partyA: this.partyA,
-          partySignatoryA: this.partyARepresent,
-          partyB: this.partyB,
-          partySignatoryB: this.partyBRepresent,
-          signingDate: this.signTime,
+          itemName: this.name,
+          weight: this.weight,
+          distance: this.distance,
+          cost: this.fee,
+          payerCustomer: this.payerString,
+          payerCustomerId: this.payer.id,
+          payerStatus: this.radio,
+          outputCustomer: this.fromString,
+          outputCustomerId: this.from.id,
+          inputCustomer: this.toString,
+          inputCustomerId: this.to.id,
           startDate: this.startTime,
           endDate: this.endTime,
+          procurementId: this.relateOrder.map((e) => {
+            return e.id;
+          }),
+          saleId: this.relateSale.map((e) => {
+            return e.id;
+          }),
           remark: this.description,
-          files: [],
+          files: this.attachments.map((e) => {
+            return {
+              fileName: e.fileName,
+              fileOriginalName: e.originalname,
+              fileSubUrl: e.subFileUrl,
+              fileUrl: e.fileUrl,
+              remark: "",
+            };
+          }),
         };
         console.log(payload);
-        const response = await createContractApi(payload);
+        this.onNetworking = true;
+        const response = await createExpressApi(payload);
+        this.onNetworking = false;
         if (response) {
           let pages = getCurrentPages();
           let prevPage = pages[pages.length - 2];
@@ -409,6 +418,7 @@ export default {
             title: "创建成功",
             icon: "none",
           });
+          this.onNetworking = true;
           setTimeout(() => {
             uni.navigateBack();
           }, 600);
@@ -420,4 +430,7 @@ export default {
 </script>
 
 <style scoped>
+.radio {
+  margin-left: 24rpx;
+}
 </style>

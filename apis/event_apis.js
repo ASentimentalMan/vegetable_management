@@ -63,11 +63,33 @@ export const getExpressListApi = payload => {
   })
 }
 
+// 新增物流单
+export const createExpressApi = payload => {
+  return request_java({
+    method: "POST",
+    url: "/info/business-logistics",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
 // 业务会议清单
 export const getMeetingListApi = payload => {
   return request_java({
     method: "GET",
-    url: "/info/business-logistics-page",
+    url: "/info/business-meeting-my-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 新增会议单
+export const createMeetingApi = payload => {
+  return request_java({
+    method: "POST",
+    url: "/info/business-meeting",
+    contentType: "application/json",
     data: payload,
     token: true
   })
@@ -77,7 +99,7 @@ export const getMeetingListApi = payload => {
 export const getOrderListApi = payload => {
   return request_java({
     method: "GET",
-    url: "/info/business-logistics-page",
+    url: "/info/business-procure-my-page",
     data: payload,
     token: true
   })
@@ -98,7 +120,7 @@ export const createOrderApi = payload => {
 export const getSaleListApi = payload => {
   return request_java({
     method: "GET",
-    url: "/info/business-logistics-page",
+    url: "/info/business-sales-my-page",
     data: payload,
     token: true
   })

@@ -7,7 +7,7 @@
             <view class="item-cover">
               <image
                 class="cover"
-                src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
+                src="https://dev.ncpgz.com/assets/management/icons/business_meeting.png"
               />
             </view>
             <view class="flex-vertical">
@@ -164,6 +164,7 @@ export default {
 <style scoped>
 .list-container {
   margin-top: 24rpx;
+  background-color: #fff;
 }
 .list-item {
   flex: 1;

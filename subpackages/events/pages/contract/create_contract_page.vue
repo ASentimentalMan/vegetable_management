@@ -208,25 +208,7 @@ export default {
       endTimeString: "",
       endTimePickerEndTime: "",
       description: "",
-      attachments: [
-        {
-          url: "",
-          blob:
-            "blob:http://localhost:8080/5065bea2-727d-4255-ac17-663620408de3",
-          text: "100%",
-          originalname: "store_icon_remove.png",
-          id: "1347100115804676097",
-          createTime: "2021-01-07 16:37:50",
-          updateTime: "2021-01-07 16:37:50",
-          fileUrl:
-            "https://dev.ncpgz.com/upload/business/images/f79a7f5b-3072-4eb5-9c17-fa62b57945d1.png",
-          fileName: "f79a7f5b-3072-4eb5-9c17-fa62b57945d1.png",
-          subFileUrl:
-            "https://dev.ncpgz.com/upload/business/images/sub_19f2c11a-1f7a-4a01-9e19-c62659f3c934.jpg",
-          originalFileName: "store_icon_remove.png",
-          fileType: "images",
-        },
-      ],
+      attachments: [],
       onNetworking: false,
     };
   },

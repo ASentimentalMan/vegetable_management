@@ -3,8 +3,8 @@
     <view class="scrollable">
       <view class="list-container flex-vertical flex-jcsb">
         <block v-for="(item, index) in list" :key="index">
-          <view class="list-item flex-horizontal flex-aic" @tap="goEvent(item)">
-            <view class="item-cover">
+          <view class="list-item flex-horizontal" @tap="goEvent(item)">
+            <view class="item-cover" style="margin-top: 12rpx">
               <image
                 class="cover"
                 src="https://dev.ncpgz.com/assets/management/icons/business_contract_icon.png"
@@ -16,6 +16,50 @@
               </view>
               <view class="item-text">
                 {{ item.createTime }}
+              </view>
+              <view class="flex-horizontal flex-aic flex-wrap">
+                <view
+                  class="item-stastic"
+                  style="background-color: #edffe8; color: #23aa48"
+                >
+                  合同 {{ item.businessCount.contract }}
+                </view>
+                <view
+                  class="item-stastic"
+                  style="background-color: #eff8f8; color: #39a2ac"
+                >
+                  客户 {{ item.businessCount.customer }}
+                </view>
+                <view
+                  class="item-stastic"
+                  style="background-color: #fdf5e9; color: #ef9024"
+                >
+                  发票 {{ item.businessCount.invoice }}
+                </view>
+                <view
+                  class="item-stastic"
+                  style="background-color: #edffe8; color: #23aa48"
+                >
+                  物流 {{ item.businessCount.logistics }}
+                </view>
+                <view
+                  class="item-stastic"
+                  style="background-color: #eff8f8; color: #39a2ac"
+                >
+                  会议 {{ item.businessCount.meeting }}
+                </view>
+                <view
+                  class="item-stastic"
+                  style="background-color: #fdf5e9; color: #ef9024"
+                >
+                  采购 {{ item.businessCount.procure }}
+                </view>
+                <view
+                  class="item-stastic"
+                  style="background-color: #edffe8; color: #23aa48"
+                >
+                  销售 {{ item.businessCount.sales }}
+                </view>
               </view>
             </view>
           </view>
@@ -113,10 +157,11 @@ export default {
       this.fetch();
     },
     goEvent(item) {
+      console.log(item);
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/event/event_detail_page" +
-          objectToQuery(item),
+          "/subpackages/events/pages/event/event_detail_page?item=" +
+          JSON.stringify(item),
       });
     },
     onCreate() {
@@ -169,5 +214,12 @@ export default {
   color: #8b8c8b;
   text-align: left;
   line-height: 1;
+}
+.item-stastic {
+  padding: 2rpx 12rpx;
+  margin-top: 12rpx;
+  margin-right: 24rpx;
+  border-radius: 12rpx;
+  color: white;
 }
 </style>
