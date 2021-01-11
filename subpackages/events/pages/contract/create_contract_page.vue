@@ -7,7 +7,7 @@
       <view class="form-container">
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
-            <text class="form-item-required">*</text>
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
             合同名称
           </view>
           <view class="form-item-input">
@@ -17,6 +17,7 @@
               cursor-spacing="16"
               placeholder="请输入合同名称"
               v-model="name"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -29,6 +30,7 @@
               cursor-spacing="16"
               placeholder="请输入合同编号"
               v-model="number"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -41,6 +43,7 @@
               cursor-spacing="16"
               placeholder="请输入合同类型"
               v-model="type"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -53,6 +56,7 @@
               cursor-spacing="16"
               placeholder="请输入合同金额"
               v-model="price"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -67,6 +71,7 @@
               cursor-spacing="16"
               placeholder="请输入甲方公司名称"
               v-model="partyA"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -79,6 +84,7 @@
               cursor-spacing="16"
               placeholder="请输入甲方签订人"
               v-model="partyARepresent"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -91,6 +97,7 @@
               cursor-spacing="16"
               placeholder="请输入乙方公司名称"
               v-model="partyB"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -103,6 +110,7 @@
               cursor-spacing="16"
               placeholder="请输入乙方签订人"
               v-model="partyBRepresent"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -113,10 +121,12 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择合同签订日期"
+              :defaultValue="signTimeDefaultValue"
               start="2019-07-19 09:00"
               :end="signTimePickerEndTime"
               fields="day"
               @change="onSignTimeSet"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -125,10 +135,12 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择合同开始日期"
+              :defaultValue="startTimeDefaultValue"
               start="2019-07-19 09:00"
               :end="startTimePickerEndTime"
               fields="day"
               @change="onStartTimeSet"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -137,10 +149,12 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择合同结束日期"
+              :defaultValue="endTimeDefaultValue"
               start="2019-07-19 09:00"
               :end="endTimePickerEndTime"
               fields="day"
               @change="onEndTimeSet"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -155,12 +169,14 @@
               cursor-spacing="16"
               placeholder="请输入备注"
               v-model="description"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
       </view>
       <add-media-attachment
         title="附件"
+        :readonly="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
         @onAttachmentRemove="onAttachmentRemove"
@@ -168,9 +184,14 @@
         @onAttachmentUploaded="onAttachmentUploaded"
       />
     </view>
-    <view class="unscrollable">
+    <view
+      class="unscrollable"
+      style="height: 40rpx"
+      v-if="mode === 'read'"
+    ></view>
+    <view class="unscrollable" v-else>
       <view class="bottom-button-container">
-        <view class="button-container" @tap="onCreate">
+        <view class="button-container" @tap="onHandle">
           <view class="bottom-button"> 完成 </view>
         </view>
       </view>
@@ -181,7 +202,7 @@
 <script>
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createContractApi } from "@/apis/event_apis";
+import { createContractApi, editContractApi } from "@/apis/event_apis";
 export default {
   components: {
     BiaoFunDatePicker,
@@ -189,7 +210,9 @@ export default {
   },
   data() {
     return {
+      mode: "create",
       eventId: "",
+      contractId: "",
       name: "",
       number: "",
       type: "",
@@ -199,13 +222,13 @@ export default {
       partyB: "",
       partyBRepresent: "",
       signTime: "",
-      signTimeString: "",
+      signTimeDefaultValue: "",
       signTimePickerEndTime: "",
       startTime: "",
-      startTimeString: "",
+      startTimeDefaultValue: "",
       startTimePickerEndTime: "",
       endTime: "",
-      endTimeString: "",
+      endTimeDefaultValue: "",
       endTimePickerEndTime: "",
       description: "",
       attachments: [],
@@ -216,7 +239,50 @@ export default {
     if (e.eventId) {
       this.eventId = e.eventId;
     }
-    console.log(this.eventId);
+    if (e.mode) {
+      this.mode = e.mode;
+      const item = JSON.parse(e.item);
+      this.contractId = item.id;
+      this.meetingId = item.id;
+      if (this.mode === "edit") {
+        uni.setNavigationBarTitle({
+          title: "修改合同",
+        });
+      } else if (this.mode === "read") {
+        uni.setNavigationBarTitle({
+          title: "合同详情",
+        });
+      }
+      this.name = item.businessName;
+      this.number = item.contractNumber;
+      this.type = item.contractType;
+      this.price = item.contractAmount;
+      this.partyA = item.partyA;
+      this.partyARepresent = item.partySignatoryA;
+      this.partyB = item.partyB;
+      this.partyBRepresent = item.partySignatoryB;
+      this.signTime = item.signingDate ? item.signingDate : "";
+      this.signTimeDefaultValue = this.signTime;
+      this.startTime = item.startDate ? item.startDate : "";
+      this.startTimeDefaultValue = this.startTime;
+      this.endTime = item.endDate ? item.endDate : "";
+      this.endTimeDefaultValue = this.endTime;
+      this.description = item.remark;
+      this.attachments = item.files.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+    }
     this.initTimePicker();
   },
   methods: {
@@ -263,16 +329,13 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onSignTimeSet(e) {
-      this.signTime = new Date(e.f3);
-      this.signTimeString = e.f1;
+      this.signTime = e.f1;
     },
     onStartTimeSet(e) {
-      this.startTime = new Date(e.f3);
-      this.startTimeString = e.f1;
+      this.startTime = e.f1;
     },
     onEndTimeSet(e) {
-      this.endTime = new Date(e.f3);
-      this.endTimeString = e.f1;
+      this.endTime = e.f1;
     },
     onAttachmentAdd(attachments) {
       this.attachments = this.attachments.concat(attachments);
@@ -298,9 +361,13 @@ export default {
         });
         return false;
       }
-      if (this.startTime && this.endTime && this.startTime > this.endTime) {
+      if (
+        this.startTime &&
+        this.endTime &&
+        new Date(this.startTime) > new Date(this.endTime)
+      ) {
         uni.showToast({
-          title: "合同结束日期不能早于合同开始日期",
+          title: '"合同结束日期" 不能早于 "合同开始日期"',
           icon: "none",
           duration: 3000,
         });
@@ -319,9 +386,9 @@ export default {
       }
       return true;
     },
-    async onCreate() {
+    async onHandle() {
       if (!this.onNetworking && this.onValidate()) {
-        const payload = {
+        let payload = {
           businessId: this.eventId,
           contractName: this.name,
           contractNumber: this.number,
@@ -331,9 +398,9 @@ export default {
           partySignatoryA: this.partyARepresent,
           partyB: this.partyB,
           partySignatoryB: this.partyBRepresent,
-          signingDate: this.signTimeString,
-          startDate: this.startTimeString,
-          endDate: this.endTimeString,
+          signingDate: this.signTime,
+          startDate: this.startTime,
+          endDate: this.endTime,
           remark: this.description,
           files: this.attachments.map((e) => {
             return {
@@ -346,14 +413,20 @@ export default {
           }),
         };
         this.onNetworking = true;
-        const response = await createContractApi(payload);
+        let response;
+        if (this.mode === "create") {
+          response = await createContractApi(payload);
+        } else if (this.mode === "edit") {
+          payload["id"] = this.contractId;
+          response = await editContractApi(payload);
+        }
         this.onNetworking = false;
         if (response) {
           let pages = getCurrentPages();
           let prevPage = pages[pages.length - 2];
           prevPage.$vm.needRefresh = true;
           uni.showToast({
-            title: "创建成功",
+            title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
           });
           this.onNetworking = true;

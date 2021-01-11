@@ -8,19 +8,19 @@
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
             <text class="form-item-required">*</text>
-            标题
+            议题
           </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入会议标题"
+              placeholder="请输入会议议题"
               v-model="topic"
             />
           </view>
         </view>
-		<view class="form-item flex-horizontal">
+        <view class="form-item flex-horizontal">
           <view class="form-item-label">
             <!-- <text class="form-item-required">*</text> -->
             纪要
@@ -83,14 +83,16 @@
 
 <script>
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createMeetingApi } from "@/apis/event_apis";
+import { createMeetingApi, editMeetingApi } from "@/apis/event_apis";
 export default {
   components: {
     AddMediaAttachment,
   },
   data() {
     return {
+      mode: "create",
       eventId: "",
+      meetingId: "",
       topic: "",
       brief: "",
       result: "",
@@ -103,7 +105,39 @@ export default {
     if (e.eventId) {
       this.eventId = e.eventId;
     }
-    console.log(this.eventId);
+    if (e.mode) {
+      this.mode = e.mode;
+      const item = JSON.parse(e.item);
+      console.log(item);
+      this.meetingId = item.id;
+      if (this.mode === "edit") {
+        uni.setNavigationBarTitle({
+          title: "修改会议",
+        });
+      } else if (this.mode === "read") {
+        uni.setNavigationBarTitle({
+          title: "会议详情",
+        });
+      }
+      this.topic = item.title;
+      this.brief = item.summary;
+      this.result = item.consequence;
+      this.description = item.remark;
+      this.attachments = item.files.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+    }
   },
   methods: {
     onAttachmentAdd(attachments) {
@@ -134,10 +168,10 @@ export default {
     },
     async onHandle() {
       if (!this.onNetworking && this.onValidate()) {
-        const payload = {
+        let payload = {
           businessId: this.eventId,
-          summary: this.brief,
           title: this.topic,
+          summary: this.brief,
           consequence: this.result,
           remark: this.description,
           files: this.attachments.map((e) => {
@@ -152,14 +186,20 @@ export default {
         };
         console.log(payload);
         this.onNetworking = true;
-        const response = await createMeetingApi(payload);
+        let response;
+        if (this.mode === "create") {
+          response = await createMeetingApi(payload);
+        } else if (this.mode === "edit") {
+          payload["id"] = this.meetingId;
+          response = await editMeetingApi(payload);
+        }
         this.onNetworking = false;
         if (response) {
           let pages = getCurrentPages();
           let prevPage = pages[pages.length - 2];
           prevPage.$vm.needRefresh = true;
           uni.showToast({
-            title: "创建成功",
+            title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
           });
           this.onNetworking = true;

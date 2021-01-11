@@ -2,35 +2,43 @@
   <view class="page-container">
     <view class="scrollable">
       <view class="list-container flex-vertical flex-jcsb">
-        <block v-for="(item, index) in list" :key="index">
-          <view class="list-item flex-horizontal flex-aic" @tap="onEvent(item)">
-            <view class="item-cover">
-              <image
-                class="cover"
-                src="https://dev.ncpgz.com/assets/management/icons/business_sale.png"
-              />
-            </view>
-            <view class="flex-vertical">
-              <view class="item-label">
-                {{ item.salesNumber }}dfs
-              </view>
-              <view class="item-text">
-                {{ item.createTime }}
-              </view>
-            </view>
-
-            <view
-              class="type-container"
-              :class="{
-                green: item.type === '物流',
-                orange: item.type === '采购单',
-              }"
-              v-if="item.type"
+        <uni-swipe-action>
+          <block v-for="(item, index) in list" :key="index">
+            <uni-swipe-action-item
+              :right-options="acitons"
+              @click="onUniSwipeAction($event, item)"
             >
-              {{ item.type }}
-            </view>
-          </view>
-        </block>
+              <view
+                class="list-item flex-horizontal flex-aic"
+                @tap="onEvent(item)"
+              >
+                <view class="item-cover">
+                  <image
+                    class="cover"
+                    src="https://dev.ncpgz.com/assets/management/icons/business_sale.png"
+                  />
+                </view>
+                <view class="flex-vertical">
+                  <view class="item-label"> {{ item.salesNumber }}dfs </view>
+                  <view class="item-text">
+                    {{ item.createTime }}
+                  </view>
+                </view>
+
+                <view
+                  class="type-container"
+                  :class="{
+                    green: item.type === '物流',
+                    orange: item.type === '采购单',
+                  }"
+                  v-if="item.type"
+                >
+                  {{ item.type }}
+                </view>
+              </view>
+            </uni-swipe-action-item>
+          </block>
+        </uni-swipe-action>
       </view>
       <view style="height: 200rpx" v-if="status === 'empty'"> </view>
       <indicator :status="status" emptyText="暂无销售" />
@@ -47,7 +55,7 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getSaleListApi } from "@/apis/event_apis";
+import { getSaleListApi, deleteSaleApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -56,6 +64,20 @@ export default {
   data() {
     return {
       eventId: "",
+      acitons: [
+        {
+          text: "修改",
+          style: {
+            backgroundColor: "#2c7cf6",
+          },
+        },
+        {
+          text: "删除",
+          style: {
+            backgroundColor: "#dd524d",
+          },
+        },
+      ],
       list: [],
       payload: {},
       page: 1,
@@ -157,6 +179,27 @@ export default {
           "/subpackages/events/pages/sale/create_sale_page?eventId=" +
           this.eventId,
       });
+    },
+    onUniSwipeAction(e, item) {
+      switch (e.index) {
+        case 0:
+          break;
+        case 1:
+          uni.showModal({
+            title: "您即将删除销售",
+            content: item.remark,
+            success: async (res) => {
+              if (res.confirm) {
+                const response = await deleteSaleApi({
+                  id: item.id,
+                });
+              } else if (res.cancel) {
+                console.log("用户点击取消");
+              }
+            },
+          });
+          break;
+      }
     },
   },
 };

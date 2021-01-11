@@ -39,6 +39,9 @@ export default {
       this.selectedStr = this.range[e.detail.value].label;
       this.$emit("onReceiptTypeChange", this.range[e.detail.value]);
     },
+    setSelectedStr(e) {
+      this.selectedStr = e;
+    },
   },
 };
 </script>

@@ -22,6 +22,27 @@ export const createEventApi = payload => {
   })
 }
 
+// 修改业务
+export const editEventApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/business",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除业务
+export const deleteEventApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/business",
+    data: payload,
+    token: true
+  })
+}
+
 // 合同清单
 export const getContractListApi = payload => {
   return request_java({
@@ -38,6 +59,27 @@ export const createContractApi = payload => {
     method: "POST",
     url: "/info/business-contract",
     contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 修改合同
+export const editContractApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/business-contract",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除合同
+export const deleteContractApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/business-contract",
     data: payload,
     token: true
   })
@@ -64,6 +106,27 @@ export const createReceiptApi = payload => {
   })
 }
 
+// 修改发票
+export const editReceiptApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/business-invoice",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除发票
+export const deleteReceiptApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/business-invoice",
+    data: payload,
+    token: true
+  })
+}
+
 // 物流清单
 export const getExpressListApi = payload => {
   return request_java({
@@ -80,6 +143,28 @@ export const createExpressApi = payload => {
     method: "POST",
     url: "/info/business-logistics",
     contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+
+// 修改物流
+export const editExpressApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/business-logistics",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除物流
+export const deleteExpressApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/business-logistics",
     data: payload,
     token: true
   })
@@ -106,6 +191,27 @@ export const createMeetingApi = payload => {
   })
 }
 
+// 修改会议
+export const editMeetingApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/business-meeting",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除会议
+export const deleteMeetingApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/business-meeting",
+    data: payload,
+    token: true
+  })
+}
+
 // 采购清单
 export const getOrderListApi = payload => {
   return request_java({
@@ -122,6 +228,27 @@ export const createOrderApi = payload => {
     method: "POST",
     url: "/info/business-procure",
     contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 修改采购
+export const editOrderApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/business-procure",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除采购
+export const deleteOrderApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/business-procure",
     data: payload,
     token: true
   })
@@ -148,6 +275,28 @@ export const createSaleApi = payload => {
   })
 }
 
+
+// 修改销售
+export const editSaleApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/business-sales",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除销售
+export const deleteSaleApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/business-sales",
+    data: payload,
+    token: true
+  })
+}
+
 // 客户清单
 export const getCustomerListApi = payload => {
   return request_java({
@@ -164,6 +313,27 @@ export const createCustomerApi = payload => {
     method: "POST",
     url: "/info/customer",
     contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 修改客户
+export const editCustomerApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/customer",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除客户
+export const deleteCustomerApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/customer",
     data: payload,
     token: true
   })

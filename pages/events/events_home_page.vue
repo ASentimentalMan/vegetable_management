@@ -2,68 +2,75 @@
   <view class="page-container">
     <view class="scrollable">
       <view class="list-container flex-vertical flex-jcsb">
-        <block v-for="(item, index) in list" :key="index">
-          <view class="list-item flex-horizontal" @tap="goEvent(item)">
-            <view class="item-cover" style="margin-top: 12rpx">
-              <image
-                class="cover"
-                src="https://dev.ncpgz.com/assets/management/icons/business_contract_icon.png"
-              />
-            </view>
-            <view class="flex-vertical">
-              <view class="item-label">
-                {{ item.businessName }}
+        <uni-swipe-action>
+          <block v-for="(item, index) in list" :key="index">
+            <uni-swipe-action-item
+              :right-options="acitons"
+              @click="onUniSwipeAction($event, item)"
+            >
+              <view class="list-item flex-horizontal" @tap="goEvent(item)">
+                <view class="item-cover" style="margin-top: 12rpx">
+                  <image
+                    class="cover"
+                    src="https://dev.ncpgz.com/assets/management/icons/business_contract_icon.png"
+                  />
+                </view>
+                <view class="flex-vertical">
+                  <view class="item-label">
+                    {{ item.businessName }}
+                  </view>
+                  <view class="item-text">
+                    {{ item.createTime }}
+                  </view>
+                  <view class="flex-horizontal flex-aic flex-wrap">
+                    <view
+                      class="item-stastic"
+                      style="background-color: #edffe8; color: #23aa48"
+                    >
+                      合同 {{ item.businessCount.contract }}
+                    </view>
+                    <view
+                      class="item-stastic"
+                      style="background-color: #eff8f8; color: #39a2ac"
+                    >
+                      客户 {{ item.businessCount.customer }}
+                    </view>
+                    <view
+                      class="item-stastic"
+                      style="background-color: #fdf5e9; color: #ef9024"
+                    >
+                      发票 {{ item.businessCount.invoice }}
+                    </view>
+                    <view
+                      class="item-stastic"
+                      style="background-color: #edffe8; color: #23aa48"
+                    >
+                      物流 {{ item.businessCount.logistics }}
+                    </view>
+                    <view
+                      class="item-stastic"
+                      style="background-color: #eff8f8; color: #39a2ac"
+                    >
+                      会议 {{ item.businessCount.meeting }}
+                    </view>
+                    <view
+                      class="item-stastic"
+                      style="background-color: #fdf5e9; color: #ef9024"
+                    >
+                      采购 {{ item.businessCount.procure }}
+                    </view>
+                    <view
+                      class="item-stastic"
+                      style="background-color: #edffe8; color: #23aa48"
+                    >
+                      销售 {{ item.businessCount.sales }}
+                    </view>
+                  </view>
+                </view>
               </view>
-              <view class="item-text">
-                {{ item.createTime }}
-              </view>
-              <view class="flex-horizontal flex-aic flex-wrap">
-                <view
-                  class="item-stastic"
-                  style="background-color: #edffe8; color: #23aa48"
-                >
-                  合同 {{ item.businessCount.contract }}
-                </view>
-                <view
-                  class="item-stastic"
-                  style="background-color: #eff8f8; color: #39a2ac"
-                >
-                  客户 {{ item.businessCount.customer }}
-                </view>
-                <view
-                  class="item-stastic"
-                  style="background-color: #fdf5e9; color: #ef9024"
-                >
-                  发票 {{ item.businessCount.invoice }}
-                </view>
-                <view
-                  class="item-stastic"
-                  style="background-color: #edffe8; color: #23aa48"
-                >
-                  物流 {{ item.businessCount.logistics }}
-                </view>
-                <view
-                  class="item-stastic"
-                  style="background-color: #eff8f8; color: #39a2ac"
-                >
-                  会议 {{ item.businessCount.meeting }}
-                </view>
-                <view
-                  class="item-stastic"
-                  style="background-color: #fdf5e9; color: #ef9024"
-                >
-                  采购 {{ item.businessCount.procure }}
-                </view>
-                <view
-                  class="item-stastic"
-                  style="background-color: #edffe8; color: #23aa48"
-                >
-                  销售 {{ item.businessCount.sales }}
-                </view>
-              </view>
-            </view>
-          </view>
-        </block>
+            </uni-swipe-action-item>
+          </block>
+        </uni-swipe-action>
       </view>
       <view style="height: 200rpx" v-if="status === 'empty'"> </view>
       <indicator :status="status" emptyText="暂无业务" />
@@ -80,7 +87,7 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getEventListApi } from "@/apis/event_apis";
+import { getEventListApi, deleteEventApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -88,6 +95,20 @@ export default {
   },
   data() {
     return {
+      acitons: [
+        {
+          text: "修改",
+          style: {
+            backgroundColor: "#2c7cf6",
+          },
+        },
+        {
+          text: "删除",
+          style: {
+            backgroundColor: "#dd524d",
+          },
+        },
+      ],
       list: [],
       payload: {},
       page: 1,
@@ -168,6 +189,32 @@ export default {
       uni.navigateTo({
         url: "/subpackages/events/pages/event/create_event_page",
       });
+    },
+    onUniSwipeAction(e, item) {
+      switch (e.index) {
+        case 0:
+          uni.navigateTo({
+            url:
+              "/subpackages/events/pages/event/create_event_page?mode=edit&item=" +
+              JSON.stringify(item),
+          });
+          break;
+        case 1:
+          uni.showModal({
+            title: "您即将删除业务",
+            content: item.businessName,
+            success: async (res) => {
+              if (res.confirm) {
+                const response = await deleteEventApi({
+                  id: item.id,
+                });
+              } else if (res.cancel) {
+                console.log("用户点击取消");
+              }
+            },
+          });
+          break;
+      }
     },
   },
 };

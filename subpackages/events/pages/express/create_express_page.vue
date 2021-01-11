@@ -15,13 +15,13 @@
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入物流单编号,自定义标识"
-              v-model="num"
+              placeholder="请输入物流单编号 自定义标识"
+              v-model="number"
             />
           </view>
         </view>
-		<view class="form-item flex-horizontal">
-			<view class="form-item-label">
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label">
             <!-- <text class="form-item-required">*</text> -->
             货物名称
           </view>
@@ -89,8 +89,12 @@
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 支付状态 </view>
           <radio-group @change="onRadioChange" class="form-item-input">
-            <label class="radio"><radio value="0" />未支付</label>
-            <label class="radio"><radio value="1" />已支付</label>
+            <label class="radio"
+              ><radio :checked="radio === '0'" value="0" />未支付</label
+            >
+            <label class="radio"
+              ><radio :checked="radio === '1'" value="1" />已支付</label
+            >
           </radio-group>
         </view>
       </view>
@@ -129,6 +133,7 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择物流开始时间"
+              :defaultValue="startTimeDefaultValue"
               start="2019-07-19 09:00"
               :end="timePickerEndTime"
               fields="day"
@@ -141,6 +146,7 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择物流结束时间"
+              :defaultValue="endTimeDefaultValue"
               start="2019-07-19 09:00"
               :end="timePickerEndTime"
               fields="day"
@@ -251,7 +257,7 @@
 <script>
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createExpressApi } from "@/apis/event_apis";
+import { createExpressApi, editExpressApi } from "@/apis/event_apis";
 export default {
   components: {
     BiaoFunDatePicker,
@@ -259,9 +265,11 @@ export default {
   },
   data() {
     return {
+      createMode: true,
       eventId: "",
+      expressId: "",
+      number: "",
       name: "",
-      num: "",
       weight: "",
       distance: "",
       fee: "",
@@ -273,8 +281,10 @@ export default {
       to: {},
       toString: "",
       startTime: "",
-      timePickerEndTime: "",
+      startTimeDefaultValue: "",
       endTime: "",
+      endTimeDefaultValue: "",
+      timePickerEndTime: "",
       relateOrder: [{ id: "" }],
       relateSale: [{ id: "" }],
       description: "",
@@ -286,11 +296,57 @@ export default {
     if (e.eventId) {
       this.eventId = e.eventId;
     }
-    console.log(this.eventId);
+    if (e.mode === "edit") {
+      uni.setNavigationBarTitle({
+        title: "修改物流",
+      });
+      this.createMode = false;
+      const item = JSON.parse(e.item);
+      this.expressId = item.id;
+      console.log(item);
+      this.number = item.logisticsNumber;
+      this.name = item.itemName;
+      this.weight = item.weight;
+      this.distance = item.distance;
+      this.fee = item.cost;
+      this.payer = { id: item.payerCustomerId };
+      this.payerString = item.payerCustomer;
+      this.radio = item.payerStatus;
+      this.from = { id: item.outputCustomerId };
+      this.fromString = item.outputCustomer;
+      this.to = { id: item.inputCustomerId };
+      this.toString = item.inputCustomer;
+      this.startTime = item.startDate ? item.startDate : "";
+      this.startTimeDefaultValue = this.startTime;
+      this.endTime = item.endDate ? item.endDate : "";
+      this.endTimeDefaultValue = this.endTime;
+      // this.relateOrder = item.procurementIds.length
+      //   ? item.procurementIds.map((e) => {
+      //       return {};
+      //     })
+      //   : [{ id: "" }];
+      // this.relateSale = item.saleIds.length
+      //   ? item.saleIds.map((e) => {
+      //       return {};
+      //     })
+      //   : [{ id: "" }];
+      this.description = item.remark;
+      this.attachments = item.files.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+    }
     this.setTimePickerEndTime();
-  },
-  onShow() {
-    console.log(this.relateSale);
   },
   methods: {
     onSelectPayer() {
@@ -331,12 +387,10 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onStartTimeSet(e) {
-      // this.startTime = e.f2;
-	  this.startTime = new Date(e.f2);
+      this.startTime = e.f1;
     },
     onEndTimeSet(e) {
-      // this.endTime = e.f2;
-	  this.endTime = new Date(e.f2);
+      this.endTime = e.f1;
     },
     onAddOrder() {
       this.relateOrder.push({ id: "" });
@@ -381,9 +435,9 @@ export default {
       );
     },
     onValidate() {
-      if (!this.num) {
+      if (!this.number) {
         uni.showToast({
-          title: "请输入物流单编号,自定义标识",
+          title: "请输入物流单编号 自定义标识",
           icon: "none",
         });
         return false;
@@ -392,9 +446,9 @@ export default {
     },
     async onHandle() {
       if (!this.onNetworking && this.onValidate()) {
-        const payload = {
+        let payload = {
           businessId: this.eventId,
-          logisticsNumber: this.num,
+          logisticsNumber: this.number,
           itemName: this.name,
           weight: this.weight,
           distance: this.distance,
@@ -408,12 +462,8 @@ export default {
           inputCustomerId: this.to.id,
           startDate: this.startTime,
           endDate: this.endTime,
-          procurementIds: this.relateOrder.map((e) => {
-            return e.id;
-          }),
-          saleIds: this.relateSale.map((e) => {
-            return e.id;
-          }),
+          procurementIds: [],
+          saleIds: [],
           remark: this.description,
           files: this.attachments.map((e) => {
             return {
@@ -425,9 +475,25 @@ export default {
             };
           }),
         };
+        for (let item of this.relateOrder) {
+          if (item.id) {
+            payload["procurementIds"].push(item.id);
+          }
+        }
+        for (let item of this.relateSale) {
+          if (item.id) {
+            payload["saleIds"].push(item.id);
+          }
+        }
         console.log(payload);
         this.onNetworking = true;
-        const response = await createExpressApi(payload);
+        let response;
+        if (this.createMode) {
+          response = await createExpressApi(payload);
+        } else {
+          payload["id"] = this.expressId;
+          response = await editExpressApi(payload);
+        }
         this.onNetworking = false;
         if (response) {
           let pages = getCurrentPages();

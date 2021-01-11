@@ -23,14 +23,27 @@
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 发票类型 </view>
           <view class="form-item-input">
-            <receipt-type-picker @onReceiptTypeChange="onReceiptTypeChange" />
+            <receipt-type-picker
+              ref="receiptTypePicker"
+              @onReceiptTypeChange="onReceiptTypeChange"
+            />
           </view>
         </view>
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 发票业务类型 </view>
           <radio-group @change="onEventTypeChange" class="form-item-input">
-            <label class="radio"><radio value="procure" />采购发票</label>
-            <label class="radio"><radio value="sale" />销售发票</label>
+            <label class="radio"
+              ><radio
+                :checked="eventType === 'procure'"
+                value="procure"
+              />采购发票</label
+            >
+            <label class="radio"
+              ><radio
+                :checked="eventType === 'sale'"
+                value="sale"
+              />销售发票</label
+            >
           </radio-group>
         </view>
         <view class="form-item flex-horizontal">
@@ -65,6 +78,7 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择开票时间"
+              :defaultValue="timeDefaultValue"
               start="2019-07-19 09:00"
               :end="timePickerEndTime"
               fields="day"
@@ -111,18 +125,18 @@
             />
           </view>
         </view> -->
-		<view class="form-item flex-horizontal">
-		  <view class="form-item-label"> 开户行地址 </view>
-		  <view class="form-item-input" @click="onLocationPick">
-		    <view
-		      :class="{
-		        'form-item-placeholder': locationString === '请输入开户行地址',
-		      }"
-		    >
-		      {{ locationString }}
-				</view>
-			</view>
-		</view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 开户行地址 </view>
+          <view class="form-item-input" @click="onLocationPick">
+            <view
+              :class="{
+                'form-item-placeholder': locationString === '请输入开户行地址',
+              }"
+            >
+              {{ locationString }}
+            </view>
+          </view>
+        </view>
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 开户银行 </view>
           <view class="form-item-input">
@@ -218,7 +232,7 @@
         </view>
       </view>
     </view>
-	<location-picker ref="location" :level="3" @onLocationSet="onLocationSet" />
+    <location-picker ref="location" :level="3" @onLocationSet="onLocationSet" />
   </view>
 </template>
 
@@ -227,7 +241,7 @@ import LocationPicker from "@/components/public/location_picker";
 import ReceiptTypePicker from "@/subpackages/events/components/receipt_type_picker.vue";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createReceiptApi } from "@/apis/event_apis";
+import { createReceiptApi, editReceiptApi } from "@/apis/event_apis";
 export default {
   components: {
     LocationPicker,
@@ -237,7 +251,9 @@ export default {
   },
   data() {
     return {
+      createMode: true,
       eventId: "",
+      receiptId: "",
       number: "",
       type: {},
       eventType: "",
@@ -245,11 +261,12 @@ export default {
       from: {},
       fromString: "",
       time: "",
+      timeDefaultValue: "",
       timePickerEndTime: "",
       to: {},
       toString: "",
       recognizeNumber: "",
-      address: "",
+      locationString: "请选择地址",
       bank: "",
       bankNumber: "",
       tel: "",
@@ -260,15 +277,71 @@ export default {
       description: "",
       attachments: [],
       onNetworking: false,
-	  locationString: "请选择地址",
     };
   },
   onLoad(e) {
     if (e.eventId) {
       this.eventId = e.eventId;
     }
-    console.log(this.eventId);
+    if (e.mode === "edit") {
+      this.createMode = false;
+      const item = JSON.parse(e.item);
+      console.log(item);
+      this.receiptId = item.id;
+      this.number = item.invoiceNumber;
+      this.type = {
+        label: item.invoiceType,
+        id: item.invoiceTypeId,
+      };
+      this.eventType = item.businessInvoiceType;
+      this.money = item.invoiceAmount;
+      this.from = {
+        customerName: item.outputInvoiceUnit,
+        id: item.outputInvoiceUnitId,
+      };
+      this.fromString = item.outputInvoiceUnit;
+      this.time = item.invoiceDate ? item.invoiceDate : "";
+      this.timeDefaultValue = this.time;
+      this.to = {
+        customerName: item.inputInvoiceUnit,
+        id: item.inputInvoiceUnitId,
+      };
+      this.toString = item.inputInvoiceUnit;
+      this.recognizeNumber = item.identificationNumber;
+      this.locationString = item.address;
+      this.bank = item.bankAccountNumber
+        ? item.bankAccountNumber.split(",")[0]
+        : "";
+      this.bankNumber = item.bankAccountNumber
+        ? item.bankAccountNumber.split(",")[1]
+        : "";
+      this.tel = item.telephone;
+      this.relateContract = {};
+      this.relateContractString = "";
+      this.relateCustomer = {};
+      this.relateCustomerString = "";
+      this.description = item.remark;
+      this.attachments = item.files.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+    }
     this.initTimePicker();
+  },
+  mounted() {
+    if (Object.keys(this.type).length) {
+      this.$refs.receiptTypePicker.setSelectedStr(this.type.label);
+    }
   },
   methods: {
     onReceiptTypeChange(e) {
@@ -293,8 +366,7 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onTimeSet(e) {
-      // this.time = e.f2;
-	  this.time = new Date(e.f2);
+      this.time = e.f1;
     },
     onSelectFrom() {
       uni.navigateTo({
@@ -346,15 +418,15 @@ export default {
       }
       return true;
     },
-	onLocationSet(location) {
-	  if (location.length) {
-	    this.location = location;
-	    this.locationString = location.map((e) => e.name).join("/");
-	  }
-	},
-	onLocationPick() {
-	  this.$refs.location.popup();
-	},
+    onLocationSet(location) {
+      if (location.length) {
+        this.location = location;
+        this.locationString = location.map((e) => e.name).join("/");
+      }
+    },
+    onLocationPick() {
+      this.$refs.location.popup();
+    },
     async onHandle() {
       if (!this.onNetworking && this.onValidate()) {
         // console.log(this.type);
@@ -362,7 +434,7 @@ export default {
         // console.log(this.to);
         // console.log(this.relateContract);
         // console.log(this.relateCustomer);
-        const payload = {
+        let payload = {
           businessId: this.eventId,
           invoiceNumber: this.number,
           invoiceType: this.type.label,
@@ -396,12 +468,18 @@ export default {
         };
         // console.log(payload);
         this.onNetworking = true;
-        const response = await createReceiptApi(payload);
+        let response;
+        if (this.createMode) {
+          response = await createReceiptApi(payload);
+        } else {
+          payload["id"] = this.receiptId;
+          response = await editReceiptApi(payload);
+        }
         this.onNetworking = false;
         if (response) {
           let pages = getCurrentPages();
-		  let prevPage = pages[pages.length - 2];
-		  prevPage.$vm.needRefresh = true;
+          let prevPage = pages[pages.length - 2];
+          prevPage.$vm.needRefresh = true;
           uni.showToast({
             title: "创建成功",
             icon: "none",

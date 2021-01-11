@@ -10,6 +10,7 @@
             mode="aspectFill"
           />
           <view
+            v-if="!readonly"
             class="attachment-remove-container"
             @click="onAttachmentRemove(index)"
           >
@@ -29,7 +30,7 @@
       </block>
       <view
         class="attachment-add-container attachment-size"
-        v-if="attachments.length < amount"
+        v-if="attachments.length < amount && !readonly"
         @click="onAttachmentAdd"
       >
         <text class="attachment-add">+</text>
@@ -49,6 +50,10 @@ export default {
     amount: {
       type: Number,
       default: 9,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
     attachments: {
       type: Array,
