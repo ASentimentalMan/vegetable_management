@@ -221,5 +221,6 @@ export default {
   margin-right: 24rpx;
   border-radius: 12rpx;
   color: white;
+  font-size: 24rpx;
 }
 </style>
