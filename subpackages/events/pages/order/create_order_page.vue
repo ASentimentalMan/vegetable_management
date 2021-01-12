@@ -115,6 +115,7 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择采购日期"
+              :defaultValue="timePickerDefaultValue"
               start="2019-07-19 09:00"
               :end="timePickerEndTime"
               fields="day"
@@ -255,6 +256,7 @@ export default {
       tel: "",
       type: [],
       time: "",
+      timePickerDefaultValue: "",
       timePickerEndTime: "",
       amount: "",
       unitPrice: "",
@@ -290,6 +292,7 @@ export default {
       this.tel = item.contactTel;
       this.type = [];
       this.time = item.purchaseDate;
+      this.timePickerDefaultValue = this.time;
       this.amount = item.quantity;
       this.unitPrice = item.unitPrice;
       this.price = item.totalPrice;
