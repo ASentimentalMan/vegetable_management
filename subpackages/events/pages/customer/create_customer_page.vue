@@ -629,7 +629,4 @@ export default {
 </script>
 
 <style scoped>
-.radio {
-  margin-left: 24rpx;
-}
 </style>

@@ -108,7 +108,7 @@
             <label class="radio">
               <radio
                 :disabled="mode === 'read'"
-                :checked="radio === true"
+                :checked="radio === 'true'"
                 value="true"
               />
               是
@@ -116,7 +116,7 @@
             <label class="radio">
               <radio
                 :disabled="mode === 'read'"
-                :checked="radio === false"
+                :checked="radio === 'false'"
                 value="false"
               />
               否
@@ -264,7 +264,7 @@ export default {
       this.locationString = item.place ? item.place : "请选择销售地";
       this.time = item.estimatedDate;
       this.timePickerDefaultValue = this.time;
-      this.radio = item.isExecuteContract;
+      this.radio = item.isExecuteContract.toString();
       this.reTime = item.newEstimatedDate;
       this.reTimePickerDefaultValue = this.reTime;
       this.receiveTime = item.receiptDate;
