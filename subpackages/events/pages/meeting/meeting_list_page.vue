@@ -6,7 +6,7 @@
           <block v-for="(item, index) in list" :key="index">
             <uni-swipe-action-item
               :right-options="acitons"
-              @click="onUniSwipeAction($event, item)"
+              @click="onUniSwipeAction($event, item, index)"
             >
               <view
                 class="list-item flex-horizontal flex-aic"
@@ -167,11 +167,13 @@ export default {
         console.log(item);
         uni.navigateBack();
       } else {
-        // uni.navigateTo({
-        //   url:
-        //     "/subpackages/events/pages/meet/contract_detail_page" +
-        //     objectToQuery(item),
-        // });
+        uni.navigateTo({
+          url:
+            "/subpackages/events/pages/meeting/create_meeting_page?mode=read&eventId=" +
+            this.eventId +
+            "&item=" +
+            JSON.stringify(item),
+        });
       }
     },
     onCreate() {
@@ -181,7 +183,7 @@ export default {
           this.eventId,
       });
     },
-    onUniSwipeAction(e, item) {
+    onUniSwipeAction(e, item, index) {
       switch (e.index) {
         case 0:
           uni.navigateTo({
@@ -201,6 +203,13 @@ export default {
                 const response = await deleteMeetingApi({
                   id: item.id,
                 });
+                if (response) {
+                  this.list.splice(index, 1);
+                  uni.showToast({
+                    title: "删除成功",
+                    icon: "none",
+                  });
+                }
               } else if (res.cancel) {
                 console.log("用户点击取消");
               }

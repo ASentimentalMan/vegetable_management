@@ -5,21 +5,22 @@
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
-		  <view class="form-item flex-horizontal">
-		    <view class="form-item-label">
-		      <text class="form-item-required">*</text>
-		      销售单编号
-		    </view>
-		    <view class="form-item-input">
-		      <input
-		        class="form-input"
-		        type="text"
-		        cursor-spacing="16"
-		        placeholder="请输入销售单编号,自定义标识"
-		        v-model="num"
-		      />
-		    </view>
-		  </view>
+        <view class="form-item flex-horizontal">
+          <view class="form-item-label">
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
+            销售单编号
+          </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入销售单编号,自定义标识"
+              v-model="number"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
             <!-- <text class="form-item-required">*</text> -->
@@ -32,6 +33,7 @@
               cursor-spacing="16"
               placeholder="请输入收货人"
               v-model="receiver"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -44,6 +46,7 @@
               cursor-spacing="16"
               placeholder="请输入收货联系电话"
               v-model="tel"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -66,10 +69,12 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择预计回款日期"
+              :defaultValue="timePickerDefaultValue"
               start="2019-07-19 09:00"
               :end="timePickerEndTime"
               fields="day"
               @change="onTimeSet"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -78,8 +83,22 @@
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 是否按合同执行 </view>
           <radio-group @change="onRadioChange" class="form-item-input">
-            <label class="radio"><radio value="true" />是</label>
-            <label class="radio"><radio value="false" />否</label>
+            <label class="radio">
+              <radio
+                :disabled="mode === 'read'"
+                :checked="radio === true"
+                value="true"
+              />
+              是
+            </label>
+            <label class="radio">
+              <radio
+                :disabled="mode === 'read'"
+                :checked="radio === false"
+                value="false"
+              />
+              否
+            </label>
           </radio-group>
         </view>
       </view>
@@ -89,10 +108,12 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择预计新回款日期"
+              :defaultValue="reTimePickerDefaultValue"
               start="2019-07-19 09:00"
               :end="timePickerEndTime"
               fields="day"
               @change="onReTimeSet"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -103,10 +124,12 @@
           <view class="form-item-input">
             <biao-fun-date-picker
               placeholder="请选择签收日期"
+              :defaultValue="receiveTimePickerDefaultValue"
               start="2019-07-19 09:00"
               :end="timePickerEndTime"
               fields="day"
-              @change="onRceiveTimeSet"
+              @change="onReceiveTimeSet"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -121,12 +144,14 @@
               cursor-spacing="16"
               placeholder="请输入备注"
               v-model="description"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
       </view>
       <add-media-attachment
         title="附件"
+        :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
         @onAttachmentRemove="onAttachmentRemove"
@@ -134,7 +159,12 @@
         @onAttachmentUploaded="onAttachmentUploaded"
       />
     </view>
-    <view class="unscrollable">
+    <view
+      class="unscrollable"
+      style="height: 40rpx"
+      v-if="mode === 'read'"
+    ></view>
+    <view class="unscrollable" v-else>
       <view class="bottom-button-container">
         <view class="button-container" @tap="onHandle">
           <view class="bottom-button"> 完成 </view>
@@ -149,7 +179,7 @@
 import LocationPicker from "@/components/public/location_picker";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createSaleApi } from "@/apis/event_apis";
+import { createSaleApi, editSaleApi } from "@/apis/event_apis";
 export default {
   components: {
     LocationPicker,
@@ -158,27 +188,72 @@ export default {
   },
   data() {
     return {
+      mode: "create",
       eventId: "",
+      saleId: "",
+      onNetworking: false,
+      number: "",
       receiver: "",
-      num: "",
       tel: "",
       location: [],
       locationString: "请选择销售地",
       time: "",
+      timePickerDefaultValue: "",
       timePickerEndTime: "",
       radio: "",
       reTime: "",
+      reTimePickerDefaultValue: "",
       receiveTime: "",
+      receiveTimePickerDefaultValue: "",
       description: "",
       attachments: [],
-      onNetworking: false,
     };
   },
   onLoad(e) {
     if (e.eventId) {
       this.eventId = e.eventId;
     }
-    console.log(this.eventId);
+    if (e.mode) {
+      this.mode = e.mode;
+      const item = JSON.parse(e.item);
+      console.log(item);
+      this.saleId = item.id;
+      if (this.mode === "edit") {
+        uni.setNavigationBarTitle({
+          title: "修改销售",
+        });
+      } else if (this.mode === "read") {
+        uni.setNavigationBarTitle({
+          title: "销售详情",
+        });
+      }
+      this.number = item.salesNumber;
+      this.receiver = item.consignee;
+      this.tel = item.phone;
+      this.locationString = item.place;
+      this.time = item.estimatedDate;
+      this.timePickerDefaultValue = this.time;
+      this.radio = item.isExecuteContract;
+      this.reTime = item.newEstimatedDate;
+      this.reTimePickerDefaultValue = this.reTime;
+      this.receiveTime = item.receiptDate;
+      this.receiveTimePickerDefaultValue = this.receiveTime;
+      this.description = item.remark;
+      this.attachments = item.files.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+    }
     this.setTimePickerEndTime();
   },
   methods: {
@@ -206,11 +281,12 @@ export default {
       // this.reTime =e.f2;
       this.reTime = new Date(e.f2);
     },
-    onRceiveTimeSet(e) {
- // this.receiveTime =e.f2;
+    onReceiveTimeSet(e) {
+      // this.receiveTime =e.f2;
       this.receiveTime = new Date(e.f2);
     },
     onLocationPick() {
+      if (this.mode === "read") return;
       this.$refs.location.popup();
     },
     onLocationSet(location) {
@@ -239,7 +315,7 @@ export default {
       );
     },
     onValidate() {
-      if (!this.num) {
+      if (!this.number) {
         uni.showToast({
           title: "请输入销售单编号",
           icon: "none",
@@ -250,9 +326,9 @@ export default {
     },
     async onHandle() {
       if (!this.onNetworking && this.onValidate()) {
-        const payload = {
+        let payload = {
           businessId: this.eventId,
-          salesNumber: this.num,
+          salesNumber: this.number,
           consignee: this.receiver,
           phone: this.tel,
           place:
@@ -274,14 +350,20 @@ export default {
         };
         console.log(payload);
         this.onNetworking = true;
-        const response = await createSaleApi(payload);
+        let response;
+        if (this.mode === "create") {
+          response = await createSaleApi(payload);
+        } else if (this.mode === "edit") {
+          payload["id"] = this.saleId;
+          response = await editSaleApi(payload);
+        }
         this.onNetworking = false;
         if (response) {
           let pages = getCurrentPages();
           let prevPage = pages[pages.length - 2];
           prevPage.$vm.needRefresh = true;
           uni.showToast({
-            title: "创建成功",
+            title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
           });
           this.onNetworking = true;

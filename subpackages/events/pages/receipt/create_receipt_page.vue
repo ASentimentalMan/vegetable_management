@@ -1,13 +1,10 @@
-
-
-
 <template>
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
-            <text class="form-item-required">*</text>
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
             发票编号
           </view>
           <view class="form-item-input">
@@ -17,6 +14,7 @@
               cursor-spacing="16"
               placeholder="请输入发票编号"
               v-model="number"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -26,6 +24,7 @@
             <receipt-type-picker
               ref="receiptTypePicker"
               @onReceiptTypeChange="onReceiptTypeChange"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -35,12 +34,14 @@
             <label class="radio"
               ><radio
                 :checked="eventType === 'procure'"
+                :disabled="mode === 'read'"
                 value="procure"
               />采购发票</label
             >
             <label class="radio"
               ><radio
                 :checked="eventType === 'sale'"
+                :disabled="mode === 'read'"
                 value="sale"
               />销售发票</label
             >
@@ -55,6 +56,7 @@
               cursor-spacing="16"
               placeholder="请输入发票金额"
               v-model="money"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -83,6 +85,7 @@
               :end="timePickerEndTime"
               fields="day"
               @change="onTimeSet"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -110,6 +113,7 @@
               cursor-spacing="16"
               placeholder="请输入纳税人识别号"
               v-model="recognizeNumber"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -146,6 +150,7 @@
               cursor-spacing="16"
               placeholder="请输入开户银行"
               v-model="bank"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -158,6 +163,7 @@
               cursor-spacing="16"
               placeholder="请输入银行账号"
               v-model="bankNumber"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -170,6 +176,7 @@
               cursor-spacing="16"
               placeholder="请输入电话"
               v-model="tel"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -212,12 +219,14 @@
               cursor-spacing="16"
               placeholder="请输入备注"
               v-model="description"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
       </view>
       <add-media-attachment
         title="附件"
+        :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
         @onAttachmentRemove="onAttachmentRemove"
@@ -225,7 +234,12 @@
         @onAttachmentUploaded="onAttachmentUploaded"
       />
     </view>
-    <view class="unscrollable">
+    <view
+      class="unscrollable"
+      style="height: 40rpx"
+      v-if="mode === 'read'"
+    ></view>
+    <view class="unscrollable" v-else>
       <view class="bottom-button-container">
         <view class="button-container" @tap="onHandle">
           <view class="bottom-button"> 完成 </view>
@@ -251,9 +265,10 @@ export default {
   },
   data() {
     return {
-      createMode: true,
+      mode: "create",
       eventId: "",
       receiptId: "",
+      onNetworking: false,
       number: "",
       type: {},
       eventType: "",
@@ -276,18 +291,25 @@ export default {
       relateCustomerString: "",
       description: "",
       attachments: [],
-      onNetworking: false,
     };
   },
   onLoad(e) {
     if (e.eventId) {
       this.eventId = e.eventId;
     }
-    if (e.mode === "edit") {
-      this.createMode = false;
+    if (e.mode) {
+      this.mode = e.mode;
       const item = JSON.parse(e.item);
-      console.log(item);
       this.receiptId = item.id;
+      if (this.mode === "edit") {
+        uni.setNavigationBarTitle({
+          title: "修改发票",
+        });
+      } else if (this.mode === "read") {
+        uni.setNavigationBarTitle({
+          title: "发票详情",
+        });
+      }
       this.number = item.invoiceNumber;
       this.type = {
         label: item.invoiceType,
@@ -344,12 +366,6 @@ export default {
     }
   },
   methods: {
-    onReceiptTypeChange(e) {
-      this.type = e;
-    },
-    onEventTypeChange(e) {
-      this.eventType = e.target.value;
-    },
     initTimePicker() {
       const time = new Date();
       this.timePickerEndTime =
@@ -365,31 +381,51 @@ export default {
         ":" +
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
-    onTimeSet(e) {
-      this.time = e.f1;
+    onReceiptTypeChange(e) {
+      this.type = e;
+    },
+    onEventTypeChange(e) {
+      this.eventType = e.target.value;
     },
     onSelectFrom() {
+      if (this.mode === "read") return;
       uni.navigateTo({
         url:
           "/subpackages/events/pages/customer/customer_list_page?mode=select&key=from",
       });
     },
+    onTimeSet(e) {
+      this.time = e.f1;
+    },
     onSelectTo() {
+      if (this.mode === "read") return;
       uni.navigateTo({
         url:
           "/subpackages/events/pages/customer/customer_list_page?mode=select&key=to",
       });
     },
-    onSelectCustomer() {
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=relateCustomer",
-      });
+    onLocationPick() {
+      if (this.mode === "read") return;
+      this.$refs.location.popup();
+    },
+    onLocationSet(location) {
+      if (location.length) {
+        this.location = location;
+        this.locationString = location.map((e) => e.name).join("/");
+      }
     },
     onSelectRelateContract() {
+      if (this.mode === "read") return;
       uni.navigateTo({
         url:
           "/subpackages/events/pages/contract/contract_list_page?mode=select&key=relateContract",
+      });
+    },
+    onSelectCustomer() {
+      if (this.mode === "read") return;
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=relateCustomer",
       });
     },
     onAttachmentAdd(attachments) {
@@ -417,15 +453,6 @@ export default {
         return false;
       }
       return true;
-    },
-    onLocationSet(location) {
-      if (location.length) {
-        this.location = location;
-        this.locationString = location.map((e) => e.name).join("/");
-      }
-    },
-    onLocationPick() {
-      this.$refs.location.popup();
     },
     async onHandle() {
       if (!this.onNetworking && this.onValidate()) {
@@ -481,7 +508,7 @@ export default {
           let prevPage = pages[pages.length - 2];
           prevPage.$vm.needRefresh = true;
           uni.showToast({
-            title: "创建成功",
+            title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
           });
           this.onNetworking = true;

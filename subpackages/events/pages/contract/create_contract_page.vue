@@ -176,7 +176,7 @@
       </view>
       <add-media-attachment
         title="附件"
-        :readonly="mode === 'read'"
+        :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
         @onAttachmentRemove="onAttachmentRemove"
@@ -213,6 +213,7 @@ export default {
       mode: "create",
       eventId: "",
       contractId: "",
+      onNetworking: false,
       name: "",
       number: "",
       type: "",
@@ -232,7 +233,6 @@ export default {
       endTimePickerEndTime: "",
       description: "",
       attachments: [],
-      onNetworking: false,
     };
   },
   onLoad(e) {
@@ -243,7 +243,6 @@ export default {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
       this.contractId = item.id;
-      this.meetingId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
           title: "修改合同",

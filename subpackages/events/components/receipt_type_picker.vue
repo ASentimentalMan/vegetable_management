@@ -5,6 +5,7 @@
       :range="range"
       range-key="label"
       @change="selectorChange"
+      :disabled="disabled"
     >
       <text
         class="selected"
@@ -24,6 +25,12 @@ export default {
       selectedStr: "请选择发票类型",
       sel: 0,
     };
+  },
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   created() {
     this.fetch();

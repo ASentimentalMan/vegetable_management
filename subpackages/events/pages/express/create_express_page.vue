@@ -7,7 +7,7 @@
       <view class="form-container">
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
-            <text class="form-item-required">*</text>
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
             物流单编号
           </view>
           <view class="form-item-input">
@@ -17,6 +17,7 @@
               cursor-spacing="16"
               placeholder="请输入物流单编号 自定义标识"
               v-model="number"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -32,6 +33,7 @@
               cursor-spacing="16"
               placeholder="请输入货物名称"
               v-model="name"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -44,6 +46,7 @@
               cursor-spacing="16"
               placeholder="请输入货物重量"
               v-model="weight"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -56,6 +59,7 @@
               cursor-spacing="16"
               placeholder="请输入运输距离"
               v-model="distance"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -68,6 +72,7 @@
               cursor-spacing="16"
               placeholder="请输入运输费用"
               v-model="fee"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -90,10 +95,18 @@
           <view class="form-item-label"> 支付状态 </view>
           <radio-group @change="onRadioChange" class="form-item-input">
             <label class="radio"
-              ><radio :checked="radio === '0'" value="0" />未支付</label
+              ><radio
+                :checked="radio === '0'"
+                :disabled="mode === 'read'"
+                value="0"
+              />未支付</label
             >
             <label class="radio"
-              ><radio :checked="radio === '1'" value="1" />已支付</label
+              ><radio
+                :checked="radio === '1'"
+                :disabled="mode === 'read'"
+                value="1"
+              />已支付</label
             >
           </radio-group>
         </view>
@@ -138,6 +151,7 @@
               :end="timePickerEndTime"
               fields="day"
               @change="onStartTimeSet"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -151,6 +165,7 @@
               :end="timePickerEndTime"
               fields="day"
               @change="onEndTimeSet"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -175,14 +190,14 @@
                 class="add-form-item"
                 style="margin-left: 12rpx"
                 @tap="onRemoveOrder(index)"
-                v-if="relateOrder.length > 1"
+                v-if="mode !== 'read' && relateOrder.length > 1"
               >
                 -
               </view>
             </view>
           </view>
         </block>
-        <view class="form-item flex-horizontal">
+        <view class="form-item flex-horizontal" v-if="mode !== 'read'">
           <view class="form-item-input">
             <view class="add-form-item" @tap="onAddOrder"> + </view>
           </view>
@@ -208,14 +223,14 @@
                 class="add-form-item"
                 style="margin-left: 12rpx"
                 @tap="onRemoveSale(index)"
-                v-if="relateSale.length > 1"
+                v-if="mode !== 'read' && relateSale.length > 1"
               >
                 -
               </view>
             </view>
           </view>
         </block>
-        <view class="form-item flex-horizontal">
+        <view class="form-item flex-horizontal" v-if="mode !== 'read'">
           <view class="form-item-input">
             <view class="add-form-item" @tap="onAddSale"> + </view>
           </view>
@@ -231,12 +246,14 @@
               cursor-spacing="16"
               placeholder="请输入备注"
               v-model="description"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
       </view>
       <add-media-attachment
         title="附件"
+        :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
         @onAttachmentRemove="onAttachmentRemove"
@@ -244,7 +261,12 @@
         @onAttachmentUploaded="onAttachmentUploaded"
       />
     </view>
-    <view class="unscrollable">
+    <view
+      class="unscrollable"
+      style="height: 40rpx"
+      v-if="mode === 'read'"
+    ></view>
+    <view class="unscrollable" v-else>
       <view class="bottom-button-container">
         <view class="button-container" @tap="onHandle">
           <view class="bottom-button"> 完成 </view>
@@ -265,9 +287,10 @@ export default {
   },
   data() {
     return {
-      createMode: true,
+      mode: "create",
       eventId: "",
       expressId: "",
+      onNetworking: false,
       number: "",
       name: "",
       weight: "",
@@ -289,21 +312,25 @@ export default {
       relateSale: [{ id: "" }],
       description: "",
       attachments: [],
-      onNetworking: false,
     };
   },
   onLoad(e) {
     if (e.eventId) {
       this.eventId = e.eventId;
     }
-    if (e.mode === "edit") {
-      uni.setNavigationBarTitle({
-        title: "修改物流",
-      });
-      this.createMode = false;
+    if (e.mode) {
+      this.mode = e.mode;
       const item = JSON.parse(e.item);
       this.expressId = item.id;
-      console.log(item);
+      if (this.mode === "edit") {
+        uni.setNavigationBarTitle({
+          title: "修改物流",
+        });
+      } else if (this.mode === "read") {
+        uni.setNavigationBarTitle({
+          title: "物流详情",
+        });
+      }
       this.number = item.logisticsNumber;
       this.name = item.itemName;
       this.weight = item.weight;
@@ -320,16 +347,8 @@ export default {
       this.startTimeDefaultValue = this.startTime;
       this.endTime = item.endDate ? item.endDate : "";
       this.endTimeDefaultValue = this.endTime;
-      // this.relateOrder = item.procurementIds.length
-      //   ? item.procurementIds.map((e) => {
-      //       return {};
-      //     })
-      //   : [{ id: "" }];
-      // this.relateSale = item.saleIds.length
-      //   ? item.saleIds.map((e) => {
-      //       return {};
-      //     })
-      //   : [{ id: "" }];
+      this.relateOrder = item.procurements;
+      this.relateSale = item.sales;
       this.description = item.remark;
       this.attachments = item.files.map((e) => {
         return {
@@ -350,6 +369,7 @@ export default {
   },
   methods: {
     onSelectPayer() {
+      if (this.mode === "read") return;
       uni.navigateTo({
         url:
           "/subpackages/events/pages/customer/customer_list_page?mode=select&key=payer",
@@ -359,12 +379,14 @@ export default {
       this.radio = e.target.value;
     },
     onSelectFrom() {
+      if (this.mode === "read") return;
       uni.navigateTo({
         url:
           "/subpackages/events/pages/customer/customer_list_page?mode=select&key=from",
       });
     },
     onSelectTo() {
+      if (this.mode === "read") return;
       uni.navigateTo({
         url:
           "/subpackages/events/pages/customer/customer_list_page?mode=select&key=to",
@@ -399,6 +421,7 @@ export default {
       this.relateOrder.splice(index, 1);
     },
     onSelectOrder(index) {
+      if (this.mode === "read") return;
       uni.navigateTo({
         url:
           "/subpackages/events/pages/order/order_list_page?mode=select&key=relateOrder&index=" +
@@ -412,6 +435,7 @@ export default {
       this.relateSale.splice(index, 1);
     },
     onSelectSale(index) {
+      if (this.mode === "read") return;
       uni.navigateTo({
         url:
           "/subpackages/events/pages/sale/sale_list_page?mode=select&key=relateSale&index=" +
@@ -488,9 +512,9 @@ export default {
         console.log(payload);
         this.onNetworking = true;
         let response;
-        if (this.createMode) {
+        if (this.mode === "create") {
           response = await createExpressApi(payload);
-        } else {
+        } else if (this.mode === "edit") {
           payload["id"] = this.expressId;
           response = await editExpressApi(payload);
         }
@@ -500,7 +524,7 @@ export default {
           let prevPage = pages[pages.length - 2];
           prevPage.$vm.needRefresh = true;
           uni.showToast({
-            title: "创建成功",
+            title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
           });
           this.onNetworking = true;

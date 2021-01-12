@@ -7,7 +7,7 @@
       <view class="form-container">
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
-            <text class="form-item-required">*</text>
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
             议题
           </view>
           <view class="form-item-input">
@@ -17,6 +17,7 @@
               cursor-spacing="16"
               placeholder="请输入会议议题"
               v-model="topic"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -32,6 +33,7 @@
               cursor-spacing="16"
               placeholder="请输入会议纪要"
               v-model="brief"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -44,6 +46,7 @@
               cursor-spacing="16"
               placeholder="请输入会议结果"
               v-model="result"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -58,12 +61,14 @@
               cursor-spacing="16"
               placeholder="请输入备注"
               v-model="description"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
       </view>
       <add-media-attachment
         title="附件"
+        :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
         @onAttachmentRemove="onAttachmentRemove"
@@ -71,7 +76,12 @@
         @onAttachmentUploaded="onAttachmentUploaded"
       />
     </view>
-    <view class="unscrollable">
+    <view
+      class="unscrollable"
+      style="height: 40rpx"
+      v-if="mode === 'read'"
+    ></view>
+    <view class="unscrollable" v-else>
       <view class="bottom-button-container">
         <view class="button-container" @tap="onHandle">
           <view class="bottom-button"> 完成 </view>
@@ -93,12 +103,12 @@ export default {
       mode: "create",
       eventId: "",
       meetingId: "",
+      onNetworking: false,
       topic: "",
       brief: "",
       result: "",
       description: "",
       attachments: [],
-      onNetworking: false,
     };
   },
   onLoad(e) {
@@ -108,7 +118,6 @@ export default {
     if (e.mode) {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
-      console.log(item);
       this.meetingId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({

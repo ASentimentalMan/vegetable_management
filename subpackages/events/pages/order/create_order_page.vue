@@ -7,7 +7,7 @@
       <view class="form-container">
         <view class="form-item flex-horizontal">
           <view class="form-item-label">
-            <text class="form-item-required">*</text>
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
             采购单编号
           </view>
           <view class="form-item-input">
@@ -16,7 +16,8 @@
               type="text"
               cursor-spacing="16"
               placeholder="请输入采购单编号,自定义标识"
-              v-model="num"
+              v-model="number"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -32,6 +33,7 @@
               cursor-spacing="16"
               placeholder="请输入基地名称"
               v-model="name"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -44,6 +46,7 @@
               cursor-spacing="16"
               placeholder="请输入基地面积"
               v-model="area"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -56,6 +59,7 @@
               cursor-spacing="16"
               placeholder="请输入基地联系人"
               v-model="contact"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -68,11 +72,12 @@
               cursor-spacing="16"
               placeholder="请输入基地联系电话"
               v-model="tel"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
       </view>
-<!--      <view class="form-container">
+      <!--      <view class="form-container">
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 采购品类 </view>
           <view class="form-item-input">
@@ -96,6 +101,7 @@
               :end="timePickerEndTime"
               fields="day"
               @change="onTimeSet"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -108,6 +114,7 @@
               cursor-spacing="16"
               placeholder="请输入采购数量"
               v-model="amount"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -120,6 +127,7 @@
               cursor-spacing="16"
               placeholder="请输入采购单价"
               v-model="unitPrice"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -132,6 +140,7 @@
               cursor-spacing="16"
               placeholder="请输入采购总价"
               v-model="price"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
@@ -161,12 +170,14 @@
               cursor-spacing="16"
               placeholder="请输入备注"
               v-model="description"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
       </view>
       <add-media-attachment
         title="附件"
+        :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
         @onAttachmentRemove="onAttachmentRemove"
@@ -174,7 +185,12 @@
         @onAttachmentUploaded="onAttachmentUploaded"
       />
     </view>
-    <view class="unscrollable">
+    <view
+      class="unscrollable"
+      style="height: 40rpx"
+      v-if="mode === 'read'"
+    ></view>
+    <view class="unscrollable" v-else>
       <view class="bottom-button-container">
         <view class="button-container" @tap="onHandle">
           <view class="bottom-button"> 完成 </view>
@@ -195,9 +211,12 @@ export default {
   },
   data() {
     return {
+      mode: "create",
       eventId: "",
+      orderId: "",
+      onNetworking: false,
+      number: "",
       name: "",
-      num: "",
       area: "",
       contact: "",
       tel: "",
@@ -211,12 +230,55 @@ export default {
       providerString: "",
       description: "",
       attachments: [],
-      onNetworking: false,
     };
   },
   onLoad(e) {
     if (e.eventId) {
       this.eventId = e.eventId;
+    }
+    if (e.mode) {
+      this.mode = e.mode;
+      const item = JSON.parse(e.item);
+      console.log(item);
+      this.orderId = item.id;
+      if (this.mode === "edit") {
+        uni.setNavigationBarTitle({
+          title: "修改采购",
+        });
+      } else if (this.mode === "read") {
+        uni.setNavigationBarTitle({
+          title: "采购详情",
+        });
+      }
+      this.number = item.procureNumber;
+      this.name = item.baseName;
+      this.area = item.baseArea;
+      this.contact = item.contact;
+      this.tel = item.contactTel;
+      this.type = [];
+      this.time = item.purchaseDate;
+      this.amount = item.quantity;
+      this.unitPrice = item.unitPrice;
+      this.price = item.totalPrice;
+      this.provider = {
+        id: item.sourceInputCustomerId,
+      };
+      this.providerString = "";
+      this.description = item.remark;
+      this.attachments = item.files.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
     }
     this.setTimePickerEndTime();
   },
@@ -239,9 +301,10 @@ export default {
     },
     onTimeSet(e) {
       // this.time = e.f2;
-	  this.time = new Date(e.f2);
+      this.time = new Date(e.f2);
     },
     onSelectProvider() {
+      if (this.mode === "read") return;
       uni.navigateTo({
         url:
           "/subpackages/events/pages/customer/customer_list_page?mode=select&key=provider",
@@ -264,7 +327,7 @@ export default {
       );
     },
     onValidate() {
-      if (!this.num) {
+      if (!this.number) {
         uni.showToast({
           title: "请输入采购单编号",
           icon: "none",
@@ -277,7 +340,7 @@ export default {
       if (!this.onNetworking && this.onValidate()) {
         const payload = {
           businessId: this.eventId,
-          procureNumber: this.num,
+          procureNumber: this.number,
           baseName: this.name,
           baseArea: this.area,
           contact: this.contact,

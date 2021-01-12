@@ -8,9 +8,10 @@
             class="attachment-size"
             :src="item.subFileUrl ? item.subFileUrl : item.blob"
             mode="aspectFill"
+            @tap="preview(index)"
           />
           <view
-            v-if="!readonly"
+            v-if="!disabled"
             class="attachment-remove-container"
             @click="onAttachmentRemove(index)"
           >
@@ -30,7 +31,7 @@
       </block>
       <view
         class="attachment-add-container attachment-size"
-        v-if="attachments.length < amount && !readonly"
+        v-if="attachments.length < amount && !disabled"
         @click="onAttachmentAdd"
       >
         <text class="attachment-add">+</text>
@@ -51,7 +52,7 @@ export default {
       type: Number,
       default: 9,
     },
-    readonly: {
+    disabled: {
       type: Boolean,
       default: false,
     },
@@ -133,6 +134,17 @@ export default {
           }, 600);
         },
       });
+    },
+    preview(index) {
+      if (this.disabled) {
+        const urls = this.attachments.map((e) => {
+          return e.fileUrl;
+        });
+        uni.previewImage({
+          urls: urls,
+          current: index,
+        });
+      }
     },
   },
 };

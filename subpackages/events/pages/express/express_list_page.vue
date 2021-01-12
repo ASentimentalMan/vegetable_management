@@ -168,7 +168,11 @@ export default {
         uni.navigateBack();
       } else {
         uni.navigateTo({
-          url: "/subpackages/event/event_detail_page" + objectToQuery(item),
+          url:
+            "/subpackages/events/pages/express/create_express_page?mode=read&eventId=" +
+            this.eventId +
+            "&item=" +
+            JSON.stringify(item),
         });
       }
     },
@@ -199,6 +203,13 @@ export default {
                 const response = await deleteExpressApi({
                   id: item.id,
                 });
+                if (response) {
+                  this.list.splice(index, 1);
+                  uni.showToast({
+                    title: "删除成功",
+                    icon: "none",
+                  });
+                }
               } else if (res.cancel) {
                 console.log("用户点击取消");
               }

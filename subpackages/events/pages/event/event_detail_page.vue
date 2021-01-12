@@ -9,9 +9,11 @@
               src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
             />
           </view>
-          <view class="options-text"> 合同 </view>
-          <view class="options-count">
-            {{ event.businessCount.contract }}
+          <view class="options-text">
+            合同
+            <text class="options-count">
+              ({{ event.businessCount.contract }})
+            </text>
           </view>
           <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
           </view>
@@ -27,9 +29,11 @@
               src="https://dev.ncpgz.com/assets/management/icons/business_receipt.png"
             />
           </view>
-          <view class="options-text"> 发票 </view>
-          <view class="options-count">
-            {{ event.businessCount.invoice }}
+          <view class="options-text">
+            发票
+            <text class="options-count">
+              ({{ event.businessCount.invoice }})
+            </text>
           </view>
           <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
           </view>
@@ -43,9 +47,11 @@
               src="https://dev.ncpgz.com/assets/management/icons/business_express.png"
             />
           </view>
-          <view class="options-text"> 物流 </view>
-          <view class="options-count">
-            {{ event.businessCount.logistics }}
+          <view class="options-text">
+            物流
+            <text class="options-count">
+              ({{ event.businessCount.logistics }})
+            </text>
           </view>
           <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
           </view>
@@ -59,10 +65,13 @@
               src="https://dev.ncpgz.com/assets/management/icons/business_meeting.png"
             />
           </view>
-          <view class="options-text"> 会议 </view>
-          <view class="options-count">
-            {{ event.businessCount.meeting }}
+          <view class="options-text">
+            会议
+            <text class="options-count">
+              ({{ event.businessCount.meeting }})
+            </text>
           </view>
+
           <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
           </view>
         </view>
@@ -77,9 +86,11 @@
               src="https://dev.ncpgz.com/assets/management/icons/business_order.png"
             />
           </view>
-          <view class="options-text"> 供应商采购单 </view>
-          <view class="options-count">
-            {{ event.businessCount.procure }}
+          <view class="options-text">
+            供应商采购单
+            <text class="options-count">
+              ({{ event.businessCount.procure }})
+            </text>
           </view>
           <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
           </view>
@@ -93,9 +104,11 @@
               src="https://dev.ncpgz.com/assets/management/icons/business_sale.png"
             />
           </view>
-          <view class="options-text"> 销售单 </view>
-          <view class="options-count">
-            {{ event.businessCount.sales }}
+          <view class="options-text">
+            销售单
+            <text class="options-count">
+              ({{ event.businessCount.sales }})
+            </text>
           </view>
           <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
           </view>
@@ -200,5 +213,6 @@ export default {
 .options-count {
   color: grey;
   font-size: 28rpx;
+  margin-left: 12rpx;
 }
 </style>
