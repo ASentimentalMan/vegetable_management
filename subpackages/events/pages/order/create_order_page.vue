@@ -5,7 +5,10 @@
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? number : true"
+        >
           <view class="form-item-label">
             <text class="form-item-required" v-if="mode !== 'read'">*</text>
             采购单编号
@@ -15,13 +18,16 @@
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入采购单编号,自定义标识"
+              placeholder="请输入采购单编号 自定义标识"
               v-model="number"
               :disabled="mode === 'read'"
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? name : true"
+        >
           <view class="form-item-label">
             <!-- <text class="form-item-required">*</text> -->
             基地名称
@@ -37,7 +43,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? area : true"
+        >
           <view class="form-item-label"> 基地面积（亩） </view>
           <view class="form-item-input">
             <input
@@ -50,7 +59,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? contact : true"
+        >
           <view class="form-item-label"> 联系人 </view>
           <view class="form-item-input">
             <input
@@ -63,7 +75,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? tel : true"
+        >
           <view class="form-item-label"> 联系电话 </view>
           <view class="form-item-input">
             <input
@@ -92,7 +107,10 @@
         </view>
       </view> -->
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? time : true"
+        >
           <view class="form-item-label"> 采购日期 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
@@ -105,7 +123,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? amount : true"
+        >
           <view class="form-item-label"> 采购数量（吨） </view>
           <view class="form-item-input">
             <input
@@ -118,7 +139,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? unitPrice : true"
+        >
           <view class="form-item-label"> 采购单价（元） </view>
           <view class="form-item-input">
             <input
@@ -131,7 +155,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? price : true"
+        >
           <view class="form-item-label"> 采购总价（元） </view>
           <view class="form-item-input">
             <input
@@ -146,7 +173,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? providerString : true"
+        >
           <view class="form-item-label"> 货源提供客户 </view>
           <view class="form-item-input" @tap="onSelectProvider">
             <input
@@ -161,7 +191,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? description : true"
+        >
           <view class="form-item-label"> 备注 </view>
           <view class="form-item-input">
             <input
@@ -203,7 +236,7 @@
 <script>
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createOrderApi } from "@/apis/event_apis";
+import { createOrderApi, editOrderApi } from "@/apis/event_apis";
 export default {
   components: {
     BiaoFunDatePicker,
@@ -300,8 +333,7 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onTimeSet(e) {
-      // this.time = e.f2;
-      this.time = new Date(e.f2);
+      this.time = e.f1;
     },
     onSelectProvider() {
       if (this.mode === "read") return;
@@ -329,7 +361,7 @@ export default {
     onValidate() {
       if (!this.number) {
         uni.showToast({
-          title: "请输入采购单编号",
+          title: "请输入采购单编号 自定义标识",
           icon: "none",
         });
         return false;
@@ -362,20 +394,32 @@ export default {
           }),
         };
         console.log(payload);
-        const response = await createOrderApi(payload);
+        this.onNetworking = true;
+        let response;
+        if (this.mode === "create") {
+          response = await createOrderApi(payload);
+        } else if (this.mode === "edit") {
+          payload["id"] = this.orderId;
+          response = await editOrderApi(payload);
+        }
+        this.onNetworking = false;
         if (response) {
-          let pages = getCurrentPages();
-          let prevPage = pages[pages.length - 2];
-          prevPage.$vm.needRefresh = true;
+          this.onRefreshPreviousPage();
           uni.showToast({
-            title: "创建成功",
+            title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
           });
+          this.onNetworking = true;
           setTimeout(() => {
             uni.navigateBack();
           }, 600);
         }
       }
+    },
+    onRefreshPreviousPage() {
+      let pages = getCurrentPages();
+      let prevPage = pages[pages.length - 2];
+      prevPage.$vm.needRefresh = true;
     },
   },
 };

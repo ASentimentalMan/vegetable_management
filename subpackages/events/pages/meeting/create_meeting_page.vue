@@ -5,7 +5,10 @@
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? topic : true"
+        >
           <view class="form-item-label">
             <text class="form-item-required" v-if="mode !== 'read'">*</text>
             议题
@@ -21,7 +24,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? brief : true"
+        >
           <view class="form-item-label">
             <!-- <text class="form-item-required">*</text> -->
             纪要
@@ -37,7 +43,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? result : true"
+        >
           <view class="form-item-label"> 结果 </view>
           <view class="form-item-input">
             <input
@@ -52,7 +61,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? description : true"
+        >
           <view class="form-item-label"> 备注 </view>
           <view class="form-item-input">
             <input
@@ -204,9 +216,7 @@ export default {
         }
         this.onNetworking = false;
         if (response) {
-          let pages = getCurrentPages();
-          let prevPage = pages[pages.length - 2];
-          prevPage.$vm.needRefresh = true;
+          this.onRefreshPreviousPage();
           uni.showToast({
             title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
@@ -217,6 +227,11 @@ export default {
           }, 600);
         }
       }
+    },
+    onRefreshPreviousPage() {
+      let pages = getCurrentPages();
+      let prevPage = pages[pages.length - 2];
+      prevPage.$vm.needRefresh = true;
     },
   },
 };

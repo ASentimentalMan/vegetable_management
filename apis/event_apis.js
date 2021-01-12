@@ -43,6 +43,16 @@ export const deleteEventApi = payload => {
   })
 }
 
+// 业务统计
+export const getEventCountApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/business-count",
+    data: payload,
+    token: true
+  })
+}
+
 // 合同清单
 export const getContractListApi = payload => {
   return request_java({

@@ -114,6 +114,7 @@ export default {
   },
   onShow() {
     if (this.needRefresh) {
+      this.onRefreshPreviousPage();
       this.onRefresh();
       this.needRefresh = false;
     }
@@ -182,7 +183,7 @@ export default {
           this.eventId,
       });
     },
-    onUniSwipeAction(e, item) {
+    onUniSwipeAction(e, item, index) {
       switch (e.index) {
         case 0:
           uni.navigateTo({
@@ -203,6 +204,7 @@ export default {
                   id: item.id,
                 });
                 if (response) {
+                  this.onRefreshPreviousPage();
                   this.list.splice(index, 1);
                   uni.showToast({
                     title: "删除成功",
@@ -216,6 +218,11 @@ export default {
           });
           break;
       }
+    },
+    onRefreshPreviousPage() {
+      let pages = getCurrentPages();
+      let prevPage = pages[pages.length - 2];
+      prevPage.$vm.needRefresh = true;
     },
   },
 };

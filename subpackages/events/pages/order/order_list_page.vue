@@ -57,7 +57,7 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getOrderListApi, deleteOrderListApi } from "@/apis/event_apis";
+import { getOrderListApi, deleteOrderApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -116,6 +116,7 @@ export default {
   },
   onShow() {
     if (this.needRefresh) {
+      this.onRefreshPreviousPage();
       this.onRefresh();
       this.needRefresh = false;
     }
@@ -205,6 +206,7 @@ export default {
                   id: item.id,
                 });
                 if (response) {
+                  this.onRefreshPreviousPage();
                   this.list.splice(index, 1);
                   uni.showToast({
                     title: "删除成功",
@@ -218,6 +220,11 @@ export default {
           });
           break;
       }
+    },
+    onRefreshPreviousPage() {
+      let pages = getCurrentPages();
+      let prevPage = pages[pages.length - 2];
+      prevPage.$vm.needRefresh = true;
     },
   },
 };

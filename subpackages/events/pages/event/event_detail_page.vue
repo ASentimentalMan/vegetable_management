@@ -119,11 +119,14 @@
 </template>
 
 <script>
+import { getEventCountApi } from "@/apis/event_apis";
 export default {
   data() {
     return {
       eventId: null,
       event: {},
+      onNetworking: false,
+      needRefresh: false,
     };
   },
   onLoad(e) {
@@ -132,14 +135,38 @@ export default {
       this.eventId = item.id;
       this.event = item;
     }
-    console.log(this.eventId);
     if (e.businessName) {
       uni.setNavigationBarTitle({
         title: e.businessName,
       });
     }
+    this.fetch();
+  },
+  onShow() {
+    if (this.needRefresh) {
+      this.onRefreshPreviousPage();
+      this.fetch();
+      this.needRefresh = false;
+    }
+  },
+  onPullDownRefresh() {
+    this.fetch();
   },
   methods: {
+    async fetch() {
+      if (!this.onNetworking) {
+        const payload = {
+          businessId: this.eventId,
+        };
+        this.onNetworking = true;
+        const response = await getEventCountApi(payload);
+        this.onNetworking = false;
+        if (response) {
+          this.event.businessCount = response.data;
+        }
+        uni.stopPullDownRefresh();
+      }
+    },
     goContract() {
       uni.navigateTo({
         url:
@@ -181,6 +208,11 @@ export default {
           "/subpackages/events/pages/sale/sale_list_page?eventId=" +
           this.eventId,
       });
+    },
+    onRefreshPreviousPage() {
+      let pages = getCurrentPages();
+      let prevPage = pages[pages.length - 2];
+      prevPage.$vm.needRefresh = true;
     },
   },
 };

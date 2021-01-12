@@ -5,7 +5,10 @@
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? number : true"
+        >
           <view class="form-item-label">
             <text class="form-item-required" v-if="mode !== 'read'">*</text>
             销售单编号
@@ -15,13 +18,16 @@
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入销售单编号,自定义标识"
+              placeholder="请输入销售单编号 自定义标识"
               v-model="number"
               :disabled="mode === 'read'"
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? receiver : true"
+        >
           <view class="form-item-label">
             <!-- <text class="form-item-required">*</text> -->
             收货人
@@ -37,7 +43,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? tel : true"
+        >
           <view class="form-item-label"> 收货联系电话 </view>
           <view class="form-item-input">
             <input
@@ -50,7 +59,14 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="
+            mode === 'read'
+              ? locationString && locationString !== '请选择销售地'
+              : true
+          "
+        >
           <view class="form-item-label"> 销售地 </view>
           <view class="form-item-input" @click="onLocationPick">
             <view
@@ -64,7 +80,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? time : true"
+        >
           <view class="form-item-label"> 预计回款日期 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
@@ -80,7 +99,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? radio : true"
+        >
           <view class="form-item-label"> 是否按合同执行 </view>
           <radio-group @change="onRadioChange" class="form-item-input">
             <label class="radio">
@@ -103,7 +125,10 @@
         </view>
       </view>
       <view class="form-container" v-if="radio === 'false'">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? reTime : true"
+        >
           <view class="form-item-label"> 预计新回款日期 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
@@ -119,7 +144,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? receiveTime : true"
+        >
           <view class="form-item-label"> 签收日期 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
@@ -135,7 +163,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? description : true"
+        >
           <view class="form-item-label"> 备注 </view>
           <view class="form-item-input">
             <input
@@ -230,7 +261,7 @@ export default {
       this.number = item.salesNumber;
       this.receiver = item.consignee;
       this.tel = item.phone;
-      this.locationString = item.place;
+      this.locationString = item.place ? item.place : "请选择销售地";
       this.time = item.estimatedDate;
       this.timePickerDefaultValue = this.time;
       this.radio = item.isExecuteContract;
@@ -274,16 +305,13 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onTimeSet(e) {
-      // this.time =e.f2;
-      this.time = new Date(e.f2);
+      this.time = e.f1;
     },
     onReTimeSet(e) {
-      // this.reTime =e.f2;
-      this.reTime = new Date(e.f2);
+      this.reTime = e.f1;
     },
     onReceiveTimeSet(e) {
-      // this.receiveTime =e.f2;
-      this.receiveTime = new Date(e.f2);
+      this.receiveTime = e.f1;
     },
     onLocationPick() {
       if (this.mode === "read") return;
@@ -317,7 +345,7 @@ export default {
     onValidate() {
       if (!this.number) {
         uni.showToast({
-          title: "请输入销售单编号",
+          title: "请输入销售单编号 自定义标识",
           icon: "none",
         });
         return false;
@@ -359,9 +387,7 @@ export default {
         }
         this.onNetworking = false;
         if (response) {
-          let pages = getCurrentPages();
-          let prevPage = pages[pages.length - 2];
-          prevPage.$vm.needRefresh = true;
+          this.onRefreshPreviousPage();
           uni.showToast({
             title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
@@ -372,6 +398,11 @@ export default {
           }, 600);
         }
       }
+    },
+    onRefreshPreviousPage() {
+      let pages = getCurrentPages();
+      let prevPage = pages[pages.length - 2];
+      prevPage.$vm.needRefresh = true;
     },
   },
 };

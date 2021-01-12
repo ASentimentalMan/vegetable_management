@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view v-if="disabled ? attachments.length : true">
     <view class="form-unit-title" v-if="title"> {{ title }} </view>
     <view class="form-attachment-container">
       <block v-for="(item, index) in attachments" :key="index">

@@ -5,7 +5,10 @@
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? number : true"
+        >
           <view class="form-item-label">
             <text class="form-item-required" v-if="mode !== 'read'">*</text>
             物流单编号
@@ -21,11 +24,11 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label">
-            <!-- <text class="form-item-required">*</text> -->
-            货物名称
-          </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? name : true"
+        >
+          <view class="form-item-label"> 货物名称 </view>
           <view class="form-item-input">
             <input
               class="form-input"
@@ -37,7 +40,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? weight : true"
+        >
           <view class="form-item-label"> 货物重量（吨） </view>
           <view class="form-item-input">
             <input
@@ -50,7 +56,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? distance : true"
+        >
           <view class="form-item-label"> 距离（kM） </view>
           <view class="form-item-input">
             <input
@@ -63,7 +72,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? fee : true"
+        >
           <view class="form-item-label"> 费用（元） </view>
           <view class="form-item-input">
             <input
@@ -78,7 +90,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? payerString : true"
+        >
           <view class="form-item-label"> 支付方 </view>
           <view class="form-item-input" @tap="onSelectPayer">
             <input
@@ -91,7 +106,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? radio : true"
+        >
           <view class="form-item-label"> 支付状态 </view>
           <radio-group @change="onRadioChange" class="form-item-input">
             <label class="radio"
@@ -112,7 +130,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? fromString : true"
+        >
           <view class="form-item-label"> 物流发货方 </view>
           <view class="form-item-input" @tap="onSelectFrom">
             <input
@@ -125,7 +146,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? toString : true"
+        >
           <view class="form-item-label"> 物流接收方 </view>
           <view class="form-item-input" @tap="onSelectTo">
             <input
@@ -141,7 +165,10 @@
       </view>
 
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? startTime : true"
+        >
           <view class="form-item-label"> 物流开始时间 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
@@ -155,7 +182,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? endTime : true"
+        >
           <view class="form-item-label"> 物流结束时间 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
@@ -172,7 +202,10 @@
       </view>
       <view class="form-container">
         <block v-for="(item, index) in relateOrder" :key="index">
-          <view class="form-item flex-horizontal">
+          <view
+            class="form-item flex-horizontal"
+            v-if="mode === 'read' ? item.id : true"
+          >
             <view class="form-item-label">
               对应采购单
               <text v-if="relateOrder.length > 1">{{ index + 1 }}</text>
@@ -205,7 +238,10 @@
       </view>
       <view class="form-container">
         <block v-for="(item, index) in relateSale" :key="index">
-          <view class="form-item flex-horizontal">
+          <view
+            class="form-item flex-horizontal"
+            v-if="mode === 'read' ? item.id : true"
+          >
             <view class="form-item-label">
               对应销售单
               <text v-if="relateSale.length > 1">{{ index + 1 }}</text></view
@@ -237,7 +273,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? description : true"
+        >
           <view class="form-item-label"> 备注 </view>
           <view class="form-item-input">
             <input
@@ -347,8 +386,12 @@ export default {
       this.startTimeDefaultValue = this.startTime;
       this.endTime = item.endDate ? item.endDate : "";
       this.endTimeDefaultValue = this.endTime;
-      this.relateOrder = item.procurements;
-      this.relateSale = item.sales;
+      if (item.procurements.length) {
+        this.relateOrder = item.procurements;
+      }
+      if (item.procurements.length) {
+        this.relateSale = item.sales;
+      }
       this.description = item.remark;
       this.attachments = item.files.map((e) => {
         return {
@@ -520,9 +563,7 @@ export default {
         }
         this.onNetworking = false;
         if (response) {
-          let pages = getCurrentPages();
-          let prevPage = pages[pages.length - 2];
-          prevPage.$vm.needRefresh = true;
+          this.onRefreshPreviousPage();
           uni.showToast({
             title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
@@ -533,6 +574,11 @@ export default {
           }, 600);
         }
       }
+    },
+    onRefreshPreviousPage() {
+      let pages = getCurrentPages();
+      let prevPage = pages[pages.length - 2];
+      prevPage.$vm.needRefresh = true;
     },
   },
 };

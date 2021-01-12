@@ -5,7 +5,10 @@
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? name : true"
+        >
           <view class="form-item-label">
             <text class="form-item-required" v-if="mode !== 'read'">*</text>
             合同名称
@@ -21,7 +24,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? number : true"
+        >
           <view class="form-item-label"> 合同编号 </view>
           <view class="form-item-input">
             <input
@@ -34,7 +40,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? type : true"
+        >
           <view class="form-item-label"> 合同类型 </view>
           <view class="form-item-input">
             <input
@@ -47,7 +56,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? price : true"
+        >
           <view class="form-item-label"> 合同金额（元） </view>
           <view class="form-item-input">
             <input
@@ -62,7 +74,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? partyA : true"
+        >
           <view class="form-item-label"> 甲方公司名称 </view>
           <view class="form-item-input">
             <input
@@ -75,7 +90,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? partyARepresent : true"
+        >
           <view class="form-item-label"> 甲方签订人 </view>
           <view class="form-item-input">
             <input
@@ -88,7 +106,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? partyB : true"
+        >
           <view class="form-item-label"> 乙方公司名称 </view>
           <view class="form-item-input">
             <input
@@ -101,7 +122,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? partyBRepresent : true"
+        >
           <view class="form-item-label"> 乙方签订人 </view>
           <view class="form-item-input">
             <input
@@ -116,7 +140,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? signTime : true"
+        >
           <view class="form-item-label"> 合同签订日期 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
@@ -130,7 +157,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? startTime : true"
+        >
           <view class="form-item-label"> 合同开始日期 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
@@ -144,7 +174,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? endTime : true"
+        >
           <view class="form-item-label"> 合同结束日期 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
@@ -160,7 +193,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? description : true"
+        >
           <view class="form-item-label"> 备注 </view>
           <view class="form-item-input">
             <input
@@ -421,9 +457,7 @@ export default {
         }
         this.onNetworking = false;
         if (response) {
-          let pages = getCurrentPages();
-          let prevPage = pages[pages.length - 2];
-          prevPage.$vm.needRefresh = true;
+          this.onRefreshPreviousPage();
           uni.showToast({
             title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
@@ -434,6 +468,11 @@ export default {
           }, 600);
         }
       }
+    },
+    onRefreshPreviousPage() {
+      let pages = getCurrentPages();
+      let prevPage = pages[pages.length - 2];
+      prevPage.$vm.needRefresh = true;
     },
   },
 };

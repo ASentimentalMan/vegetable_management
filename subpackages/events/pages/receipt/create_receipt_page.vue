@@ -2,7 +2,10 @@
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? number : true"
+        >
           <view class="form-item-label">
             <text class="form-item-required" v-if="mode !== 'read'">*</text>
             发票编号
@@ -18,7 +21,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? type.label : true"
+        >
           <view class="form-item-label"> 发票类型 </view>
           <view class="form-item-input">
             <receipt-type-picker
@@ -28,7 +34,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? eventType : true"
+        >
           <view class="form-item-label"> 发票业务类型 </view>
           <radio-group @change="onEventTypeChange" class="form-item-input">
             <label class="radio"
@@ -47,7 +56,10 @@
             >
           </radio-group>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? money : true"
+        >
           <view class="form-item-label"> 发票金额（元） </view>
           <view class="form-item-input">
             <input
@@ -62,7 +74,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? fromString : true"
+        >
           <view class="form-item-label"> 开票单位 </view>
           <view class="form-item-input" @tap="onSelectFrom">
             <input
@@ -75,7 +90,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? time : true"
+        >
           <view class="form-item-label"> 开票时间 </view>
           <view class="form-item-input">
             <biao-fun-date-picker
@@ -89,7 +107,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? toString : true"
+        >
           <view class="form-item-label"> 收票单位 </view>
           <view class="form-item-input" @tap="onSelectTo">
             <input
@@ -104,7 +125,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? recognizeNumber : true"
+        >
           <view class="form-item-label"> 纳税人识别号 </view>
           <view class="form-item-input">
             <input
@@ -129,19 +153,29 @@
             />
           </view>
         </view> -->
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="
+            mode === 'read'
+              ? locationString && locationString !== '请选择开户行地址'
+              : true
+          "
+        >
           <view class="form-item-label"> 开户行地址 </view>
           <view class="form-item-input" @click="onLocationPick">
             <view
               :class="{
-                'form-item-placeholder': locationString === '请输入开户行地址',
+                'form-item-placeholder': locationString === '请选择开户行地址',
               }"
             >
               {{ locationString }}
             </view>
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? bank : true"
+        >
           <view class="form-item-label"> 开户银行 </view>
           <view class="form-item-input">
             <input
@@ -154,7 +188,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? bankNumber : true"
+        >
           <view class="form-item-label"> 银行账号 </view>
           <view class="form-item-input">
             <input
@@ -167,7 +204,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? tel : true"
+        >
           <view class="form-item-label"> 电话 </view>
           <view class="form-item-input">
             <input
@@ -182,7 +222,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? relateContractString : true"
+        >
           <view class="form-item-label"> 关联合同 </view>
           <view class="form-item-input" @tap="onSelectRelateContract">
             <input
@@ -195,7 +238,10 @@
             />
           </view>
         </view>
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? relateCustomerString : true"
+        >
           <view class="form-item-label"> 关联客户 </view>
           <view class="form-item-input" @tap="onSelectCustomer">
             <input
@@ -210,7 +256,10 @@
         </view>
       </view>
       <view class="form-container">
-        <view class="form-item flex-horizontal">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? description : true"
+        >
           <view class="form-item-label"> 备注 </view>
           <view class="form-item-input">
             <input
@@ -281,7 +330,7 @@ export default {
       to: {},
       toString: "",
       recognizeNumber: "",
-      locationString: "请选择地址",
+      locationString: "请选择开户行地址",
       bank: "",
       bankNumber: "",
       tel: "",
@@ -300,6 +349,7 @@ export default {
     if (e.mode) {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
+      console.log(item);
       this.receiptId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
@@ -330,7 +380,7 @@ export default {
       };
       this.toString = item.inputInvoiceUnit;
       this.recognizeNumber = item.identificationNumber;
-      this.locationString = item.address;
+      this.locationString = item.address ? item.address : "请选择开户行地址";
       this.bank = item.bankAccountNumber
         ? item.bankAccountNumber.split(",")[0]
         : "";
@@ -361,7 +411,7 @@ export default {
     this.initTimePicker();
   },
   mounted() {
-    if (Object.keys(this.type).length) {
+    if (this.type.label) {
       this.$refs.receiptTypePicker.setSelectedStr(this.type.label);
     }
   },
@@ -474,7 +524,10 @@ export default {
           inputInvoiceUnit: this.to.customerName,
           inputInvoiceUnitId: this.to.id,
           identificationNumber: this.recognizeNumber,
-          address: this.locationString,
+          address:
+            this.locationString === "请选择开户行地址"
+              ? ""
+              : this.locationString,
           bankAccountNumber:
             this.bank + "," + this.bankNumber === ","
               ? ""
@@ -496,17 +549,15 @@ export default {
         // console.log(payload);
         this.onNetworking = true;
         let response;
-        if (this.createMode) {
+        if (this.mode === "create") {
           response = await createReceiptApi(payload);
-        } else {
+        } else if (this.mode === "edit") {
           payload["id"] = this.receiptId;
           response = await editReceiptApi(payload);
         }
         this.onNetworking = false;
         if (response) {
-          let pages = getCurrentPages();
-          let prevPage = pages[pages.length - 2];
-          prevPage.$vm.needRefresh = true;
+          this.onRefreshPreviousPage();
           uni.showToast({
             title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
@@ -517,6 +568,11 @@ export default {
           }, 600);
         }
       }
+    },
+    onRefreshPreviousPage() {
+      let pages = getCurrentPages();
+      let prevPage = pages[pages.length - 2];
+      prevPage.$vm.needRefresh = true;
     },
   },
 };
