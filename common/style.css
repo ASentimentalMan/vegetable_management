@@ -115,6 +115,9 @@ uni-video {
 .flex-jcc {
   justify-content: center;
 }
+.flex-jcfs {
+  justify-content: flex-start;
+}
 .flex-jcfe {
   justify-content: flex-end;
 }
@@ -218,4 +221,12 @@ uni-video {
   color: #ffffff;
   height: 88rpx;
   line-height: 88rpx;
+}
+.ellipsis {
+  word-break: break-all;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }

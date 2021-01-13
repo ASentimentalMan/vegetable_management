@@ -342,7 +342,8 @@ export default {
       if (this.mode === "read") return;
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=provider",
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=provider&selectedIds=" +
+          JSON.stringify([this.provider.id]),
       });
     },
     onAttachmentAdd(attachments) {
@@ -389,7 +390,7 @@ export default {
           files: this.attachments.map((e) => {
             return {
               fileName: e.fileName,
-              fileOriginalName: e.originalname,
+              fileOriginalName: e.originalFileName,
               fileSubUrl: e.subFileUrl,
               fileUrl: e.fileUrl,
               remark: "",

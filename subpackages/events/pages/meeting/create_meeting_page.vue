@@ -198,7 +198,7 @@ export default {
           files: this.attachments.map((e) => {
             return {
               fileName: e.fileName,
-              fileOriginalName: e.originalname,
+              fileOriginalName: e.originalFileName,
               fileSubUrl: e.subFileUrl,
               fileUrl: e.fileUrl,
               remark: "",

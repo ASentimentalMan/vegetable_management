@@ -288,7 +288,7 @@ export default {
           title: "合同详情",
         });
       }
-      this.name = item.businessName;
+      this.name = item.contractName;
       this.number = item.contractNumber;
       this.type = item.contractType;
       this.price = item.contractAmount;
@@ -440,7 +440,7 @@ export default {
           files: this.attachments.map((e) => {
             return {
               fileName: e.fileName,
-              fileOriginalName: e.originalname,
+              fileOriginalName: e.originalFileName,
               fileSubUrl: e.subFileUrl,
               fileUrl: e.fileUrl,
               remark: "",

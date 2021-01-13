@@ -1,9 +1,22 @@
 <template>
   <view v-if="disabled ? attachments.length : true">
-    <view class="form-unit-title" v-if="title"> {{ title }} </view>
-    <view class="form-attachment-container">
+    <view class="form-attachment-container flex-vertical">
+      <view class="form-unit-container flex-horizontal flex-jcsb" v-if="title">
+        <view class="form-unit-title">
+          {{ title }}
+        </view>
+        <view class="form-unit-title">
+          <view
+            class="add-form-item"
+            v-if="attachments.length < amount && !disabled"
+            @tap="onAttachmentAdd"
+          >
+            +
+          </view>
+        </view>
+      </view>
       <block v-for="(item, index) in attachments" :key="index">
-        <view class="form-attachment attachment-size">
+        <view class="form-attachment flex-horizontal flex-aic">
           <image
             class="attachment-size"
             :src="item.subFileUrl ? item.subFileUrl : item.blob"
@@ -11,31 +24,28 @@
             @tap="preview(index)"
           />
           <view
-            v-if="!disabled"
-            class="attachment-remove-container"
+            class="attachment-detail flex-vertical flex-jcfs"
+            v-if="item.subFileUrl"
+          >
+            <view class="attachment-text ellipsis">
+              {{ item.originalFileName }}
+            </view>
+            <view class="attachment-text ellipsis">
+              {{ item.createTime }}
+            </view>
+          </view>
+          <view class="attachment-detail flex-vertical" v-else>
+            <view class="attachment-text ellipsis"> {{ item.text }} </view>
+          </view>
+          <image
+            class="attachment-remove"
             @click="onAttachmentRemove(index)"
-          >
-            <image
-              class="attachment-remove"
-              src="https://dev.ncpgz.com/assets/icons/store_icon_remove.png"
-              mode="aspectFill"
-            />
-          </view>
-          <view
-            class="attachment-cover attachment-size flex-vertical flex-aic flex-jcc"
-            v-if="!item.subFileUrl"
-          >
-            <view class="attachment-cover-text"> {{ item.text }} </view>
-          </view>
+            v-if="!disabled"
+            src="https://dev.ncpgz.com/assets/icons/store_icon_remove.png"
+            mode="aspectFill"
+          />
         </view>
       </block>
-      <view
-        class="attachment-add-container attachment-size"
-        v-if="attachments.length < amount && !disabled"
-        @click="onAttachmentAdd"
-      >
-        <text class="attachment-add">+</text>
-      </view>
     </view>
   </view>
 </template>
@@ -82,8 +92,6 @@ export default {
         success: (chooseImageRes) => {
           const tempFilePaths = chooseImageRes.tempFilePaths;
           const tempFiles = chooseImageRes.tempFiles;
-          // console.log(tempFilePaths);
-          // console.log(tempFiles);
           this.$emit(
             "onAttachmentAdd",
             tempFilePaths.map((e, index) => {
@@ -151,64 +159,43 @@ export default {
 </script>
 
 <style scoped>
-.form-unit-title {
-  margin: 24rpx 24rpx 0 24rpx;
-}
 .form-attachment-container {
   margin: 24rpx 24rpx 0 24rpx;
-  padding-top: 24rpx;
   background-color: #ffffff;
   border-radius: 10rpx;
-  display: flex;
-  flex-wrap: wrap;
+}
+.form-unit-container {
+  margin: 0 24rpx;
+  padding: 24rpx 0;
 }
 .form-attachment {
-  border: 1px solid #dddddd;
+  margin: 0 24rpx;
+  padding: 24rpx 0;
   font-size: 200rpx;
   line-height: 170rpx;
   text-align: center;
   color: #888888;
-  margin-left: 24rpx;
-  margin-bottom: 24rpx;
   position: relative;
+  border-top: 1px solid #dddddd;
+}
+.form-attachment:last-child {
+  padding-bottom: 24rpx;
 }
 .attachment-size {
-  width: 200rpx;
-  height: 200rpx;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
 }
-.attachment-remove-container {
-  position: absolute;
-  right: -15rpx;
-  top: -20rpx;
-  width: 40rpx;
-  height: 40rpx;
-  z-index: 2;
+.attachment-detail {
+  flex: 1;
+  padding: 0 24rpx;
+  font-size: 22rpx;
+}
+.attachment-text {
+  text-align: left;
 }
 .attachment-remove {
   width: 40rpx;
   height: 40rpx;
-}
-.attachment-add-container {
-  background-color: #eaeaea;
-  font-size: 200rpx;
-  line-height: 120rpx;
-  text-align: center;
-  color: #888888;
-  margin-left: 24rpx;
-  margin-bottom: 24rpx;
-}
-.attachment-add {
-  font-size: 120rpx;
-  font-weight: 100;
-  color: #888888;
-}
-.attachment-cover {
-  position: absolute;
-  left: 0;
-  top: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-}
-.attachment-cover-text {
-  color: white;
 }
 </style>

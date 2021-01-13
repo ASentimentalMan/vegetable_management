@@ -349,7 +349,6 @@ export default {
     if (e.mode) {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
-      console.log(item);
       this.receiptId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
@@ -441,7 +440,8 @@ export default {
       if (this.mode === "read") return;
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=from",
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=from&selectedIds=" +
+          JSON.stringify([this.from.id]),
       });
     },
     onTimeSet(e) {
@@ -451,7 +451,8 @@ export default {
       if (this.mode === "read") return;
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=to",
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=to&selectedIds=" +
+          JSON.stringify([this.to.id]),
       });
     },
     onLocationPick() {
@@ -468,14 +469,16 @@ export default {
       if (this.mode === "read") return;
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/contract/contract_list_page?mode=select&key=relateContract",
+          "/subpackages/events/pages/contract/contract_list_page?mode=select&key=relateContract&selectedIds=" +
+          JSON.stringify([this.relateContract.id]),
       });
     },
     onSelectCustomer() {
       if (this.mode === "read") return;
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=relateCustomer",
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=relateCustomer&selectedIds=" + 
+          JSON.stringify([this.relateCustomer.id]),
       });
     },
     onAttachmentAdd(attachments) {
@@ -506,11 +509,6 @@ export default {
     },
     async onHandle() {
       if (!this.onNetworking && this.onValidate()) {
-        // console.log(this.type);
-        // console.log(this.from);
-        // console.log(this.to);
-        // console.log(this.relateContract);
-        // console.log(this.relateCustomer);
         let payload = {
           businessId: this.eventId,
           invoiceNumber: this.number,
@@ -539,7 +537,7 @@ export default {
           files: this.attachments.map((e) => {
             return {
               fileName: e.fileName,
-              fileOriginalName: e.originalname,
+              fileOriginalName: e.originalFileName,
               fileSubUrl: e.subFileUrl,
               fileUrl: e.fileUrl,
               remark: "",
@@ -556,6 +554,7 @@ export default {
           response = await editReceiptApi(payload);
         }
         this.onNetworking = false;
+        console.log(response)
         if (response) {
           this.onRefreshPreviousPage();
           uni.showToast({

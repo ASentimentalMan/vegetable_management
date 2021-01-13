@@ -6,36 +6,42 @@
           <block v-for="(item, index) in list" :key="index">
             <uni-swipe-action-item
               :right-options="acitons"
+              :disabled="key !== ''"
               @click="onUniSwipeAction($event, item, index)"
             >
               <view
-                class="list-item flex-horizontal flex-aic"
-                @tap="onEvent(item)"
+                class="list-item-container"
+                :class="{ active: item.active }"
               >
-                <view class="item-cover">
-                  <image
-                    class="cover"
-                    src="https://dev.ncpgz.com/assets/management/icons/business_order.png"
-                  />
-                </view>
-                <view class="flex-vertical">
-                  <view class="item-label">
-                    {{ item.procureNumber }}
-                  </view>
-                  <view class="item-text">
-                    {{ item.createTime }}
-                  </view>
-                </view>
-
                 <view
-                  class="type-container"
-                  :class="{
-                    green: item.type === '物流',
-                    orange: item.type === '采购单',
-                  }"
-                  v-if="item.type"
+                  class="list-item flex-horizontal flex-aic"
+                  @tap="onEvent(item)"
                 >
-                  {{ item.type }}
+                  <view class="item-cover">
+                    <image
+                      class="cover"
+                      src="https://dev.ncpgz.com/assets/management/icons/business_order.png"
+                    />
+                  </view>
+                  <view class="flex-vertical">
+                    <view class="item-label">
+                      {{ item.procureNumber }}
+                    </view>
+                    <view class="item-text">
+                      {{ item.createTime }}
+                    </view>
+                  </view>
+
+                  <view
+                    class="type-container"
+                    :class="{
+                      green: item.type === '物流',
+                      orange: item.type === '采购单',
+                    }"
+                    v-if="item.type"
+                  >
+                    {{ item.type }}
+                  </view>
                 </view>
               </view>
             </uni-swipe-action-item>
@@ -91,6 +97,7 @@ export default {
       selectMode: false,
       key: "",
       index: "",
+      selectedIds: "",
     };
   },
   computed: {
@@ -111,6 +118,9 @@ export default {
       this.selectMode = true;
       this.key = e.key;
       this.index = e.index;
+    }
+    if (e.selectedIds) {
+      this.selectedIds = JSON.parse(e.selectedIds);
     }
     this.fetch();
   },
@@ -148,6 +158,7 @@ export default {
             this.hasMore = false;
           }
           this.page++;
+          this.onGenerateSelected();
         }
         if (this.onRefreshing) {
           this.onRefreshing = false;
@@ -163,11 +174,17 @@ export default {
     },
     onEvent(item) {
       if (this.selectMode) {
-        let pages = getCurrentPages();
-        let prevPage = pages[pages.length - 2];
-        this.$set(prevPage.$vm[this.key], this.index, item);
-        // console.log(item);
-        uni.navigateBack();
+        if (item.active) {
+          uni.showToast({
+            title: "该采购单已关联",
+            icon: "none",
+          });
+        } else {
+          let pages = getCurrentPages();
+          let prevPage = pages[pages.length - 2];
+          this.$set(prevPage.$vm[this.key], this.index, item);
+          uni.navigateBack();
+        }
       } else {
         uni.navigateTo({
           url:
@@ -226,6 +243,15 @@ export default {
       let prevPage = pages[pages.length - 2];
       prevPage.$vm.needRefresh = true;
     },
+    onGenerateSelected() {
+      for (let item of this.selectedIds) {
+        for (let element of this.list) {
+          if (element.id === item) {
+            element["active"] = true;
+          }
+        }
+      }
+    },
   },
 };
 </script>
@@ -235,13 +261,19 @@ export default {
   margin-top: 24rpx;
   background-color: #fff;
 }
+.list-item-container {
+  width: 100%;
+}
+.list-item-container.active {
+  background-color: #dddddd;
+}
 .list-item {
   flex: 1;
   margin: 0 28rpx;
   padding: 28rpx 0;
   position: relative;
 }
-.list-item:not(:last-child) {
+.list-item-container:not(:last-child) .list-item {
   border-bottom: 1px solid #f3f3f3;
 }
 .item-cover {

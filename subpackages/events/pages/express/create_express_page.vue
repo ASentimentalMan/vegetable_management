@@ -219,14 +219,14 @@
                 v-model="item.id"
                 disabled
               />
-              <view
-                class="add-form-item"
-                style="margin-left: 12rpx"
-                @tap="onRemoveOrder(index)"
-                v-if="mode !== 'read' && relateOrder.length > 1"
-              >
-                -
-              </view>
+            </view>
+            <view
+              class="add-form-item"
+              style="margin-left: 12rpx"
+              @tap="onRemoveOrder(index)"
+              v-if="mode !== 'read' && relateOrder.length > 1"
+            >
+              -
             </view>
           </view>
         </block>
@@ -255,14 +255,14 @@
                 v-model="item.id"
                 disabled
               />
-              <view
-                class="add-form-item"
-                style="margin-left: 12rpx"
-                @tap="onRemoveSale(index)"
-                v-if="mode !== 'read' && relateSale.length > 1"
-              >
-                -
-              </view>
+            </view>
+            <view
+              class="add-form-item"
+              style="margin-left: 12rpx"
+              @tap="onRemoveSale(index)"
+              v-if="mode !== 'read' && relateSale.length > 1"
+            >
+              -
             </view>
           </view>
         </block>
@@ -389,7 +389,7 @@ export default {
       if (item.procurements.length) {
         this.relateOrder = item.procurements;
       }
-      if (item.procurements.length) {
+      if (item.sales.length) {
         this.relateSale = item.sales;
       }
       this.description = item.remark;
@@ -415,7 +415,8 @@ export default {
       if (this.mode === "read") return;
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=payer",
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=payer&selectedIds=" +
+          JSON.stringify([this.payer.id]),
       });
     },
     onRadioChange(e) {
@@ -425,14 +426,16 @@ export default {
       if (this.mode === "read") return;
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=from",
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=from&selectedIds=" +
+          JSON.stringify([this.from.id]),
       });
     },
     onSelectTo() {
       if (this.mode === "read") return;
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=to",
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=to&selectedIds=" +
+          JSON.stringify([this.to.id]),
       });
     },
     setTimePickerEndTime() {
@@ -468,7 +471,13 @@ export default {
       uni.navigateTo({
         url:
           "/subpackages/events/pages/order/order_list_page?mode=select&key=relateOrder&index=" +
-          index,
+          index +
+          "&selectedIds=" +
+          JSON.stringify(
+            this.relateOrder.map((e) => {
+              return e.id;
+            })
+          ),
       });
     },
     onAddSale() {
@@ -482,7 +491,13 @@ export default {
       uni.navigateTo({
         url:
           "/subpackages/events/pages/sale/sale_list_page?mode=select&key=relateSale&index=" +
-          index,
+          index +
+          "&selectedIds=" +
+          JSON.stringify(
+            this.relateSale.map((e) => {
+              return e.id;
+            })
+          ),
       });
     },
     onAttachmentAdd(attachments) {
@@ -535,7 +550,7 @@ export default {
           files: this.attachments.map((e) => {
             return {
               fileName: e.fileName,
-              fileOriginalName: e.originalname,
+              fileOriginalName: e.originalFileName,
               fileSubUrl: e.subFileUrl,
               fileUrl: e.fileUrl,
               remark: "",

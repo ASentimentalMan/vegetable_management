@@ -6,6 +6,7 @@
           <block v-for="(item, index) in list" :key="index">
             <uni-swipe-action-item
               :right-options="acitons"
+              :disabled="key !== ''"
               @click="onUniSwipeAction($event, item, index)"
             >
               <view

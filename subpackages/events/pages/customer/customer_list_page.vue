@@ -3,19 +3,25 @@
     <view class="scrollable">
       <view class="list-container flex-vertical flex-jcsb">
         <block v-for="(item, index) in list" :key="index">
-          <view class="list-item flex-horizontal flex-aic" @tap="onEvent(item)">
-            <view class="item-cover">
-              <image
-                class="cover"
-                src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
-              />
-            </view>
-            <view class="flex-vertical">
-              <view class="item-label">
-                {{ item.customerName }}
+          <view
+            class="list-item-container"
+            :class="{ active: item.active }"
+            @tap="onEvent(item)"
+          >
+            <view class="list-item flex-horizontal flex-aic">
+              <view class="item-cover">
+                <image
+                  class="cover"
+                  src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
+                />
               </view>
-              <view class="item-text" v-if="item.industry">
-                {{ item.industry }}
+              <view class="flex-vertical">
+                <view class="item-label">
+                  {{ item.customerName }}
+                </view>
+                <view class="item-text" v-if="item.industry">
+                  {{ item.industry }}
+                </view>
               </view>
             </view>
           </view>
@@ -55,6 +61,7 @@ export default {
       needRefresh: false,
       selectMode: false,
       key: "",
+      selectedIds: [],
     };
   },
   computed: {
@@ -75,7 +82,9 @@ export default {
       this.selectMode = true;
       this.key = e.key;
     }
-    console.log(this.eventId);
+    if (e.selectedIds) {
+      this.selectedIds = JSON.parse(e.selectedIds);
+    }
     this.fetch();
   },
   onShow() {
@@ -110,6 +119,7 @@ export default {
             this.hasMore = false;
           }
           this.page++;
+          this.onGenerateSelected();
         }
         if (this.onRefreshing) {
           this.onRefreshing = false;
@@ -129,7 +139,6 @@ export default {
         let prevPage = pages[pages.length - 2];
         prevPage.$vm[this.key] = item;
         prevPage.$vm[this.key + "String"] = item.customerName;
-        console.log(item);
         uni.navigateBack();
       } else {
         // uni.navigateTo({
@@ -146,6 +155,15 @@ export default {
           this.eventId,
       });
     },
+    onGenerateSelected() {
+      for (let item of this.selectedIds) {
+        for (let element of this.list) {
+          if (element.id === item) {
+            element["active"] = true;
+          }
+        }
+      }
+    },
   },
 };
 </script>
@@ -160,8 +178,11 @@ export default {
   margin: 0 28rpx;
   padding: 28rpx 0;
 }
-.list-item:not(:last-child) {
+.list-item-container:not(:last-child) .list-item {
   border-bottom: 1px solid #f3f3f3;
+}
+.list-item-container.active {
+  background-color: #dddddd;
 }
 .item-cover {
   margin-right: 24rpx;
