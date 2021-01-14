@@ -299,7 +299,7 @@ export default {
       this.provider = {
         id: item.sourceInputCustomerId,
       };
-      this.providerString = "";
+      this.providerString = item.sourceInputCustomer.customerName;
       this.description = item.remark;
       this.attachments = item.files.map((e) => {
         return {

@@ -115,6 +115,26 @@
         </view>
       </view>
     </view>
+    <view class="options-container">
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goFund">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_fund.png"
+            />
+          </view>
+          <view class="options-text">
+            资金
+            <text class="options-count">
+              ({{ event.businessCount.contract }})
+            </text>
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -206,6 +226,13 @@ export default {
       uni.navigateTo({
         url:
           "/subpackages/events/pages/sale/sale_list_page?eventId=" +
+          this.eventId,
+      });
+    },
+    goFund() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/fund/fund_list_page?eventId=" +
           this.eventId,
       });
     },

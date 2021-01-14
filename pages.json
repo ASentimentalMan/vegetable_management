@@ -204,6 +204,25 @@
 						"backgroundColorTop": "#f5f5f5",
 						"backgroundColor": "#f5f5f5"
 					}
+				},
+				{
+					"path": "pages/fund/fund_list_page",
+					"style": {
+						"navigationBarTitleText": "资金清单",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5",
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "pages/fund/create_fund_page",
+					"style": {
+						"navigationBarTitleText": "新增资金",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5"
+					}
 				}
 			]
 		}

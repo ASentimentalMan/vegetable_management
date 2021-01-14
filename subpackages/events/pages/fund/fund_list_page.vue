@@ -10,36 +10,33 @@
               @click="onUniSwipeAction($event, item, index)"
             >
               <view
-                class="list-item-container"
-                :class="{ active: item.active }"
+                class="list-item flex-horizontal flex-aic"
+                @tap="onEvent(item)"
               >
-                <view
-                  class="list-item flex-horizontal flex-aic"
-                  @tap="onEvent(item)"
-                >
-                  <view class="item-cover">
-                    <image
-                      class="cover"
-                      src="https://dev.ncpgz.com/assets/management/icons/business_sale.png"
-                    />
+                <view class="item-cover">
+                  <image
+                    class="cover"
+                    src="https://dev.ncpgz.com/assets/management/icons/business_express.png"
+                  />
+                </view>
+                <view class="flex-vertical">
+                  <view class="item-label">
+                    {{ item.logisticsNumber }}
                   </view>
-                  <view class="flex-vertical">
-                    <view class="item-label"> {{ item.salesNumber }} </view>
-                    <view class="item-text">
-                      {{ item.createTime }}
-                    </view>
+                  <view class="item-text">
+                    {{ item.createTime }}
                   </view>
+                </view>
 
-                  <view
-                    class="type-container"
-                    :class="{
-                      green: item.type === '物流',
-                      orange: item.type === '采购单',
-                    }"
-                    v-if="item.type"
-                  >
-                    {{ item.type }}
-                  </view>
+                <view
+                  class="type-container"
+                  :class="{
+                    green: item.type === '物流',
+                    orange: item.type === '采购单',
+                  }"
+                  v-if="item.type"
+                >
+                  {{ item.type }}
                 </view>
               </view>
             </uni-swipe-action-item>
@@ -47,12 +44,12 @@
         </uni-swipe-action>
       </view>
       <view style="height: 200rpx" v-if="status === 'empty'"> </view>
-      <indicator :status="status" emptyText="暂无销售" />
+      <indicator :status="status" emptyText="暂无资金" />
     </view>
     <view class="unscrollable">
       <view class="bottom-button-container">
         <view class="button-container" @tap="onCreate">
-          <view class="bottom-button"> 新增销售 </view>
+          <view class="bottom-button"> 新增资金 </view>
         </view>
       </view>
     </view>
@@ -61,7 +58,7 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getSaleListApi, deleteSaleApi } from "@/apis/event_apis";
+import { getExpressListApi, deleteExpressApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -94,8 +91,6 @@ export default {
       needRefresh: false,
       selectMode: false,
       key: "",
-      index: "",
-      selectedIds: "",
     };
   },
   computed: {
@@ -115,10 +110,6 @@ export default {
     if (e.mode && e.mode === "select") {
       this.selectMode = true;
       this.key = e.key;
-      this.index = e.index;
-    }
-    if (e.selectedIds) {
-      this.selectedIds = JSON.parse(e.selectedIds);
     }
     this.fetch();
   },
@@ -144,7 +135,7 @@ export default {
           businessId: this.eventId,
         };
         this.onNetworking = true;
-        const response = await getSaleListApi(payload);
+        const response = await getExpressListApi(payload);
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
@@ -156,7 +147,6 @@ export default {
             this.hasMore = false;
           }
           this.page++;
-          this.onGenerateSelected();
         }
         if (this.onRefreshing) {
           this.onRefreshing = false;
@@ -172,22 +162,16 @@ export default {
     },
     onEvent(item) {
       if (this.selectMode) {
-        if (item.active) {
-          uni.showToast({
-            title: "该销售单已关联",
-            icon: "none",
-          });
-        } else {
-          let pages = getCurrentPages();
-          let prevPage = pages[pages.length - 2];
-          this.$set(prevPage.$vm[this.key], this.index, item);
-          console.log(item);
-          uni.navigateBack();
-        }
+        let pages = getCurrentPages();
+        let prevPage = pages[pages.length - 2];
+        prevPage.$vm[this.key] = item;
+        prevPage.$vm[this.key + "String"] = item.contractName;
+        console.log(item);
+        uni.navigateBack();
       } else {
         uni.navigateTo({
           url:
-            "/subpackages/events/pages/sale/create_sale_page?mode=read&eventId=" +
+            "/subpackages/events/pages/fund/create_fund_page?mode=read&eventId=" +
             this.eventId +
             "&item=" +
             JSON.stringify(item),
@@ -197,7 +181,7 @@ export default {
     onCreate() {
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/sale/create_sale_page?eventId=" +
+          "/subpackages/events/pages/fund/create_fund_page?eventId=" +
           this.eventId,
       });
     },
@@ -206,7 +190,7 @@ export default {
         case 0:
           uni.navigateTo({
             url:
-              "/subpackages/events/pages/sale/create_sale_page?mode=edit&eventId=" +
+              "/subpackages/events/pages/fund/create_fund_page?mode=edit&eventId=" +
               this.eventId +
               "&item=" +
               JSON.stringify(item),
@@ -214,11 +198,11 @@ export default {
           break;
         case 1:
           uni.showModal({
-            title: "您即将删除销售",
-            content: item.remark,
+            title: "您即将删除资金",
+            content: item.logisticsNumber,
             success: async (res) => {
               if (res.confirm) {
-                const response = await deleteSaleApi({
+                const response = await deleteExpressApi({
                   id: item.id,
                 });
                 if (response) {
@@ -242,15 +226,6 @@ export default {
       let prevPage = pages[pages.length - 2];
       prevPage.$vm.needRefresh = true;
     },
-    onGenerateSelected() {
-      for (let item of this.selectedIds) {
-        for (let element of this.list) {
-          if (element.id === item) {
-            element["active"] = true;
-          }
-        }
-      }
-    },
   },
 };
 </script>
@@ -260,19 +235,13 @@ export default {
   margin-top: 24rpx;
   background-color: #fff;
 }
-.list-item-container {
-  width: 100%;
-}
-.list-item-container.active {
-  background-color: #dddddd;
-}
 .list-item {
   flex: 1;
   margin: 0 28rpx;
   padding: 28rpx 0;
   position: relative;
 }
-.list-item-container:not(:last-child) .list-item {
+.list-item:not(:last-child) {
   border-bottom: 1px solid #f3f3f3;
 }
 .item-cover {
