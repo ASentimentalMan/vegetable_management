@@ -1,6 +1,7 @@
 <template>
   <view class="page-container">
     <view class="scrollable">
+      <searcher @onSearch="onSearch" />
       <view class="list-container flex-vertical flex-jcsb">
         <uni-swipe-action>
           <block v-for="(item, index) in list" :key="index">
@@ -62,11 +63,13 @@
 </template>
 
 <script>
+import Searcher from "@/components/public/searcher";
 import Indicator from "@/components/public/indicator.vue";
 import { getOrderListApi, deleteOrderApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
+    Searcher,
     Indicator,
   },
   data() {
@@ -146,7 +149,9 @@ export default {
           businessId: this.eventId,
         };
         this.onNetworking = true;
-        const response = await getOrderListApi(payload);
+        const response = await getOrderListApi(
+          Object.assign(this.payload, payload)
+        );
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
@@ -171,6 +176,14 @@ export default {
       this.hasMore = true;
       this.onRefreshing = true;
       this.fetch();
+    },
+    onSearch(keywords) {
+      if (keywords) {
+        this.payload["procureNumber"] = keywords;
+      } else {
+        delete this.payload["procureNumber"];
+      }
+      this.onRefresh();
     },
     onEvent(item) {
       if (this.selectMode) {

@@ -3,7 +3,7 @@
     <view class="form-attachment-container flex-vertical">
       <view class="form-unit-container flex-horizontal flex-jcsb" v-if="title">
         <view class="form-unit-title">
-          {{ title }}
+          <text class="form-item-label"> {{ title }} </text>
         </view>
         <view class="form-unit-title">
           <view
@@ -165,7 +165,7 @@ export default {
   border-radius: 10rpx;
 }
 .form-unit-container {
-  margin: 0 24rpx;
+  margin: 0 32rpx;
   padding: 24rpx 0;
 }
 .form-attachment {

@@ -7,6 +7,27 @@
       <view class="form-container">
         <view
           class="form-item flex-horizontal"
+          v-if="mode === 'read' ? relateContractString : true"
+        >
+          <view class="form-item-label">
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
+            关联合同
+          </view>
+          <view class="form-item-input" @tap="onRelateContract">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择关联合同"
+              v-model="relateContractString"
+              disabled
+            />
+          </view>
+        </view>
+      </view>
+      <view class="form-container">
+        <view
+          class="form-item flex-horizontal"
           v-if="mode === 'read' ? number : true"
         >
           <view class="form-item-label">
@@ -20,41 +41,6 @@
               cursor-spacing="16"
               placeholder="请输入采购单编号 自定义标识"
               v-model="number"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? name : true"
-        >
-          <view class="form-item-label">
-            <!-- <text class="form-item-required">*</text> -->
-            基地名称
-          </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入基地名称"
-              v-model="name"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? area : true"
-        >
-          <view class="form-item-label"> 基地面积（亩） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入基地面积"
-              v-model="area"
               :disabled="mode === 'read'"
             />
           </view>
@@ -91,22 +77,6 @@
             />
           </view>
         </view>
-      </view>
-      <!--      <view class="form-container">
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 采购品类 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择采购品类"
-              v-model="partyA"
-            />
-          </view>
-        </view>
-      </view> -->
-      <view class="form-container">
         <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? time : true"
@@ -124,6 +94,51 @@
             />
           </view>
         </view>
+      </view>
+      <!-- <view class="form-container">
+          <view class="form-item flex-horizontal">
+            <view class="form-item-label"> 采购品类 </view>
+            <view class="form-item-input">
+              <input
+                class="form-input"
+                type="text"
+                cursor-spacing="16"
+                placeholder="请选择采购品类"
+                v-model="partyA"
+              />
+            </view>
+          </view>
+        </view> -->
+      <view class="form-container">
+        <block v-for="(item, index) in cates" :key="index">
+          <view
+            class="form-item flex-horizontal"
+            v-if="mode === 'read' ? cates.length : true"
+          >
+            <view class="form-item-label">
+              采购品类
+              <text v-if="cates.length > 1">{{ index + 1 }}</text>
+            </view>
+            <view class="form-item-input">
+              <cate-picker />
+            </view>
+            <view
+              class="add-form-item"
+              style="margin-left: 12rpx"
+              @tap="onRemoveOrder(index)"
+              v-if="mode !== 'read' && cates.length > 1"
+            >
+              -
+            </view>
+          </view>
+        </block>
+        <view class="form-item flex-horizontal" v-if="mode !== 'read'">
+          <view class="form-item-input">
+            <view class="add-form-item" @tap="onAddOrder"> + </view>
+          </view>
+        </view>
+      </view>
+      <view class="form-container">
         <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? amount : true"
@@ -144,7 +159,7 @@
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? unitPrice : true"
         >
-          <view class="form-item-label"> 采购单价（元） </view>
+          <view class="form-item-label"> 采购单价（元/吨） </view>
           <view class="form-item-input">
             <input
               class="form-input"
@@ -169,24 +184,6 @@
               placeholder="请输入采购总价"
               v-model="price"
               :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-      </view>
-      <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? providerString : true"
-        >
-          <view class="form-item-label"> 货源提供客户 </view>
-          <view class="form-item-input" @tap="onSelectProvider">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择货源提供客户"
-              v-model="providerString"
-              disabled
             />
           </view>
         </view>
@@ -235,12 +232,14 @@
 </template>
 
 <script>
-import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
+import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker";
+import CatePicker from "@/components/public/cate_picker";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
 import { createOrderApi, editOrderApi } from "@/apis/event_apis";
 export default {
   components: {
     BiaoFunDatePicker,
+    CatePicker,
     AddMediaAttachment,
   },
   data() {
@@ -249,11 +248,12 @@ export default {
       eventId: "",
       orderId: "",
       onNetworking: false,
+      relateContract: {},
+      relateContractString: "",
       number: "",
-      name: "",
-      area: "",
       contact: "",
       tel: "",
+      cates: [{ id: "" }],
       type: [],
       time: "",
       timePickerDefaultValue: "",
@@ -335,8 +335,30 @@ export default {
         ":" +
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
+    onRelateContract() {
+      if (this.mode === "read") return;
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/contract/contract_list_page?mode=select&key=relateContract&type=procure&selectedIds=" +
+          JSON.stringify([this.relateContract.id]),
+      });
+    },
     onTimeSet(e) {
       this.time = e.f1;
+    },
+    onSelectCate(index) {
+      if (this.mode === "read") return;
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/order/order_list_page?mode=select&key=relateOrder&index=" +
+          index +
+          "&selectedIds=" +
+          JSON.stringify(
+            this.relateOrder.map((e) => {
+              return e.id;
+            })
+          ),
+      });
     },
     onSelectProvider() {
       if (this.mode === "read") return;

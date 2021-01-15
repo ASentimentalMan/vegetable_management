@@ -44,12 +44,12 @@
         </uni-swipe-action>
       </view>
       <view style="height: 200rpx" v-if="status === 'empty'"> </view>
-      <indicator :status="status" emptyText="暂无资金" />
+      <indicator :status="status" emptyText="暂无收款" />
     </view>
     <view class="unscrollable">
       <view class="bottom-button-container">
         <view class="button-container" @tap="onCreate">
-          <view class="bottom-button"> 新增资金 </view>
+          <view class="bottom-button"> 新增收款 </view>
         </view>
       </view>
     </view>
@@ -198,7 +198,7 @@ export default {
           break;
         case 1:
           uni.showModal({
-            title: "您即将删除资金",
+            title: "您即将删除收款",
             content: item.logisticsNumber,
             success: async (res) => {
               if (res.confirm) {

@@ -2,62 +2,6 @@
   <view class="page-container">
     <view class="options-container">
       <view class="options-item-container">
-        <view class="options-item flex-horizontal flex-aic" @tap="goContract">
-          <view class="options-icon-container">
-            <image
-              class="options-icon"
-              src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
-            />
-          </view>
-          <view class="options-text">
-            合同
-            <text class="options-count">
-              ({{ event.businessCount.contract }})
-            </text>
-          </view>
-          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
-          </view>
-        </view>
-      </view>
-    </view>
-    <view class="options-container">
-      <view class="options-item-container">
-        <view class="options-item flex-horizontal flex-aic" @tap="goReceipt">
-          <view class="options-icon-container">
-            <image
-              class="options-icon"
-              src="https://dev.ncpgz.com/assets/management/icons/business_receipt.png"
-            />
-          </view>
-          <view class="options-text">
-            发票
-            <text class="options-count">
-              ({{ event.businessCount.invoice }})
-            </text>
-          </view>
-          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
-          </view>
-        </view>
-      </view>
-      <view class="options-item-container">
-        <view class="options-item flex-horizontal flex-aic" @tap="goExpress">
-          <view class="options-icon-container">
-            <image
-              class="options-icon"
-              src="https://dev.ncpgz.com/assets/management/icons/business_express.png"
-            />
-          </view>
-          <view class="options-text">
-            物流
-            <text class="options-count">
-              ({{ event.businessCount.logistics }})
-            </text>
-          </view>
-          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
-          </view>
-        </view>
-      </view>
-      <view class="options-item-container">
         <view class="options-item flex-horizontal flex-aic" @tap="goMeeting">
           <view class="options-icon-container">
             <image
@@ -72,6 +16,24 @@
             </text>
           </view>
 
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goContract">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
+            />
+          </view>
+          <view class="options-text">
+            合同
+            <text class="options-count">
+              ({{ event.businessCount.contract }})
+            </text>
+          </view>
           <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
           </view>
         </view>
@@ -117,6 +79,45 @@
     </view>
     <view class="options-container">
       <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goExpress">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_express.png"
+            />
+          </view>
+          <view class="options-text">
+            物流
+            <text class="options-count">
+              ({{ event.businessCount.logistics }})
+            </text>
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goReceipt">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_receipt.png"
+            />
+          </view>
+          <view class="options-text">
+            发票
+            <text class="options-count">
+              ({{ event.businessCount.invoice }})
+            </text>
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="options-container">
+      <view class="options-item-container">
         <view class="options-item flex-horizontal flex-aic" @tap="goFund">
           <view class="options-icon-container">
             <image
@@ -125,7 +126,25 @@
             />
           </view>
           <view class="options-text">
-            资金
+            付款
+            <text class="options-count">
+              ({{ event.businessCount.contract }})
+            </text>
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goFund">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_fund.png"
+            />
+          </view>
+          <view class="options-text">
+            收款
             <text class="options-count">
               ({{ event.businessCount.contract }})
             </text>

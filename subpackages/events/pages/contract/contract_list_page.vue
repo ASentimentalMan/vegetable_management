@@ -1,6 +1,8 @@
 <template>
   <view class="page-container">
     <view class="scrollable">
+      <searcher @onSearch="onSearch" />
+      <sorter v-if="!selectMode" :sorter="sorter" @onSorterTap="onSorterTap" />
       <view class="list-container flex-vertical flex-jcsb">
         <uni-swipe-action>
           <block v-for="(item, index) in list" :key="index">
@@ -51,16 +53,34 @@
 </template>
 
 <script>
-import Indicator from "@/components/public/indicator.vue";
+import Searcher from "@/components/public/searcher";
+import Sorter from "@/components/public/sorter";
+import Indicator from "@/components/public/indicator";
 import { getContractListApi, deleteContractApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
+    Searcher,
+    Sorter,
     Indicator,
   },
   data() {
     return {
       eventId: "",
+      sorter: [
+        {
+          label: "全部",
+          key: "",
+        },
+        {
+          label: "采购",
+          key: "procure",
+        },
+        {
+          label: "销售",
+          key: "sale",
+        },
+      ],
       acitons: [
         {
           text: "修改",
@@ -106,6 +126,18 @@ export default {
       this.selectMode = true;
       this.key = e.key;
     }
+    if (e.type) {
+      this.payload["contractType"] = e.type;
+      if (e.type === "procure") {
+        uni.setNavigationBarTitle({
+          title: "选择采购合同",
+        });
+      } else if (e.type === "sale") {
+        uni.setNavigationBarTitle({
+          title: "选择销售合同",
+        });
+      }
+    }
     if (e.selectedIds) {
       this.selectedIds = JSON.parse(e.selectedIds);
     }
@@ -133,7 +165,9 @@ export default {
           businessId: this.eventId,
         };
         this.onNetworking = true;
-        const response = await getContractListApi(payload);
+        const response = await getContractListApi(
+          Object.assign(this.payload, payload)
+        );
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
@@ -158,6 +192,22 @@ export default {
       this.hasMore = true;
       this.onRefreshing = true;
       this.fetch();
+    },
+    onSearch(keywords) {
+      if (keywords) {
+        this.payload["contractName"] = keywords;
+      } else {
+        delete this.payload["contractName"];
+      }
+      this.onRefresh();
+    },
+    onSorterTap(index) {
+      if (index) {
+        this.payload["contractType"] = this.sorter[index]["key"];
+      } else {
+        delete this.payload["contractType"];
+      }
+      this.onRefresh();
     },
     onEvent(item) {
       if (this.selectMode) {

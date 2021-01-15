@@ -7,6 +7,33 @@
       <view class="form-container">
         <view
           class="form-item flex-horizontal"
+          v-if="mode === 'read' ? type : true"
+        >
+          <view class="form-item-label">
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
+            合同类型
+          </view>
+          <radio-group @change="onRadioChange" class="form-item-input">
+            <label class="radio flex-horizontal flex-aic">
+              <radio
+                :disabled="mode === 'read'"
+                :checked="type === 'procure'"
+                value="procure"
+              />
+              采购合同
+            </label>
+            <label class="radio flex-horizontal flex-aic">
+              <radio
+                :disabled="mode === 'read'"
+                :checked="type === 'sale'"
+                value="sale"
+              />
+              销售合同
+            </label>
+          </radio-group>
+        </view>
+        <view
+          class="form-item flex-horizontal"
           v-if="mode === 'read' ? name : true"
         >
           <view class="form-item-label">
@@ -42,22 +69,6 @@
         </view>
         <view
           class="form-item flex-horizontal"
-          v-if="mode === 'read' ? type : true"
-        >
-          <view class="form-item-label"> 合同类型 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入合同类型"
-              v-model="type"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
           v-if="mode === 'read' ? price : true"
         >
           <view class="form-item-label"> 合同金额（元） </view>
@@ -76,87 +87,38 @@
       <view class="form-container">
         <view
           class="form-item flex-horizontal"
-          v-if="mode === 'read' ? partyA : true"
+          v-if="mode === 'read' ? partyAString : true"
         >
-          <view class="form-item-label"> 甲方公司名称 </view>
-          <view class="form-item-input">
+          <view class="form-item-label"> 甲方公司 </view>
+          <view class="form-item-input" @tap="onSelectPartyA">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入甲方公司名称"
-              v-model="partyA"
-              :disabled="mode === 'read'"
+              placeholder="请选择甲方公司"
+              v-model="partyAString"
+              disabled
             />
           </view>
         </view>
         <view
           class="form-item flex-horizontal"
-          v-if="mode === 'read' ? partyARepresent : true"
+          v-if="mode === 'read' ? partyBString : true"
         >
-          <view class="form-item-label"> 甲方签订人 </view>
-          <view class="form-item-input">
+          <view class="form-item-label"> 乙方公司 </view>
+          <view class="form-item-input" @tap="onSelectPartyB">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入甲方签订人"
-              v-model="partyARepresent"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? partyB : true"
-        >
-          <view class="form-item-label"> 乙方公司名称 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入乙方公司名称"
-              v-model="partyB"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? partyBRepresent : true"
-        >
-          <view class="form-item-label"> 乙方签订人 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入乙方签订人"
-              v-model="partyBRepresent"
-              :disabled="mode === 'read'"
+              placeholder="请选择乙方公司"
+              v-model="partyBString"
+              disabled
             />
           </view>
         </view>
       </view>
       <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? signTime : true"
-        >
-          <view class="form-item-label"> 合同签订日期 </view>
-          <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择合同签订日期"
-              :defaultValue="signTimeDefaultValue"
-              start="2019-07-19 09:00"
-              :end="signTimePickerEndTime"
-              fields="day"
-              @change="onSignTimeSet"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
         <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? startTime : true"
@@ -176,17 +138,17 @@
         </view>
         <view
           class="form-item flex-horizontal"
-          v-if="mode === 'read' ? endTime : true"
+          v-if="mode === 'read' ? period : true"
         >
-          <view class="form-item-label"> 合同结束日期 </view>
+          <view class="form-item-label"> 合同有效期（月） </view>
           <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择合同结束日期"
-              :defaultValue="endTimeDefaultValue"
-              start="2019-07-19 09:00"
-              :end="endTimePickerEndTime"
-              fields="day"
-              @change="onEndTimeSet"
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入合同有效期"
+              maxlength="3"
+              v-model="period"
               :disabled="mode === 'read'"
             />
           </view>
@@ -211,7 +173,7 @@
         </view>
       </view>
       <add-media-attachment
-        title="附件"
+        title="合同照片"
         :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
@@ -250,23 +212,18 @@ export default {
       eventId: "",
       contractId: "",
       onNetworking: false,
+      type: "",
       name: "",
       number: "",
-      type: "",
       price: "",
-      partyA: "",
-      partyARepresent: "",
-      partyB: "",
-      partyBRepresent: "",
-      signTime: "",
-      signTimeDefaultValue: "",
-      signTimePickerEndTime: "",
+      partyA: {},
+      partyAString: "",
+      partyB: {},
+      partyBString: "",
       startTime: "",
       startTimeDefaultValue: "",
       startTimePickerEndTime: "",
-      endTime: "",
-      endTimeDefaultValue: "",
-      endTimePickerEndTime: "",
+      period: "",
       description: "",
       attachments: [],
     };
@@ -278,6 +235,7 @@ export default {
     if (e.mode) {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
+      console.log(item);
       this.contractId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
@@ -288,20 +246,17 @@ export default {
           title: "合同详情",
         });
       }
+      this.type = item.contractType;
       this.name = item.contractName;
       this.number = item.contractNumber;
-      this.type = item.contractType;
       this.price = item.contractAmount;
-      this.partyA = item.partyA;
-      this.partyARepresent = item.partySignatoryA;
-      this.partyB = item.partyB;
-      this.partyBRepresent = item.partySignatoryB;
-      this.signTime = item.signingDate ? item.signingDate : "";
-      this.signTimeDefaultValue = this.signTime;
+      // this.partyA["id"] = item.partyA;
+      this.partyAString = item.partyA;
+      // this.partyB["id"] = item.partyB;
+      this.partyBString = item.partyB;
       this.startTime = item.startDate ? item.startDate : "";
       this.startTimeDefaultValue = this.startTime;
-      this.endTime = item.endDate ? item.endDate : "";
-      this.endTimeDefaultValue = this.endTime;
+      this.period = item.validPeriod;
       this.description = item.remark;
       this.attachments = item.files.map((e) => {
         return {
@@ -323,19 +278,6 @@ export default {
   methods: {
     initTimePicker() {
       const time = new Date();
-      this.signTimePickerEndTime =
-        time.getFullYear() +
-        1 +
-        "-" +
-        (time.getMonth() + 1 > 9
-          ? time.getMonth() + 1
-          : "0" + (time.getMonth() + 1)) +
-        "-" +
-        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
-        " " +
-        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
-        ":" +
-        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
       this.startTimePickerEndTime =
         time.getFullYear() +
         5 +
@@ -349,28 +291,29 @@ export default {
         (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
         ":" +
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
-      this.endTimePickerEndTime =
-        time.getFullYear() +
-        20 +
-        "-" +
-        (time.getMonth() + 1 > 9
-          ? time.getMonth() + 1
-          : "0" + (time.getMonth() + 1)) +
-        "-" +
-        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
-        " " +
-        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
-        ":" +
-        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
-    onSignTimeSet(e) {
-      this.signTime = e.f1;
+    onRadioChange(e) {
+      console.log(e.target.value);
+      this.type = e.target.value;
+    },
+    onSelectPartyA() {
+      if (this.mode === "read") return;
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=partyA&selectedIds=" +
+          JSON.stringify([this.partyA.id]),
+      });
+    },
+    onSelectPartyB() {
+      if (this.mode === "read") return;
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=partyB&selectedIds=" +
+          JSON.stringify([this.partyB.id]),
+      });
     },
     onStartTimeSet(e) {
       this.startTime = e.f1;
-    },
-    onEndTimeSet(e) {
-      this.endTime = e.f1;
     },
     onAttachmentAdd(attachments) {
       this.attachments = this.attachments.concat(attachments);
@@ -389,22 +332,17 @@ export default {
       );
     },
     onValidate() {
-      if (!this.name) {
+      if (!this.type) {
         uni.showToast({
-          title: "请输入合同名称",
+          title: "请选择合同类型",
           icon: "none",
         });
         return false;
       }
-      if (
-        this.startTime &&
-        this.endTime &&
-        new Date(this.startTime) > new Date(this.endTime)
-      ) {
+      if (!this.name) {
         uni.showToast({
-          title: '"合同结束日期" 不能早于 "合同开始日期"',
+          title: "请输入合同名称",
           icon: "none",
-          duration: 3000,
         });
         return false;
       }
@@ -425,17 +363,16 @@ export default {
       if (!this.onNetworking && this.onValidate()) {
         let payload = {
           businessId: this.eventId,
+          contractType: this.type,
           contractName: this.name,
           contractNumber: this.number,
-          contractType: this.type,
           contractAmount: this.price,
-          partyA: this.partyA,
-          partySignatoryA: this.partyARepresent,
-          partyB: this.partyB,
-          partySignatoryB: this.partyBRepresent,
-          signingDate: this.signTime,
+          partyA: this.partyAString,
+          partyAId: this.partyA.id,
+          partyB: this.partyBString,
+          partyBId: this.partyB.id,
           startDate: this.startTime,
-          endDate: this.endTime,
+          validPeriod: this.period,
           remark: this.description,
           files: this.attachments.map((e) => {
             return {
@@ -479,4 +416,7 @@ export default {
 </script>
 
 <style scoped>
+.radio {
+  margin-left: 24rpx;
+}
 </style>

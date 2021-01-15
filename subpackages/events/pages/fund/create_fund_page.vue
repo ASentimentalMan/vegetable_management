@@ -5,238 +5,6 @@
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? number : true"
-        >
-          <view class="form-item-label">
-            <text class="form-item-required" v-if="mode !== 'read'">*</text>
-            物流单编号
-          </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入物流单编号 自定义标识"
-              v-model="number"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? name : true"
-        >
-          <view class="form-item-label"> 货物名称 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入货物名称"
-              v-model="name"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? weight : true"
-        >
-          <view class="form-item-label"> 货物重量（吨） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入货物重量"
-              v-model="weight"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? distance : true"
-        >
-          <view class="form-item-label"> 距离（kM） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入运输距离"
-              v-model="distance"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? fee : true"
-        >
-          <view class="form-item-label"> 费用（元） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入运输费用"
-              v-model="fee"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-      </view>
-      <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? payerString : true"
-        >
-          <view class="form-item-label"> 支付方 </view>
-          <view class="form-item-input" @tap="onSelectPayer">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择运费支付方"
-              v-model="payerString"
-              disabled
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? radio : true"
-        >
-          <view class="form-item-label"> 支付状态 </view>
-          <radio-group @change="onRadioChange" class="form-item-input">
-            <label class="radio"
-              ><radio
-                :checked="radio === '0'"
-                :disabled="mode === 'read'"
-                value="0"
-              />未支付</label
-            >
-            <label class="radio"
-              ><radio
-                :checked="radio === '1'"
-                :disabled="mode === 'read'"
-                value="1"
-              />已支付</label
-            >
-          </radio-group>
-        </view>
-      </view>
-      <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? fromString : true"
-        >
-          <view class="form-item-label"> 物流发货方 </view>
-          <view class="form-item-input" @tap="onSelectFrom">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择物流发货方"
-              v-model="fromString"
-              disabled
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? toString : true"
-        >
-          <view class="form-item-label"> 物流接收方 </view>
-          <view class="form-item-input" @tap="onSelectTo">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择物流接收方"
-              v-model="toString"
-              disabled
-            />
-          </view>
-        </view>
-      </view>
-
-      <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? startTime : true"
-        >
-          <view class="form-item-label"> 物流开始时间 </view>
-          <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择物流开始时间"
-              :defaultValue="startTimeDefaultValue"
-              start="2019-07-19 09:00"
-              :end="timePickerEndTime"
-              fields="day"
-              @change="onStartTimeSet"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? endTime : true"
-        >
-          <view class="form-item-label"> 物流结束时间 </view>
-          <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择物流结束时间"
-              :defaultValue="endTimeDefaultValue"
-              start="2019-07-19 09:00"
-              :end="timePickerEndTime"
-              fields="day"
-              @change="onEndTimeSet"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-      </view>
-      <view class="form-container">
-        <block v-for="(item, index) in relateOrder" :key="index">
-          <view
-            class="form-item flex-horizontal"
-            v-if="mode === 'read' ? item.id : true"
-          >
-            <view class="form-item-label">
-              对应采购单
-              <text v-if="relateOrder.length > 1">{{ index + 1 }}</text>
-            </view>
-            <view class="form-item-input" @tap="onSelectOrder(index)">
-              <input
-                class="form-input"
-                type="text"
-                cursor-spacing="16"
-                placeholder="请选择对应采购单"
-                v-model="item.id"
-                disabled
-              />
-            </view>
-            <view
-              class="add-form-item"
-              style="margin-left: 12rpx"
-              @tap="onRemoveOrder(index)"
-              v-if="mode !== 'read' && relateOrder.length > 1"
-            >
-              -
-            </view>
-          </view>
-        </block>
-        <view class="form-item flex-horizontal" v-if="mode !== 'read'">
-          <view class="form-item-input">
-            <view class="add-form-item" @tap="onAddOrder"> + </view>
-          </view>
-        </view>
-      </view>
-      <view class="form-container">
         <block v-for="(item, index) in relateSale" :key="index">
           <view
             class="form-item flex-horizontal"
@@ -272,6 +40,149 @@
           </view>
         </view>
       </view>
+      <view class="form-container">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? payerString : true"
+        >
+          <view class="form-item-label">
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
+            付款方
+          </view>
+          <view class="form-item-input" @tap="onSelectPayer">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择付款方"
+              v-model="payerString"
+              disabled
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? number : true"
+        >
+          <view class="form-item-label">
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
+            收款编号
+          </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入收款编号"
+              v-model="number"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? name : true"
+        >
+          <view class="form-item-label"> 收款名称 </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入收款名称"
+              v-model="name"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? weight : true"
+        >
+          <view class="form-item-label"> 收款金额（元） </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入收款金额"
+              v-model="weight"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? distance : true"
+        >
+          <view class="form-item-label"> 已付款金额 （元） </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入已付款金额"
+              v-model="distance"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? endTime : true"
+        >
+          <view class="form-item-label"> 收款日期 </view>
+          <view class="form-item-input">
+            <biao-fun-date-picker
+              placeholder="请选择收款日期"
+              :defaultValue="endTimeDefaultValue"
+              start="2019-07-19 09:00"
+              :end="timePickerEndTime"
+              fields="day"
+              @change="onEndTimeSet"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+      </view>
+      <view class="form-container">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? number : true"
+        >
+          <view class="form-item-label">
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
+            合同金额
+          </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入合同金额"
+              v-model="number"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? name : true"
+        >
+          <view class="form-item-label"> 收款说明 </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入收款说明"
+              v-model="name"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+      </view>
+
       <view class="form-container">
         <view
           class="form-item flex-horizontal"
@@ -363,11 +274,11 @@ export default {
       this.expressId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
-          title: "修改资金",
+          title: "修改收款",
         });
       } else if (this.mode === "read") {
         uni.setNavigationBarTitle({
-          title: "资金详情",
+          title: "收款详情",
         });
       }
       this.number = item.logisticsNumber;
