@@ -1,140 +1,55 @@
-
-
-
 <template>
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
         <view
           class="form-item flex-horizontal"
-          v-if="mode === 'read' ? number : true"
+          v-if="mode === 'read' ? name : true"
         >
           <view class="form-item-label">
             <text class="form-item-required" v-if="mode !== 'read'">*</text>
-            物流单编号
+            收款名称
           </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入物流单编号 自定义标识"
-              v-model="number"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? name : true"
-        >
-          <view class="form-item-label"> 货物名称 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入货物名称"
+              placeholder="请输入收款名称"
               v-model="name"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? weight : true"
-        >
-          <view class="form-item-label"> 货物重量（吨） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入货物重量"
-              v-model="weight"
               :disabled="mode === 'read'"
             />
           </view>
         </view>
         <!-- <view
           class="form-item flex-horizontal"
-          v-if="mode === 'read' ? distance : true"
+          v-if="mode === 'read' ? number : true"
         >
-          <view class="form-item-label"> 距离（kM） </view>
+          <view class="form-item-label"> 收款编号 </view>
           <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请输入运输距离"
-              v-model="distance"
+              placeholder="请输入收款编号"
+              v-model="number"
               :disabled="mode === 'read'"
             />
           </view>
         </view> -->
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? fee : true"
-        >
-          <view class="form-item-label"> 费用（元） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入运输费用"
-              v-model="fee"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-      </view>
-      <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? fromString : true"
-        >
-          <view class="form-item-label"> 物流发货方 </view>
-          <view class="form-item-input" @tap="onSelectFrom">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择物流发货方"
-              v-model="fromString"
-              disabled
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? toString : true"
-        >
-          <view class="form-item-label"> 物流接收方 </view>
-          <view class="form-item-input" @tap="onSelectTo">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择物流接收方"
-              v-model="toString"
-              disabled
-            />
-          </view>
-        </view>
       </view>
       <view class="form-container">
         <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? payerString : true"
         >
-          <view class="form-item-label"> 支付方 </view>
+          <view class="form-item-label"> 付款方 </view>
           <view class="form-item-input" @tap="onSelectPayer">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请选择运费支付方"
+              placeholder="请选择付款方"
               v-model="payerString"
               disabled
             />
@@ -142,96 +57,67 @@
         </view>
         <view
           class="form-item flex-horizontal"
-          v-if="mode === 'read' ? radio : true"
+          v-if="mode === 'read' ? total : true"
         >
-          <view class="form-item-label"> 支付状态 </view>
-          <radio-group @change="onRadioChange" class="form-item-input">
-            <label class="radio"
-              ><radio
-                :checked="radio === '0'"
-                :disabled="mode === 'read'"
-                value="0"
-              />未支付</label
-            >
-            <label class="radio"
-              ><radio
-                :checked="radio === '1'"
-                :disabled="mode === 'read'"
-                value="1"
-              />已支付</label
-            >
-          </radio-group>
-        </view>
-      </view>
-      <!-- <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? startTime : true"
-        >
-          <view class="form-item-label"> 物流开始时间 </view>
+          <view class="form-item-label"> 合同金额（元） </view>
           <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择物流开始时间"
-              :defaultValue="startTimeDefaultValue"
-              start="2019-07-19 09:00"
-              :end="timePickerEndTime"
-              fields="day"
-              @change="onStartTimeSet"
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入合同金额"
+              v-model="total"
               :disabled="mode === 'read'"
             />
           </view>
         </view>
         <view
           class="form-item flex-horizontal"
-          v-if="mode === 'read' ? endTime : true"
+          v-if="mode === 'read' ? received : true"
         >
-          <view class="form-item-label"> 物流结束时间 </view>
+          <view class="form-item-label"> 已收款金额（元） </view>
           <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择物流结束时间"
-              :defaultValue="endTimeDefaultValue"
-              start="2019-07-19 09:00"
-              :end="timePickerEndTime"
-              fields="day"
-              @change="onEndTimeSet"
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入已收款金额"
+              v-model="received"
               :disabled="mode === 'read'"
             />
           </view>
         </view>
-      </view> -->
-      <view class="form-container">
-        <block v-for="(item, index) in relateOrder" :key="index">
-          <view
-            class="form-item flex-horizontal"
-            v-if="mode === 'read' ? item.id : true"
-          >
-            <view class="form-item-label">
-              对应采购单
-              <text v-if="relateOrder.length > 1">{{ index + 1 }}</text>
-            </view>
-            <view class="form-item-input" @tap="onSelectOrder(index)">
-              <input
-                class="form-input"
-                type="text"
-                cursor-spacing="16"
-                placeholder="请选择对应采购单"
-                v-model="item.id"
-                disabled
-              />
-            </view>
-            <view
-              class="add-form-item"
-              style="margin-left: 12rpx"
-              @tap="onRemoveOrder(index)"
-              v-if="mode !== 'read' && relateOrder.length > 1"
-            >
-              -
-            </view>
-          </view>
-        </block>
-        <view class="form-item flex-horizontal" v-if="mode !== 'read'">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? receive : true"
+        >
+          <view class="form-item-label"> 本次收款金额（元） </view>
           <view class="form-item-input">
-            <view class="add-form-item" @tap="onAddOrder"> + </view>
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入本次收款金额"
+              v-model="receive"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? time : true"
+        >
+          <view class="form-item-label"> 收款日期 </view>
+          <view class="form-item-input">
+            <biao-fun-date-picker
+              placeholder="请选择收款日期"
+              :defaultValue="timeDefaultValue"
+              start="2019-07-19 09:00"
+              :end="timePickerEndTime"
+              fields="day"
+              @change="onTimeSet"
+              :disabled="mode === 'read'"
+            />
           </view>
         </view>
       </view>
@@ -317,7 +203,10 @@
 <script>
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createExpressApi, editExpressApi } from "@/apis/event_apis";
+import {
+  createReceivePaymentApi,
+  editReceivePaymentApi,
+} from "@/apis/event_apis";
 export default {
   components: {
     BiaoFunDatePicker,
@@ -329,24 +218,16 @@ export default {
       eventId: "",
       expressId: "",
       onNetworking: false,
-      number: "",
       name: "",
-      weight: "",
-      distance: "",
-      fee: "",
+      // number: "",
       payer: "",
       payerString: "",
-      radio: "",
-      from: {},
-      fromString: "",
-      to: {},
-      toString: "",
-      startTime: "",
-      startTimeDefaultValue: "",
-      endTime: "",
-      endTimeDefaultValue: "",
+      total: "",
+      received: "",
+      receive: "",
+      time: "",
+      timeDefaultValue: "",
       timePickerEndTime: "",
-      relateOrder: [{ id: "" }],
       relateSale: [{ id: "" }],
       description: "",
       attachments: [],
@@ -359,35 +240,24 @@ export default {
     if (e.mode) {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
-      this.expressId = item.id;
+      this.receiveId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
-          title: "修改物流",
+          title: "修改收款",
         });
       } else if (this.mode === "read") {
         uni.setNavigationBarTitle({
-          title: "物流详情",
+          title: "收款详情",
         });
       }
-      this.number = item.logisticsNumber;
-      this.name = item.itemName;
-      this.weight = item.weight;
-      this.distance = item.distance;
-      this.fee = item.cost;
+      this.name = item.receiveName;
       this.payer = { id: item.payerCustomerId };
-      this.payerString = item.payerCustomer;
-      this.radio = item.payerStatus;
-      this.from = { id: item.outputCustomerId };
-      this.fromString = item.outputCustomer;
-      this.to = { id: item.inputCustomerId };
-      this.toString = item.inputCustomer;
-      this.startTime = item.startDate ? item.startDate : "";
-      this.startTimeDefaultValue = this.startTime;
-      this.endTime = item.endDate ? item.endDate : "";
-      this.endTimeDefaultValue = this.endTime;
-      if (item.procurements.length) {
-        this.relateOrder = item.procurements;
-      }
+      this.payerString = item.payerCustomer.customerName;
+      this.total = item.contractAmount;
+      this.received = item.paidAmount;
+      this.receive = item.receiveAmount;
+      this.time = item.receiveDate ? item.receiveDate : "";
+      this.timeDefaultValue = this.time
       if (item.sales.length) {
         this.relateSale = item.sales;
       }
@@ -410,33 +280,6 @@ export default {
     this.setTimePickerEndTime();
   },
   methods: {
-    onSelectPayer() {
-      if (this.mode === "read") return;
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=payer&selectedIds=" +
-          JSON.stringify([this.payer.id]),
-      });
-    },
-    onRadioChange(e) {
-      this.radio = e.target.value;
-    },
-    onSelectFrom() {
-      if (this.mode === "read") return;
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=from&selectedIds=" +
-          JSON.stringify([this.from.id]),
-      });
-    },
-    onSelectTo() {
-      if (this.mode === "read") return;
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=to&selectedIds=" +
-          JSON.stringify([this.to.id]),
-      });
-    },
     setTimePickerEndTime() {
       const time = new Date();
       this.timePickerEndTime =
@@ -453,31 +296,17 @@ export default {
         ":" +
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
-    onStartTimeSet(e) {
-      this.startTime = e.f1;
-    },
-    onEndTimeSet(e) {
-      this.endTime = e.f1;
-    },
-    onAddOrder() {
-      this.relateOrder.push({ id: "" });
-    },
-    onRemoveOrder(index) {
-      this.relateOrder.splice(index, 1);
-    },
-    onSelectOrder(index) {
+    onSelectPayer() {
       if (this.mode === "read") return;
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/order/order_list_page?mode=select&key=relateOrder&index=" +
-          index +
-          "&selectedIds=" +
-          JSON.stringify(
-            this.relateOrder.map((e) => {
-              return e.id;
-            })
-          ),
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=payer&selectedIds=" +
+          JSON.stringify([this.payer.id]),
       });
+    },
+
+    onTimeSet(e) {
+      this.time = e.f1;
     },
     onAddSale() {
       this.relateSale.push({ id: "" });
@@ -516,9 +345,9 @@ export default {
       );
     },
     onValidate() {
-      if (!this.number) {
+      if (!this.name) {
         uni.showToast({
-          title: "请输入物流单编号 自定义标识",
+          title: "请输入收款名称",
           icon: "none",
         });
         return false;
@@ -529,22 +358,13 @@ export default {
       if (!this.onNetworking && this.onValidate()) {
         let payload = {
           businessId: this.eventId,
-          logisticsNumber: this.number,
-          itemName: this.name,
-          weight: this.weight,
-          distance: this.distance,
-          cost: this.fee,
-          payerCustomer: this.payerString,
+          receiveName: this.name,
           payerCustomerId: this.payer.id,
-          payerStatus: this.radio,
-          outputCustomer: this.fromString,
-          outputCustomerId: this.from.id,
-          inputCustomer: this.toString,
-          inputCustomerId: this.to.id,
-          startDate: this.startTime,
-          endDate: this.endTime,
-          procurementIds: [],
-          saleIds: [],
+          contractAmount: this.total,
+          paidAmount: this.received,
+          receiveAmount: this.receive,
+          receiveDate: this.time,
+          salesIds: [],
           remark: this.description,
           files: this.attachments.map((e) => {
             return {
@@ -556,24 +376,19 @@ export default {
             };
           }),
         };
-        for (let item of this.relateOrder) {
-          if (item.id) {
-            payload["procurementIds"].push(item.id);
-          }
-        }
         for (let item of this.relateSale) {
           if (item.id) {
-            payload["saleIds"].push(item.id);
+            payload["salesIds"].push(item.id);
           }
         }
         console.log(payload);
         this.onNetworking = true;
         let response;
         if (this.mode === "create") {
-          response = await createExpressApi(payload);
+          response = await createReceivePaymentApi(payload);
         } else if (this.mode === "edit") {
-          payload["id"] = this.expressId;
-          response = await editExpressApi(payload);
+          payload["id"] = this.receiveId;
+          response = await editReceivePaymentApi(payload);
         }
         this.onNetworking = false;
         if (response) {

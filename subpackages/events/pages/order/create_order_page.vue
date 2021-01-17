@@ -24,8 +24,6 @@
             />
           </view>
         </view>
-      </view>
-      <view class="form-container">
         <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? number : true"
@@ -45,6 +43,8 @@
             />
           </view>
         </view>
+      </view>
+      <view class="form-container">
         <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? contact : true"
@@ -95,97 +95,101 @@
           </view>
         </view>
       </view>
-      <!-- <view class="form-container">
-          <view class="form-item flex-horizontal">
-            <view class="form-item-label"> 采购品类 </view>
-            <view class="form-item-input">
-              <input
-                class="form-input"
-                type="text"
-                cursor-spacing="16"
-                placeholder="请选择采购品类"
-                v-model="partyA"
-              />
-            </view>
-          </view>
-        </view> -->
-      <view class="form-container">
-        <block v-for="(item, index) in cates" :key="index">
-          <view
-            class="form-item flex-horizontal"
-            v-if="mode === 'read' ? cates.length : true"
-          >
-            <view class="form-item-label">
-              采购品类
-              <text v-if="cates.length > 1">{{ index + 1 }}</text>
-            </view>
-            <view class="form-item-input">
-              <cate-picker />
+      <block v-for="(item, index) in cates" :key="index">
+        <view class="flex-vertical" v-if="mode === 'read' ? item.id : true">
+          <view class="form-container">
+            <view class="form-item flex-horizontal">
+              <view class="form-item-label">
+                采购品类
+                <text v-if="cates.length > 1">{{ index + 1 }}</text>
+              </view>
+              <view class="form-item-input">
+                <cate-picker
+                  :disabled="mode === 'read'"
+                  :index="index"
+                  :defaultValue="item.value"
+                  @onSelectCate="onSelectCate"
+                />
+              </view>
+              <view
+                class="add-form-item"
+                style="margin-left: 12rpx"
+                @tap="onRemoveCate(index)"
+                v-if="mode !== 'read' && cates.length > 1"
+              >
+                -
+              </view>
             </view>
             <view
-              class="add-form-item"
-              style="margin-left: 12rpx"
-              @tap="onRemoveOrder(index)"
-              v-if="mode !== 'read' && cates.length > 1"
+              class="form-container"
+              v-if="item['id']"
+              style="margin-top: 0"
             >
-              -
+              <view
+                class="form-item flex-horizontal"
+                v-if="mode === 'read' ? item['amount'] : true"
+                style="margin-right: 0"
+              >
+                <view class="form-item-label"> 采购数量（吨） </view>
+                <view class="form-item-input">
+                  <input
+                    class="form-input"
+                    type="text"
+                    cursor-spacing="16"
+                    placeholder="请输入采购数量"
+                    v-model="item['amount']"
+                    :disabled="mode === 'read'"
+                    @input="onAmountChange($event, item)"
+                  />
+                </view>
+              </view>
+              <view
+                class="form-item flex-horizontal"
+                v-if="mode === 'read' ? item['unitPrice'] : true"
+                style="margin-right: 0"
+              >
+                <view class="form-item-label"> 采购单价（元/吨） </view>
+                <view class="form-item-input">
+                  <input
+                    class="form-input"
+                    type="text"
+                    cursor-spacing="16"
+                    placeholder="请输入采购单价"
+                    v-model="item['unitPrice']"
+                    :disabled="mode === 'read'"
+                    @input="onUnitPriceChange($event, item)"
+                  />
+                </view>
+              </view>
+              <view
+                class="form-item flex-horizontal"
+                v-if="mode === 'read' ? item['price'] : true"
+                style="margin-right: 0"
+              >
+                <view class="form-item-label"> 采购总价（元） </view>
+                <view class="form-item-input">
+                  <input
+                    class="form-input"
+                    type="text"
+                    cursor-spacing="16"
+                    placeholder="请输入采购总价"
+                    v-model="item['price']"
+                    :disabled="mode === 'read'"
+                  />
+                </view>
+              </view>
             </view>
           </view>
-        </block>
-        <view class="form-item flex-horizontal" v-if="mode !== 'read'">
-          <view class="form-item-input">
-            <view class="add-form-item" @tap="onAddOrder"> + </view>
-          </view>
         </view>
-      </view>
-      <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? amount : true"
-        >
-          <view class="form-item-label"> 采购数量（吨） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入采购数量"
-              v-model="amount"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? unitPrice : true"
-        >
-          <view class="form-item-label"> 采购单价（元/吨） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入采购单价"
-              v-model="unitPrice"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? price : true"
-        >
-          <view class="form-item-label"> 采购总价（元） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入采购总价"
-              v-model="price"
-              :disabled="mode === 'read'"
-            />
-          </view>
+      </block>
+      <view
+        class="form-item flex-horizontal"
+        v-if="mode !== 'read'"
+        style="border-bottom: none"
+      >
+        <view class="form-item-input" style="margin-right: 24rpx">
+          <text class="add-form-text"> 新增品类 </text>
+          <view class="add-form-item" @tap="onAddCate"> + </view>
         </view>
       </view>
       <view class="form-container">
@@ -253,16 +257,10 @@ export default {
       number: "",
       contact: "",
       tel: "",
-      cates: [{ id: "" }],
-      type: [],
       time: "",
       timePickerDefaultValue: "",
       timePickerEndTime: "",
-      amount: "",
-      unitPrice: "",
-      price: "",
-      provider: {},
-      providerString: "",
+      cates: [{ id: "", amount: "", unitPrice: "", price: "" }],
       description: "",
       attachments: [],
     };
@@ -285,21 +283,24 @@ export default {
           title: "采购详情",
         });
       }
+      this.relateContract = item.contract;
+      this.relateContractString = item.contract.contractName;
       this.number = item.procureNumber;
-      this.name = item.baseName;
-      this.area = item.baseArea;
       this.contact = item.contact;
       this.tel = item.contactTel;
-      this.type = [];
       this.time = item.purchaseDate;
       this.timePickerDefaultValue = this.time;
-      this.amount = item.quantity;
-      this.unitPrice = item.unitPrice;
-      this.price = item.totalPrice;
-      this.provider = {
-        id: item.sourceInputCustomerId,
-      };
-      this.providerString = item.sourceInputCustomer.customerName;
+      if (item.categories.length) {
+        this.cates = item.categories.map((e) => {
+          return {
+            id: e.categoryId,
+            value: e.category,
+            amount: e.quantity,
+            unitPrice: e.unitPrice,
+            price: e.totalPrice,
+          };
+        });
+      }
       this.description = item.remark;
       this.attachments = item.files.map((e) => {
         return {
@@ -346,27 +347,26 @@ export default {
     onTimeSet(e) {
       this.time = e.f1;
     },
-    onSelectCate(index) {
+    onSelectCate(e) {
       if (this.mode === "read") return;
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/order/order_list_page?mode=select&key=relateOrder&index=" +
-          index +
-          "&selectedIds=" +
-          JSON.stringify(
-            this.relateOrder.map((e) => {
-              return e.id;
-            })
-          ),
-      });
+      this.$set(this.cates, e.index, Object.assign(this.cates[e.index], e));
+      console.log(this.cates[e.index]);
     },
-    onSelectProvider() {
-      if (this.mode === "read") return;
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=provider&selectedIds=" +
-          JSON.stringify([this.provider.id]),
-      });
+    onAddCate() {
+      this.cates.push({ id: "", amount: "", unitPrice: "", price: "" });
+    },
+    onRemoveCate(index) {
+      this.cates.splice(index, 1);
+    },
+    onAmountChange(e, item) {
+      if (item.unitPrice) {
+        item.price = e.detail.value * item.unitPrice;
+      }
+    },
+    onUnitPriceChange(e, item) {
+      if (item.amount) {
+        item.price = e.detail.value * item.amount;
+      }
     },
     onAttachmentAdd(attachments) {
       this.attachments = this.attachments.concat(attachments);
@@ -385,6 +385,13 @@ export default {
       );
     },
     onValidate() {
+      if (!this.relateContractString) {
+        uni.showToast({
+          title: "请选择关联合同",
+          icon: "none",
+        });
+        return false;
+      }
       if (!this.number) {
         uni.showToast({
           title: "请输入采购单编号 自定义标识",
@@ -396,18 +403,14 @@ export default {
     },
     async onHandle() {
       if (!this.onNetworking && this.onValidate()) {
-        const payload = {
+        let payload = {
           businessId: this.eventId,
+          contractId: this.relateContract.id,
           procureNumber: this.number,
-          baseName: this.name,
-          baseArea: this.area,
           contact: this.contact,
           contactTel: this.tel,
           purchaseDate: this.time,
-          quantity: this.amount,
-          unitPrice: this.unitPrice,
-          totalPrice: this.price,
-          sourceInputCustomerId: this.provider.id,
+          categories: [],
           remark: this.description,
           files: this.attachments.map((e) => {
             return {
@@ -419,6 +422,17 @@ export default {
             };
           }),
         };
+        for (let item of this.cates) {
+          if (item.id) {
+            payload["categories"].push({
+              category: item.value,
+              categoryId: item.id,
+              quantity: item.amount,
+              unitPrice: item.unitPrice,
+              totalPrice: item.price,
+            });
+          }
+        }
         console.log(payload);
         this.onNetworking = true;
         let response;

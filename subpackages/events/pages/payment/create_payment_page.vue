@@ -1,25 +1,127 @@
-
-
-
 <template>
   <view class="page-container">
     <view class="scrollable">
       <view class="form-container">
-        <block v-for="(item, index) in relateSale" :key="index">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? name : true"
+        >
+          <view class="form-item-label">
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
+            付款名称
+          </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入付款名称"
+              v-model="name"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+      </view>
+      <view class="form-container">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? receiverString : true"
+        >
+          <view class="form-item-label"> 收款方 </view>
+          <view class="form-item-input" @tap="onSelectReceiver">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择收款方"
+              v-model="receiverString"
+              disabled
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? total : true"
+        >
+          <view class="form-item-label"> 合同金额（元） </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入合同金额"
+              v-model="total"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? paid : true"
+        >
+          <view class="form-item-label"> 已付款金额（元） </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入已付款金额"
+              v-model="paid"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? pay : true"
+        >
+          <view class="form-item-label"> 本次付款金额（元） </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入本次付款金额"
+              v-model="pay"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? time : true"
+        >
+          <view class="form-item-label"> 付款日期 </view>
+          <view class="form-item-input">
+            <biao-fun-date-picker
+              placeholder="请选择付款日期"
+              :defaultValue="timeDefaultValue"
+              start="2019-07-19 09:00"
+              :end="timePickerEndTime"
+              fields="day"
+              @change="onTimeSet"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+      </view>
+
+      <view class="form-container">
+        <block v-for="(item, index) in relateOrder" :key="index">
           <view
             class="form-item flex-horizontal"
             v-if="mode === 'read' ? item.id : true"
           >
             <view class="form-item-label">
-              对应销售单
-              <text v-if="relateSale.length > 1">{{ index + 1 }}</text></view
-            >
-            <view class="form-item-input" @tap="onSelectSale(index)">
+              对应采购单
+              <text v-if="relateOrder.length > 1">{{ index + 1 }}</text>
+            </view>
+            <view class="form-item-input" @tap="onSelectOrder(index)">
               <input
                 class="form-input"
                 type="text"
                 cursor-spacing="16"
-                placeholder="请选择对应销售单"
+                placeholder="请选择对应采购单"
                 v-model="item.id"
                 disabled
               />
@@ -27,8 +129,8 @@
             <view
               class="add-form-item"
               style="margin-left: 12rpx"
-              @tap="onRemoveSale(index)"
-              v-if="mode !== 'read' && relateSale.length > 1"
+              @tap="onRemoveOrder(index)"
+              v-if="mode !== 'read' && relateOrder.length > 1"
             >
               -
             </view>
@@ -36,153 +138,10 @@
         </block>
         <view class="form-item flex-horizontal" v-if="mode !== 'read'">
           <view class="form-item-input">
-            <view class="add-form-item" @tap="onAddSale"> + </view>
+            <view class="add-form-item" @tap="onAddOrder"> + </view>
           </view>
         </view>
       </view>
-      <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? payerString : true"
-        >
-          <view class="form-item-label">
-            <text class="form-item-required" v-if="mode !== 'read'">*</text>
-            付款方
-          </view>
-          <view class="form-item-input" @tap="onSelectPayer">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择付款方"
-              v-model="payerString"
-              disabled
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? number : true"
-        >
-          <view class="form-item-label">
-            <text class="form-item-required" v-if="mode !== 'read'">*</text>
-            收款编号
-          </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入收款编号"
-              v-model="number"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? name : true"
-        >
-          <view class="form-item-label"> 收款名称 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入收款名称"
-              v-model="name"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? weight : true"
-        >
-          <view class="form-item-label"> 收款金额（元） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入收款金额"
-              v-model="weight"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? distance : true"
-        >
-          <view class="form-item-label"> 已付款金额 （元） </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入已付款金额"
-              v-model="distance"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? endTime : true"
-        >
-          <view class="form-item-label"> 收款日期 </view>
-          <view class="form-item-input">
-            <biao-fun-date-picker
-              placeholder="请选择收款日期"
-              :defaultValue="endTimeDefaultValue"
-              start="2019-07-19 09:00"
-              :end="timePickerEndTime"
-              fields="day"
-              @change="onEndTimeSet"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-      </view>
-      <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? number : true"
-        >
-          <view class="form-item-label">
-            <text class="form-item-required" v-if="mode !== 'read'">*</text>
-            合同金额
-          </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入合同金额"
-              v-model="number"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? name : true"
-        >
-          <view class="form-item-label"> 收款说明 </view>
-          <view class="form-item-input">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请输入收款说明"
-              v-model="name"
-              :disabled="mode === 'read'"
-            />
-          </view>
-        </view>
-      </view>
-
       <view class="form-container">
         <view
           class="form-item flex-horizontal"
@@ -229,7 +188,7 @@
 <script>
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createExpressApi, editExpressApi } from "@/apis/event_apis";
+import { createPaymentApi, editPaymentApi } from "@/apis/event_apis";
 export default {
   components: {
     BiaoFunDatePicker,
@@ -239,27 +198,18 @@ export default {
     return {
       mode: "create",
       eventId: "",
-      expressId: "",
+      paymentId: "",
       onNetworking: false,
-      number: "",
       name: "",
-      weight: "",
-      distance: "",
-      fee: "",
-      payer: "",
-      payerString: "",
-      radio: "",
-      from: {},
-      fromString: "",
-      to: {},
-      toString: "",
-      startTime: "",
-      startTimeDefaultValue: "",
-      endTime: "",
-      endTimeDefaultValue: "",
+      receiver: "",
+      receiverString: "",
+      total: "",
+      paid: "",
+      pay: "",
+      time: "",
+      timeDefaultValue: "",
       timePickerEndTime: "",
       relateOrder: [{ id: "" }],
-      relateSale: [{ id: "" }],
       description: "",
       attachments: [],
     };
@@ -271,7 +221,7 @@ export default {
     if (e.mode) {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
-      this.expressId = item.id;
+      this.paymentId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
           title: "修改收款",
@@ -281,27 +231,16 @@ export default {
           title: "收款详情",
         });
       }
-      this.number = item.logisticsNumber;
-      this.name = item.itemName;
-      this.weight = item.weight;
-      this.distance = item.distance;
-      this.fee = item.cost;
-      this.payer = { id: item.payerCustomerId };
-      this.payerString = item.payerCustomer;
-      this.radio = item.payerStatus;
-      this.from = { id: item.outputCustomerId };
-      this.fromString = item.outputCustomer;
-      this.to = { id: item.inputCustomerId };
-      this.toString = item.inputCustomer;
-      this.startTime = item.startDate ? item.startDate : "";
-      this.startTimeDefaultValue = this.startTime;
-      this.endTime = item.endDate ? item.endDate : "";
-      this.endTimeDefaultValue = this.endTime;
-      if (item.procurements.length) {
-        this.relateOrder = item.procurements;
-      }
-      if (item.sales.length) {
-        this.relateSale = item.sales;
+      this.name = item.paymentName;
+      this.receiver = { id: item.receiveCustomerId };
+      this.receiverString = item.receiveCustomer.customerName;
+      this.total = item.contractAmount;
+      this.paid = item.paidAmount;
+      this.pay = item.paymentAmount;
+      this.time = item.paymentDate ? item.paymentDate : "";
+      this.timeDefaultValue = this.time;
+      if (item.procure.length) {
+        this.relateOrder = item.procure;
       }
       this.description = item.remark;
       this.attachments = item.files.map((e) => {
@@ -322,33 +261,6 @@ export default {
     this.setTimePickerEndTime();
   },
   methods: {
-    onSelectPayer() {
-      if (this.mode === "read") return;
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=payer&selectedIds=" +
-          JSON.stringify([this.payer.id]),
-      });
-    },
-    onRadioChange(e) {
-      this.radio = e.target.value;
-    },
-    onSelectFrom() {
-      if (this.mode === "read") return;
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=from&selectedIds=" +
-          JSON.stringify([this.from.id]),
-      });
-    },
-    onSelectTo() {
-      if (this.mode === "read") return;
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=to&selectedIds=" +
-          JSON.stringify([this.to.id]),
-      });
-    },
     setTimePickerEndTime() {
       const time = new Date();
       this.timePickerEndTime =
@@ -365,11 +277,16 @@ export default {
         ":" +
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
-    onStartTimeSet(e) {
-      this.startTime = e.f1;
+    onSelectReceiver() {
+      if (this.mode === "read") return;
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=receiver&selectedIds=" +
+          JSON.stringify([this.receiver.id]),
+      });
     },
-    onEndTimeSet(e) {
-      this.endTime = e.f1;
+    onTimeSet(e) {
+      this.time = e.f1;
     },
     onAddOrder() {
       this.relateOrder.push({ id: "" });
@@ -386,26 +303,6 @@ export default {
           "&selectedIds=" +
           JSON.stringify(
             this.relateOrder.map((e) => {
-              return e.id;
-            })
-          ),
-      });
-    },
-    onAddSale() {
-      this.relateSale.push({ id: "" });
-    },
-    onRemoveSale(index) {
-      this.relateSale.splice(index, 1);
-    },
-    onSelectSale(index) {
-      if (this.mode === "read") return;
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/sale/sale_list_page?mode=select&key=relateSale&index=" +
-          index +
-          "&selectedIds=" +
-          JSON.stringify(
-            this.relateSale.map((e) => {
               return e.id;
             })
           ),
@@ -428,9 +325,9 @@ export default {
       );
     },
     onValidate() {
-      if (!this.number) {
+      if (!this.name) {
         uni.showToast({
-          title: "请输入物流单编号 自定义标识",
+          title: "请输入付款名称",
           icon: "none",
         });
         return false;
@@ -441,22 +338,13 @@ export default {
       if (!this.onNetworking && this.onValidate()) {
         let payload = {
           businessId: this.eventId,
-          logisticsNumber: this.number,
-          itemName: this.name,
-          weight: this.weight,
-          distance: this.distance,
-          cost: this.fee,
-          payerCustomer: this.payerString,
-          payerCustomerId: this.payer.id,
-          payerStatus: this.radio,
-          outputCustomer: this.fromString,
-          outputCustomerId: this.from.id,
-          inputCustomer: this.toString,
-          inputCustomerId: this.to.id,
-          startDate: this.startTime,
-          endDate: this.endTime,
-          procurementIds: [],
-          saleIds: [],
+          paymentName: this.name,
+          receiveCustomerId: this.receiver.id,
+          contractAmount: this.total,
+          paidAmount: this.paid,
+          paymentAmount: this.pay,
+          paymentDate: this.time,
+          procureIds: [],
           remark: this.description,
           files: this.attachments.map((e) => {
             return {
@@ -470,22 +358,17 @@ export default {
         };
         for (let item of this.relateOrder) {
           if (item.id) {
-            payload["procurementIds"].push(item.id);
-          }
-        }
-        for (let item of this.relateSale) {
-          if (item.id) {
-            payload["saleIds"].push(item.id);
+            payload["procureIds"].push(item.id);
           }
         }
         console.log(payload);
         this.onNetworking = true;
         let response;
         if (this.mode === "create") {
-          response = await createExpressApi(payload);
+          response = await createPaymentApi(payload);
         } else if (this.mode === "edit") {
-          payload["id"] = this.expressId;
-          response = await editExpressApi(payload);
+          payload["id"] = this.paymentId;
+          response = await editPaymentApi(payload);
         }
         this.onNetworking = false;
         if (response) {

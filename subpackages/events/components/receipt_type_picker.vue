@@ -1,5 +1,5 @@
 <template>
-  <view class="picker-container">
+  <view>
     <picker
       mode="selector"
       :range="range"

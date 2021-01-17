@@ -32,17 +32,6 @@
                       {{ item.createTime }}
                     </view>
                   </view>
-
-                  <view
-                    class="type-container"
-                    :class="{
-                      green: item.type === '物流',
-                      orange: item.type === '采购单',
-                    }"
-                    v-if="item.type"
-                  >
-                    {{ item.type }}
-                  </view>
                 </view>
               </view>
             </uni-swipe-action-item>
@@ -100,7 +89,7 @@ export default {
       selectMode: false,
       key: "",
       index: "",
-      selectedIds: "",
+      selectedIds: [],
     };
   },
   computed: {
@@ -317,22 +306,5 @@ export default {
   color: #8b8c8b;
   text-align: left;
   line-height: 1;
-}
-.type-container {
-  position: absolute;
-  left: 36rpx;
-  top: 0;
-  font-size: 20rpx;
-  font-weight: 500;
-  color: #ffffff;
-  padding: 2rpx 12rpx;
-  background-color: #2c7cf6;
-  text-align: center;
-}
-.type-container.green {
-  background-color: #42ad4e;
-}
-.type-container.orange {
-  background-color: #f09c2c;
 }
 </style>

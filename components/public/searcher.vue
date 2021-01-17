@@ -28,7 +28,7 @@ export default {
   props: {
     focus: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     fixed: {
       type: Boolean,

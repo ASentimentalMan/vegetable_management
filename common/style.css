@@ -190,6 +190,14 @@ uni-video {
 .form-item-placeholder {
   color: grey;
 }
+.add-form-text {
+  border-radius: 50%;
+  color: #2c7cf6;
+  font-size: 26rpx;
+  text-align: center;
+  line-height: 40rpx;
+  margin-right: 12rpx;
+}
 .add-form-item {
   width: 48rpx;
   height: 48rpx;

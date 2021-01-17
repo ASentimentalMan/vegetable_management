@@ -206,7 +206,7 @@
 					}
 				},
 				{
-					"path": "pages/fund/fund_list_page",
+					"path": "pages/receive_payment/receive_payment_list_page",
 					"style": {
 						"navigationBarTitleText": "收款清单",
 						"navigationBarBackgroundColor": "#ffffff",
@@ -216,9 +216,28 @@
 					}
 				},
 				{
-					"path": "pages/fund/create_fund_page",
+					"path": "pages/receive_payment/create_receive_payment_page",
 					"style": {
 						"navigationBarTitleText": "新增收款",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5"
+					}
+				},
+				{
+					"path": "pages/payment/payment_list_page",
+					"style": {
+						"navigationBarTitleText": "付款清单",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5",
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "pages/payment/create_payment_page",
+					"style": {
+						"navigationBarTitleText": "新增付款",
 						"navigationBarBackgroundColor": "#ffffff",
 						"backgroundColorTop": "#f5f5f5",
 						"backgroundColor": "#f5f5f5"

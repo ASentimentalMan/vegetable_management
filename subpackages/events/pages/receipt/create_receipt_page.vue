@@ -238,7 +238,7 @@
             />
           </view>
         </view>
-        <view
+        <!-- <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? relateCustomerString : true"
         >
@@ -253,7 +253,7 @@
               disabled
             />
           </view>
-        </view>
+        </view> -->
       </view>
       <view class="form-container">
         <view
@@ -379,7 +379,9 @@ export default {
       };
       this.toString = item.inputInvoiceUnit;
       this.recognizeNumber = item.identificationNumber;
-      this.locationString = item.address ? item.address : "请选择开户行地址";
+      if (item.bankAddress) {
+        this.locationString = item.bankAddress;
+      }
       this.bank = item.bankAccountNumber
         ? item.bankAccountNumber.split(",")[0]
         : "";
@@ -387,8 +389,8 @@ export default {
         ? item.bankAccountNumber.split(",")[1]
         : "";
       this.tel = item.telephone;
-      this.relateContract = {};
-      this.relateContractString = "";
+      this.relateContract = { id: item.contract.id };
+      this.relateContractString = item.contract.contractName;
       this.relateCustomer = {};
       this.relateCustomerString = "";
       this.description = item.remark;
@@ -409,10 +411,14 @@ export default {
     }
     this.initTimePicker();
   },
+  onShow() {
+    this.fill();
+  },
   mounted() {
     if (this.type.label) {
       this.$refs.receiptTypePicker.setSelectedStr(this.type.label);
     }
+    this.fill();
   },
   methods: {
     initTimePicker() {
@@ -429,6 +435,20 @@ export default {
         (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
         ":" +
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
+    },
+    fill() {
+      if (this.to) {
+        if (this.to.identificationNumber) {
+          this.recognizeNumber = this.to.identificationNumber;
+        }
+        if (this.to.bankAddress) {
+          this.locationString = this.to.bankAddress;
+        }
+        if (this.to.bankAccountNumber) {
+          this.bank = this.to.bankAccountNumber.split(",")[0];
+          this.bankNumber = this.to.bankAccountNumber.split(",")[1];
+        }
+      }
     },
     onReceiptTypeChange(e) {
       this.type = e;
@@ -473,14 +493,14 @@ export default {
           JSON.stringify([this.relateContract.id]),
       });
     },
-    onSelectCustomer() {
-      if (this.mode === "read") return;
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/customer/customer_list_page?mode=select&key=relateCustomer&selectedIds=" + 
-          JSON.stringify([this.relateCustomer.id]),
-      });
-    },
+    // onSelectCustomer() {
+    //   if (this.mode === "read") return;
+    //   uni.navigateTo({
+    //     url:
+    //       "/subpackages/events/pages/customer/customer_list_page?mode=select&key=relateCustomer&selectedIds=" +
+    //       JSON.stringify([this.relateCustomer.id]),
+    //   });
+    // },
     onAttachmentAdd(attachments) {
       this.attachments = this.attachments.concat(attachments);
     },
@@ -522,7 +542,7 @@ export default {
           inputInvoiceUnit: this.to.customerName,
           inputInvoiceUnitId: this.to.id,
           identificationNumber: this.recognizeNumber,
-          address:
+          bankAddress:
             this.locationString === "请选择开户行地址"
               ? ""
               : this.locationString,
@@ -554,7 +574,7 @@ export default {
           response = await editReceiptApi(payload);
         }
         this.onNetworking = false;
-        console.log(response)
+        console.log(response);
         if (response) {
           this.onRefreshPreviousPage();
           uni.showToast({

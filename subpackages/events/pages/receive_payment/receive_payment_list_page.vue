@@ -6,30 +6,37 @@
           <block v-for="(item, index) in list" :key="index">
             <uni-swipe-action-item
               :right-options="acitons"
+              :disabled="key !== ''"
               @click="onUniSwipeAction($event, item, index)"
             >
               <view
-                class="list-item-container"
-                :class="{ active: item.active }"
+                class="list-item flex-horizontal flex-aic"
+                @tap="onEvent(item)"
               >
+                <view class="item-cover">
+                  <image
+                    class="cover"
+                    src="https://dev.ncpgz.com/assets/management/icons/business_express.png"
+                  />
+                </view>
+                <view class="flex-vertical">
+                  <view class="item-label">
+                    {{ item.receiveName }}
+                  </view>
+                  <view class="item-text">
+                    {{ item.createTime }}
+                  </view>
+                </view>
+
                 <view
-                  class="list-item flex-horizontal flex-aic"
-                  @tap="onEvent(item)"
+                  class="type-container"
+                  :class="{
+                    green: item.type === '物流',
+                    orange: item.type === '采购单',
+                  }"
+                  v-if="item.type"
                 >
-                  <view class="item-cover">
-                    <image
-                      class="cover"
-                      src="https://dev.ncpgz.com/assets/management/icons/business_contract.png"
-                    />
-                  </view>
-                  <view class="flex-vertical">
-                    <view class="item-label">
-                      {{ item.customerName }}
-                    </view>
-                    <view class="item-text" v-if="item.industry">
-                      {{ item.industry }}
-                    </view>
-                  </view>
+                  {{ item.type }}
                 </view>
               </view>
             </uni-swipe-action-item>
@@ -37,12 +44,12 @@
         </uni-swipe-action>
       </view>
       <view style="height: 200rpx" v-if="status === 'empty'"> </view>
-      <indicator :status="status" emptyText="暂无客户" />
+      <indicator :status="status" emptyText="暂无收款" />
     </view>
     <view class="unscrollable">
       <view class="bottom-button-container">
         <view class="button-container" @tap="onCreate">
-          <view class="bottom-button"> 新增客户 </view>
+          <view class="bottom-button"> 新增收款 </view>
         </view>
       </view>
     </view>
@@ -51,7 +58,7 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getCustomerListApi } from "@/apis/event_apis";
+import { getReceivePaymentListApi, deleteReceivePaymentApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -67,12 +74,12 @@ export default {
             backgroundColor: "#2c7cf6",
           },
         },
-        // {
-        //   text: "删除",
-        //   style: {
-        //     backgroundColor: "#dd524d",
-        //   },
-        // },
+        {
+          text: "删除",
+          style: {
+            backgroundColor: "#dd524d",
+          },
+        },
       ],
       list: [],
       payload: {},
@@ -84,8 +91,6 @@ export default {
       needRefresh: false,
       selectMode: false,
       key: "",
-      index: "",
-      selectedIds: [],
     };
   },
   computed: {
@@ -106,13 +111,11 @@ export default {
       this.selectMode = true;
       this.key = e.key;
     }
-    if (e.selectedIds) {
-      this.selectedIds = JSON.parse(e.selectedIds);
-    }
     this.fetch();
   },
   onShow() {
     if (this.needRefresh) {
+      this.onRefreshPreviousPage();
       this.onRefresh();
       this.needRefresh = false;
     }
@@ -129,9 +132,10 @@ export default {
         const payload = {
           current: this.page,
           size: this.pageSize,
+          businessId: this.eventId,
         };
         this.onNetworking = true;
-        const response = await getCustomerListApi(payload);
+        const response = await getReceivePaymentListApi(payload);
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
@@ -143,7 +147,6 @@ export default {
             this.hasMore = false;
           }
           this.page++;
-          this.onGenerateSelected();
         }
         if (this.onRefreshing) {
           this.onRefreshing = false;
@@ -162,20 +165,23 @@ export default {
         let pages = getCurrentPages();
         let prevPage = pages[pages.length - 2];
         prevPage.$vm[this.key] = item;
-        prevPage.$vm[this.key + "String"] = item.customerName;
+        prevPage.$vm[this.key + "String"] = item.contractName;
+        console.log(item);
         uni.navigateBack();
       } else {
-        // uni.navigateTo({
-        //   url:
-        //     "/subpackages/events/pages/contract/contract_detail_page" +
-        //     objectToQuery(item),
-        // });
+        uni.navigateTo({
+          url:
+            "/subpackages/events/pages/receive_payment/create_receive_payment_page?mode=read&eventId=" +
+            this.eventId +
+            "&item=" +
+            JSON.stringify(item),
+        });
       }
     },
     onCreate() {
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/customer/create_customer_page?eventId=" +
+          "/subpackages/events/pages/receive_payment/create_receive_payment_page?eventId=" +
           this.eventId,
       });
     },
@@ -184,7 +190,7 @@ export default {
         case 0:
           uni.navigateTo({
             url:
-              "/subpackages/events/pages/customer/create_customer_page?mode=edit&eventId=" +
+              "/subpackages/events/pages/receive_payment/create_receive_payment_page?mode=edit&eventId=" +
               this.eventId +
               "&item=" +
               JSON.stringify(item),
@@ -192,11 +198,11 @@ export default {
           break;
         case 1:
           uni.showModal({
-            title: "您即将删除物流",
-            content: item.logisticsNumber,
+            title: "您即将删除收款",
+            content: item.receiveName,
             success: async (res) => {
               if (res.confirm) {
-                const response = await deleteExpressApi({
+                const response = await deleteReceivePaymentApi({
                   id: item.id,
                 });
                 if (response) {
@@ -215,14 +221,10 @@ export default {
           break;
       }
     },
-    onGenerateSelected() {
-      for (let item of this.selectedIds) {
-        for (let element of this.list) {
-          if (element.id === item) {
-            element["active"] = true;
-          }
-        }
-      }
+    onRefreshPreviousPage() {
+      let pages = getCurrentPages();
+      let prevPage = pages[pages.length - 2];
+      prevPage.$vm.needRefresh = true;
     },
   },
 };
@@ -233,19 +235,13 @@ export default {
   margin-top: 24rpx;
   background-color: #fff;
 }
-.list-item-container {
-  width: 100%;
-}
-.list-item-container.active {
-  background-color: #dddddd;
-}
 .list-item {
   flex: 1;
   margin: 0 28rpx;
   padding: 28rpx 0;
   position: relative;
 }
-.list-item-container:not(:last-child) .list-item {
+.list-item:not(:last-child) {
   border-bottom: 1px solid #f3f3f3;
 }
 .item-cover {
@@ -276,5 +272,22 @@ export default {
   color: #8b8c8b;
   text-align: left;
   line-height: 1;
+}
+.type-container {
+  position: absolute;
+  left: 36rpx;
+  top: 0;
+  font-size: 20rpx;
+  font-weight: 500;
+  color: #ffffff;
+  padding: 2rpx 12rpx;
+  background-color: #2c7cf6;
+  text-align: center;
+}
+.type-container.green {
+  background-color: #42ad4e;
+}
+.type-container.orange {
+  background-color: #f09c2c;
 }
 </style>

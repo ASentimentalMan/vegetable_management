@@ -21,7 +21,7 @@
                 </view>
                 <view class="flex-vertical">
                   <view class="item-label">
-                    {{ item.logisticsNumber }}
+                    {{ item.paymentName }}
                   </view>
                   <view class="item-text">
                     {{ item.createTime }}
@@ -44,12 +44,12 @@
         </uni-swipe-action>
       </view>
       <view style="height: 200rpx" v-if="status === 'empty'"> </view>
-      <indicator :status="status" emptyText="暂无收款" />
+      <indicator :status="status" emptyText="暂无付款" />
     </view>
     <view class="unscrollable">
       <view class="bottom-button-container">
         <view class="button-container" @tap="onCreate">
-          <view class="bottom-button"> 新增收款 </view>
+          <view class="bottom-button"> 新增付款 </view>
         </view>
       </view>
     </view>
@@ -58,7 +58,7 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getExpressListApi, deleteExpressApi } from "@/apis/event_apis";
+import { getPaymentListApi, deletePaymentApi } from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -135,7 +135,7 @@ export default {
           businessId: this.eventId,
         };
         this.onNetworking = true;
-        const response = await getExpressListApi(payload);
+        const response = await getPaymentListApi(payload);
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
@@ -171,7 +171,7 @@ export default {
       } else {
         uni.navigateTo({
           url:
-            "/subpackages/events/pages/fund/create_fund_page?mode=read&eventId=" +
+            "/subpackages/events/pages/payment/create_payment_page?mode=read&eventId=" +
             this.eventId +
             "&item=" +
             JSON.stringify(item),
@@ -181,7 +181,7 @@ export default {
     onCreate() {
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/fund/create_fund_page?eventId=" +
+          "/subpackages/events/pages/payment/create_payment_page?eventId=" +
           this.eventId,
       });
     },
@@ -190,7 +190,7 @@ export default {
         case 0:
           uni.navigateTo({
             url:
-              "/subpackages/events/pages/fund/create_fund_page?mode=edit&eventId=" +
+              "/subpackages/events/pages/payment/create_payment_page?mode=edit&eventId=" +
               this.eventId +
               "&item=" +
               JSON.stringify(item),
@@ -198,11 +198,11 @@ export default {
           break;
         case 1:
           uni.showModal({
-            title: "您即将删除收款",
-            content: item.logisticsNumber,
+            title: "您即将删除付款",
+            content: item.paymentName,
             success: async (res) => {
               if (res.confirm) {
-                const response = await deleteExpressApi({
+                const response = await deletePaymentApi({
                   id: item.id,
                 });
                 if (response) {

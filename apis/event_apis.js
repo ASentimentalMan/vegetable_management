@@ -349,6 +349,90 @@ export const deleteCustomerApi = payload => {
   })
 }
 
+// 收款清单
+export const getReceivePaymentListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/business-fund-receive-my-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 新增收款
+export const createReceivePaymentApi = payload => {
+  return request_java({
+    method: "POST",
+    url: "/info/business-fund-receive",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 修改收款
+export const editReceivePaymentApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/business-fund-receive",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除收款
+export const deleteReceivePaymentApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/business-fund-receive",
+    data: payload,
+    token: true
+  })
+}
+
+// 付款清单
+export const getPaymentListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/business-fund-payment-my-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 新增付款
+export const createPaymentApi = payload => {
+  return request_java({
+    method: "POST",
+    url: "/info/business-fund-payment",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 修改付款
+export const editPaymentApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/business-fund-payment",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除付款
+export const deletePaymentApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/business-fund-payment",
+    data: payload,
+    token: true
+  })
+}
+
 // 发票类型列表
 export const getReceiptTypeListApi = () => {
   return request_java({

@@ -22,19 +22,25 @@
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 客户类型 </view>
           <view class="form-item-input">
-            <customer-type-picker @onPick="onCustomerTypeChange" />
+            <customer-type-picker ref="type" @onPick="onCustomerTypeChange" />
           </view>
         </view>
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 客户来源 </view>
           <view class="form-item-input">
-            <customer-source-picker @onPick="onCustomerSourceChange" />
+            <customer-source-picker
+              ref="source"
+              @onPick="onCustomerSourceChange"
+            />
           </view>
         </view>
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 客户等级 </view>
           <view class="form-item-input">
-            <customer-level-picker @onPick="onCustomerLevelChange" />
+            <customer-level-picker
+              ref="level"
+              @onPick="onCustomerLevelChange"
+            />
           </view>
         </view>
       </view>
@@ -47,7 +53,7 @@
         </view> -->
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 所属区域 </view>
-          <view class="form-item-input" @click="onLocationPick">
+          <view class="form-item-input" @click="onCustomerLocationPick">
             <view
               :class="{
                 'form-item-placeholder': locationString === '请选择所属区域',
@@ -60,7 +66,10 @@
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 所属行业 </view>
           <view class="form-item-input">
-            <customer-industry-picker @onPick="onCustomerIndustryChange" />
+            <customer-industry-picker
+              ref="industry"
+              @onPick="onCustomerIndustryChange"
+            />
           </view>
         </view>
       </view>
@@ -114,21 +123,88 @@
           </view>
         </view>
       </view>
-      <!-- <view class="form-container">
-        <view class="form-item flex-horizontal">
-          <view class="form-item-label"> 共享人 </view>
-          <view class="form-item-input" @tap="onSelectFrom">
+      <view class="form-container">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? recognizeNumber : true"
+        >
+          <view class="form-item-label"> 纳税人识别号 </view>
+          <view class="form-item-input">
             <input
               class="form-input"
               type="text"
               cursor-spacing="16"
-              placeholder="请选择共享人"
-              v-model="creator"
-              disabled
+              placeholder="请输入纳税人识别号"
+              v-model="recognizeNumber"
+              :disabled="mode === 'read'"
             />
           </view>
         </view>
-      </view> -->
+        <!-- <view class="form-item flex-horizontal">
+          <view class="form-item-label"> 地址 </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入地址"
+              v-model="address"
+            />
+          </view>
+        </view> -->
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? bank : true"
+        >
+          <view class="form-item-label"> 开户银行 </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入开户银行"
+              v-model="bank"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="
+            mode === 'read'
+              ? bankLocationString && bankLocationString !== '请选择开户行地址'
+              : true
+          "
+        >
+          <view class="form-item-label"> 开户行地址 </view>
+          <view class="form-item-input" @click="onBankLocationPick">
+            <view
+              :class="{
+                'form-item-placeholder':
+                  bankLocationString === '请选择开户行地址',
+              }"
+            >
+              {{ bankLocationString }}
+            </view>
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? bankNumber : true"
+        >
+          <view class="form-item-label"> 银行账号 </view>
+          <view class="form-item-input">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请输入银行账号"
+              v-model="bankNumber"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+      </view>
       <view class="form-container">
         <view class="form-item flex-horizontal">
           <view class="form-item-label"> 备注 </view>
@@ -237,7 +313,7 @@ import CustomerIndustryPicker from "@/subpackages/events/components/costumer_ind
 import ReceiptTypePicker from "@/subpackages/events/components/receipt_type_picker";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
-import { createCustomerApi } from "@/apis/event_apis";
+import { createCustomerApi, editCustomerApi } from "@/apis/event_apis";
 export default {
   components: {
     UniDataPicker,
@@ -252,7 +328,9 @@ export default {
   },
   data() {
     return {
+      mode: "create",
       eventId: "",
+      customerId: "",
       name: "",
       type: {},
       source: {},
@@ -266,7 +344,11 @@ export default {
       manager: "",
       tel: "",
       mobile: "",
-      creator: "",
+      recognizeNumber: "",
+      bank: "",
+      bankLocation: [],
+      bankLocationString: "请选择开户行地址",
+      bankNumber: "",
       description: "",
       businessLicenses: [],
       accountOpeningLicenses: [],
@@ -278,13 +360,191 @@ export default {
       realMedia: [],
       attachments: [],
       onNetworking: false,
+      locationPickerType: "",
     };
   },
   onLoad(e) {
     if (e.eventId) {
       this.eventId = e.eventId;
     }
-    // console.log(this.eventId);
+    if (e.mode) {
+      this.mode = e.mode;
+      const item = JSON.parse(e.item);
+      console.log(item);
+      this.customerId = item.id;
+      if (this.mode === "edit") {
+        uni.setNavigationBarTitle({
+          title: "修改客户",
+        });
+      } else if (this.mode === "read") {
+        uni.setNavigationBarTitle({
+          title: "客户详情",
+        });
+      }
+      this.name = item.customerName;
+      this.type = { label: item.customerType, id: item.customerTypeId };
+      this.source = { label: item.customerSource, id: item.customerSourceId };
+      this.level = { label: item.customerLevel, id: item.customerLevelId };
+      if (item.area) {
+        this.locationString = item.area;
+      }
+      this.industry = { label: item.industry, id: item.industryId };
+      this.dimension = item.scale;
+      this.manager = item.personInCharge;
+      this.tel = item.tel;
+      this.mobile = item.mobile;
+      this.recognizeNumber = item.identificationNumber;
+      this.bank = item.bankAccountNumber
+        ? item.bankAccountNumber.split(",")[0]
+        : "";
+      if (item.bankAddress) {
+        this.bankLocationString = item.bankAddress;
+      }
+      this.bankNumber = item.bankAccountNumber
+        ? item.bankAccountNumber.split(",")[1]
+        : "";
+      this.description = item.remark;
+      this.businessLicenses = item.licenseFiles.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+      this.accountOpeningLicenses = item.openAccountFiles.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+      this.creditReports = item.creditFiles.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+      this.bankStatements = item.bankFiles.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+      this.financialStatements = item.financeFiles.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+      this.foodLicenses = item.foodFiles.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+      this.riskControlData = item.riskFiles.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+      this.realMedia = item.surveyFiles.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+      this.attachments = item.otherFiles.map((e) => {
+        return {
+          blob: "",
+          createTime: e.createTime,
+          fileName: e.fileName,
+          fileType: e.fileType,
+          fileUrl: e.fileUrl,
+          id: e.id,
+          originalFileName: e.fileOriginalName,
+          subFileUrl: e.fileSubUrl,
+          text: "",
+          updateTime: e.updateTime,
+        };
+      });
+    }
+  },
+  mounted() {
+    if (this.type.label) {
+      this.$refs.type.setSelectedStr(this.type.label);
+    }
+    if (this.source.label) {
+      this.$refs.source.setSelectedStr(this.source.label);
+    }
+    if (this.level.label) {
+      this.$refs.level.setSelectedStr(this.level.label);
+    }
+    if (this.industry.label) {
+      this.$refs.industry.setSelectedStr(this.industry.label);
+    }
   },
   methods: {
     onCustomerTypeChange(e) {
@@ -296,13 +556,23 @@ export default {
     onCustomerLevelChange(e) {
       this.level = e;
     },
-    onLocationPick() {
+    onCustomerLocationPick() {
+      this.locationPickerType = "customer";
+      this.$refs.location.popup();
+    },
+    onBankLocationPick() {
+      this.locationPickerType = "bank";
       this.$refs.location.popup();
     },
     onLocationSet(location) {
       if (location.length) {
-        this.location = location;
-        this.locationString = location.map((e) => e.name).join("/");
+        if (this.locationPickerType === "customer") {
+          this.location = location;
+          this.locationString = location.map((e) => e.name).join("/");
+        } else if (this.locationPickerType === "bank") {
+          this.bankLocation = location;
+          this.bankLocationString = location.map((e) => e.name).join("/");
+        }
       }
     },
     onCustomerIndustryChange(e) {
@@ -504,6 +774,12 @@ export default {
           personInChargeId: "",
           tel: this.tel,
           mobile: this.mobile,
+          identificationNumber: this.recognizeNumber,
+          bankAddress: this.bankLocationString,
+          bankAccountNumber:
+            this.bank + "," + this.bankNumber === ","
+              ? ""
+              : this.bank + "," + this.bankNumber,
           remark: this.description,
           licenseFiles: this.businessLicenses.map((e) => {
             return {
@@ -607,14 +883,18 @@ export default {
         };
         console.log(payload);
         this.onNetworking = true;
-        const response = await createCustomerApi(payload);
+        let response;
+        if (this.mode === "create") {
+          response = await createCustomerApi(payload);
+        } else if (this.mode === "edit") {
+          payload["id"] = this.customerId;
+          response = await editCustomerApi(payload);
+        }
         this.onNetworking = false;
         if (response) {
-          let pages = getCurrentPages();
-          let prevPage = pages[pages.length - 2];
-          prevPage.$vm.needRefresh = true;
+          this.onRefreshPreviousPage();
           uni.showToast({
-            title: "创建成功",
+            title: `${this.mode === "create" ? "创建" : "修改"}成功`,
             icon: "none",
           });
           this.onNetworking = true;
@@ -623,6 +903,11 @@ export default {
           }, 600);
         }
       }
+    },
+    onRefreshPreviousPage() {
+      let pages = getCurrentPages();
+      let prevPage = pages[pages.length - 2];
+      prevPage.$vm.needRefresh = true;
     },
   },
 };
