@@ -222,6 +222,14 @@ export const deleteMeetingApi = payload => {
   })
 }
 
+// 获得会议类型
+export const getMeetingTypeListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/params/dict-data/business-meeting-type"
+  })
+}
+
 // 采购清单
 export const getOrderListApi = payload => {
   return request_java({

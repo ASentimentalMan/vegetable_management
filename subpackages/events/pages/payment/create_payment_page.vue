@@ -161,7 +161,7 @@
         </view>
       </view>
       <add-media-attachment
-        title="附件"
+        title="付款单"
         :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"

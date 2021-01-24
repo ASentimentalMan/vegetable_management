@@ -274,7 +274,7 @@
         </view>
       </view>
       <add-media-attachment
-        title="附件"
+        title="发票"
         :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"

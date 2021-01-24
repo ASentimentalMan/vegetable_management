@@ -211,7 +211,7 @@
         </view>
       </view>
       <add-media-attachment
-        title="附件"
+        title="采购单"
         :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"

@@ -298,7 +298,7 @@
         </view>
       </view>
       <add-media-attachment
-        title="附件"
+        title="销售单"
         :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
