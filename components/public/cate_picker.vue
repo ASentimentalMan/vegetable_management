@@ -9,12 +9,11 @@
       @columnchange="columnChange"
       @change="selectorChange"
       class="component-container"
+      :disabled="disabled"
     >
-      <view
-        class="value"
-        :class="{ green: green, active: selectedStr !== placeholder }"
-        >{{ selectedStr }}</view
-      >
+      <view class="value" :class="{ green: green, active: selectedStr }">{{
+        selectedStr ? selectedStr : placeholder
+      }}</view>
     </picker>
   </view>
 </template>
@@ -29,7 +28,7 @@ export default {
       cateT2Index: 0,
       cateT3Index: 0,
       sel: [0, 0, 0],
-      selectedStr: "请选择商品分类",
+      selectedStr: "",
       selectedId: [],
     };
   },
@@ -37,6 +36,18 @@ export default {
     placeholder: {
       type: String,
       default: "请选择商品分类",
+    },
+    defaultValue: {
+      type: String,
+      default: "",
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    index: {
+      type: Number,
+      default: -1,
     },
     green: {
       type: Boolean,
@@ -48,30 +59,14 @@ export default {
       cates: (state) => state.cates,
     }),
   },
-  created() {
-    this.$store.dispatch("app/getCates");
+  async created() {
+    if (this.defaultValue) {
+      this.selectedStr = this.defaultValue;
+    }
+    await this.$store.dispatch("app/getCates");
+    this.initCates();
   },
   watch: {
-    cates() {
-      this.range[0] = this.cates.map((e) => {
-        return {
-          id: e.parentId,
-          value: e.label,
-        };
-      });
-      this.range[1] = this.cates[0].children.map((e) => {
-        return {
-          id: e.id,
-          value: e.label,
-        };
-      });
-      this.range[2] = this.cates[0].children[0].children.map((e) => {
-        return {
-          id: e.id,
-          value: e.label,
-        };
-      });
-    },
     cateT1Index() {
       this.range[1] = this.cates[this.cateT1Index].children.map((e) => {
         return {
@@ -101,8 +96,25 @@ export default {
     },
   },
   methods: {
-    setClass(e) {
-      this.selectedStr = e.gcName;
+    initCates() {
+      this.range[0] = this.cates.map((e) => {
+        return {
+          id: e.id,
+          value: e.label,
+        };
+      });
+      this.range[1] = this.cates[0].children.map((e) => {
+        return {
+          id: e.id,
+          value: e.label,
+        };
+      });
+      this.range[2] = this.cates[0].children[0].children.map((e) => {
+        return {
+          id: e.id,
+          value: e.label,
+        };
+      });
     },
     columnChange(e) {
       if (e.detail.column === 0) {
@@ -123,30 +135,36 @@ export default {
     selectorChange(e) {
       this.selectedStr = this.range[0][this.cateT1Index]["value"];
       let payload = {
-        gcId: this.range[0][this.cateT1Index]["id"],
-        gcName: this.range[0][this.cateT1Index]["value"],
-        gcIdList: [this.range[0][this.cateT1Index]["id"]],
-        gcNameList: [this.range[0][this.cateT1Index]["value"]],
+        id: this.range[0][this.cateT1Index]["id"],
+        value: this.range[0][this.cateT1Index]["value"],
+        ids: [this.range[0][this.cateT1Index]["id"]],
+        values: [this.range[0][this.cateT1Index]["value"]],
       };
       if (this.range[1][this.cateT2Index]) {
         this.selectedStr = this.range[1][this.cateT2Index]["value"];
-        payload["gcId"] = this.range[1][this.cateT2Index]["id"];
-        payload["gcName"] = this.range[1][this.cateT2Index]["value"];
-        payload["gcIdList"].push(this.range[1][this.cateT2Index]["id"]);
-        payload["gcNameList"].push(this.range[1][this.cateT2Index]["value"]);
+        payload["id"] = this.range[1][this.cateT2Index]["id"];
+        payload["value"] = this.range[1][this.cateT2Index]["value"];
+        payload["ids"].push(this.range[1][this.cateT2Index]["id"]);
+        payload["values"].push(this.range[1][this.cateT2Index]["value"]);
       }
       if (this.range[2][this.cateT3Index]) {
         this.selectedStr = this.range[2][this.cateT3Index]["value"];
-        payload["gcId"] = this.range[2][this.cateT3Index]["id"];
-        payload["gcName"] = this.range[2][this.cateT3Index]["value"];
-        payload["gcIdList"].push(this.range[2][this.cateT3Index]["id"]);
-        payload["gcNameList"].push(this.range[2][this.cateT3Index]["value"]);
+        payload["id"] = this.range[2][this.cateT3Index]["id"];
+        payload["value"] = this.range[2][this.cateT3Index]["value"];
+        payload["ids"].push(this.range[2][this.cateT3Index]["id"]);
+        payload["values"].push(this.range[2][this.cateT3Index]["value"]);
       }
-      this.$emit("onClassChange", payload);
+      if (this.index !== -1) {
+        payload["index"] = this.index;
+      }
+      this.$emit("onSelectCate", payload);
     },
     reset() {
-      this.selectedStr = "商品分类";
+      this.selectedStr = this.placeholder;
       this.selectedId = [];
+    },
+    setSelectedCate(e) {
+      this.selectedStr = e.gcName;
     },
   },
 };

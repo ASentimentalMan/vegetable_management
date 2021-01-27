@@ -222,6 +222,14 @@ export const deleteMeetingApi = payload => {
   })
 }
 
+// 获得会议类型
+export const getMeetingTypeListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/params/dict-data/business-meeting-type"
+  })
+}
+
 // 采购清单
 export const getOrderListApi = payload => {
   return request_java({
@@ -344,6 +352,90 @@ export const deleteCustomerApi = payload => {
   return request_java({
     method: "DELETE",
     url: "/info/customer",
+    data: payload,
+    token: true
+  })
+}
+
+// 收款清单
+export const getReceivePaymentListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/business-fund-receive-my-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 新增收款
+export const createReceivePaymentApi = payload => {
+  return request_java({
+    method: "POST",
+    url: "/info/business-fund-receive",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 修改收款
+export const editReceivePaymentApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/business-fund-receive",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除收款
+export const deleteReceivePaymentApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/business-fund-receive",
+    data: payload,
+    token: true
+  })
+}
+
+// 付款清单
+export const getPaymentListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/business-fund-payment-my-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 新增付款
+export const createPaymentApi = payload => {
+  return request_java({
+    method: "POST",
+    url: "/info/business-fund-payment",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 修改付款
+export const editPaymentApi = payload => {
+  return request_java({
+    method: "PUT",
+    url: "/info/business-fund-payment",
+    contentType: "application/json",
+    data: payload,
+    token: true
+  })
+}
+
+// 删除付款
+export const deletePaymentApi = payload => {
+  return request_java({
+    method: "DELETE",
+    url: "/info/business-fund-payment",
     data: payload,
     token: true
   })

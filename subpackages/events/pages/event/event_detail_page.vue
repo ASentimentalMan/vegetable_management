@@ -115,28 +115,9 @@
         </view>
       </view>
     </view>
-
     <view class="options-container">
       <view class="options-item-container">
-        <view class="options-item flex-horizontal flex-aic" @tap="goFund">
-          <view class="options-icon-container">
-            <image
-              class="options-icon"
-              src="https://dev.ncpgz.com/assets/management/icons/business_fund.png"
-            />
-          </view>
-          <view class="options-text">
-            付款
-            <text class="options-count">
-              ({{ event.businessCount.contract }})
-            </text>
-          </view>
-          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
-          </view>
-        </view>
-      </view>
-      <view class="options-item-container">
-        <view class="options-item flex-horizontal flex-aic" @tap="goFund">
+        <view class="options-item flex-horizontal flex-aic" @tap="goReceivePayment">
           <view class="options-icon-container">
             <image
               class="options-icon"
@@ -145,9 +126,27 @@
           </view>
           <view class="options-text">
             收款
-            <text class="options-count">
+            <!-- <text class="options-count">
               ({{ event.businessCount.contract }})
-            </text>
+            </text> -->
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goPayment">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_fund.png"
+            />
+          </view>
+          <view class="options-text">
+            付款
+            <!-- <text class="options-count">
+              ({{ event.businessCount.contract }})
+            </text> -->
           </view>
           <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
           </view>
@@ -248,10 +247,17 @@ export default {
           this.eventId,
       });
     },
-    goFund() {
+    goReceivePayment() {
       uni.navigateTo({
         url:
-          "/subpackages/events/pages/fund/fund_list_page?eventId=" +
+          "/subpackages/events/pages/receive_payment/receive_payment_list_page?eventId=" +
+          this.eventId,
+      });
+    },
+    goPayment() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/payment/payment_list_page?eventId=" +
           this.eventId,
       });
     },

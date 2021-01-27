@@ -56,7 +56,7 @@
             />
           </view>
         </view>
-        <view
+        <!-- <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? distance : true"
         >
@@ -71,7 +71,7 @@
               :disabled="mode === 'read'"
             />
           </view>
-        </view>
+        </view> -->
         <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? fee : true"
@@ -90,6 +90,78 @@
         </view>
       </view>
       <view class="form-container">
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? fromString : true"
+        >
+          <view class="form-item-label"> 物流发货方 </view>
+          <view class="form-item-input" @tap="onSelectFrom">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择物流发货方"
+              v-model="fromString"
+              disabled
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="
+            mode === 'read'
+              ? locationStartString && locationStartString !== '请选择物流发货方地址'
+              : true
+          "
+        >
+          <view class="form-item-label"> 物流发货方地址 </view>
+          <view class="form-item-input" @click="onLocationStartPick">
+            <view
+              :class="{
+                'form-item-placeholder': locationStartString === '请选择物流发货方地址',
+              }"
+            >
+              {{ locationStartString }}
+            </view>
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? toString : true"
+        >
+          <view class="form-item-label"> 物流接收方 </view>
+          <view class="form-item-input" @tap="onSelectTo">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择物流接收方"
+              v-model="toString"
+              disabled
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="
+            mode === 'read'
+              ? locationEndString && locationEndString !== '请选择物流接收方地址'
+              : true
+          "
+        >
+          <view class="form-item-label"> 物流接收方地址 </view>
+          <view class="form-item-input" @click="onLocationEndPick">
+            <view
+              :class="{
+                'form-item-placeholder': locationEndString === '请选择物流接收方地址',
+              }"
+            >
+              {{ locationEndString }}
+            </view>
+          </view>
+        </view>
+	  </view>
+        <view class="form-container">
         <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? payerString : true"
@@ -129,42 +201,7 @@
           </radio-group>
         </view>
       </view>
-      <view class="form-container">
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? fromString : true"
-        >
-          <view class="form-item-label"> 物流发货方 </view>
-          <view class="form-item-input" @tap="onSelectFrom">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择物流发货方"
-              v-model="fromString"
-              disabled
-            />
-          </view>
-        </view>
-        <view
-          class="form-item flex-horizontal"
-          v-if="mode === 'read' ? toString : true"
-        >
-          <view class="form-item-label"> 物流接收方 </view>
-          <view class="form-item-input" @tap="onSelectTo">
-            <input
-              class="form-input"
-              type="text"
-              cursor-spacing="16"
-              placeholder="请选择物流接收方"
-              v-model="toString"
-              disabled
-            />
-          </view>
-        </view>
-      </view>
-
-      <view class="form-container">
+      <!-- <view class="form-container">
         <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? startTime : true"
@@ -199,7 +236,7 @@
             />
           </view>
         </view>
-      </view>
+      </view> -->
       <view class="form-container">
         <block v-for="(item, index) in relateOrder" :key="index">
           <view
@@ -291,7 +328,7 @@
         </view>
       </view>
       <add-media-attachment
-        title="附件"
+        title="物流单"
         :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
@@ -312,15 +349,19 @@
         </view>
       </view>
     </view>
+    <location-picker ref="locationStart" :level="3" @onLocationSet="onLocationStartSet" />
+    <location-picker ref="locationEnd" :level="3" @onLocationSet="onLocationEndSet" />
   </view>
 </template>
 
 <script>
+import LocationPicker from "@/components/public/location_picker";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
 import { createExpressApi, editExpressApi } from "@/apis/event_apis";
 export default {
   components: {
+	LocationPicker,
     BiaoFunDatePicker,
     AddMediaAttachment,
   },
@@ -343,7 +384,9 @@ export default {
       to: {},
       toString: "",
       startTime: "",
-      startTimeDefaultValue: "",
+      locationStart: [],
+      locationEnd: [],
+	  startTimeDefaultValue: "",
       endTime: "",
       endTimeDefaultValue: "",
       timePickerEndTime: "",
@@ -351,7 +394,9 @@ export default {
       relateSale: [{ id: "" }],
       description: "",
       attachments: [],
-    };
+      locationStartString: "请选择物流发货放地址",
+      locationEndString: "请选择物流收货放地址",
+	};
   },
   onLoad(e) {
     if (e.eventId) {
@@ -386,7 +431,9 @@ export default {
       this.startTimeDefaultValue = this.startTime;
       this.endTime = item.endDate ? item.endDate : "";
       this.endTimeDefaultValue = this.endTime;
-      if (item.procurements.length) {
+     this.locationStartString = item.inputCustomerAddress ? item.inputCustomerAddress : "请选择物流发货方地址";
+     this.locationEndString = item.outputCustomerAddress ? item.outputCustomerAddress : "请选择物流接收方地址";
+	  if (item.procurements.length) {
         this.relateOrder = item.procurements;
       }
       if (item.sales.length) {
@@ -418,6 +465,26 @@ export default {
           "/subpackages/events/pages/customer/customer_list_page?mode=select&key=payer&selectedIds=" +
           JSON.stringify([this.payer.id]),
       });
+    },
+	onLocationStartPick() {
+	  if (this.mode === "read") return;
+	  this.$refs.locationStart.popup();
+	},
+	onLocationEndPick() {
+	  if (this.mode === "read") return;
+	  this.$refs.locationEnd.popup();
+	},
+    onLocationStartSet(locationStart) {
+      if (locationStart.length) {
+        this.locationStart = locationStart;
+        this.locationStartString = locationStart.map((e) => e.name).join("/");
+      }
+    },
+    onLocationEndSet(locationEnd) {
+      if (locationEnd.length) {
+        this.locationEnd = locationEnd;
+        this.locationEndString = locationEnd.map((e) => e.name).join("/");
+      }
     },
     onRadioChange(e) {
       this.radio = e.target.value;
@@ -536,6 +603,8 @@ export default {
           distance: this.distance,
           cost: this.fee,
           payerCustomer: this.payerString,
+          outputCustomerAddress: this.locationStartString,
+          inputCustomerAddress: this.locationEndString,
           payerCustomerId: this.payer.id,
           payerStatus: this.radio,
           outputCustomer: this.fromString,

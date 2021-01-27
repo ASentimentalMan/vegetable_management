@@ -7,6 +7,25 @@
       <view class="form-container">
         <view
           class="form-item flex-horizontal"
+          v-if="mode === 'read' ? relateContractString : true"
+        >
+          <view class="form-item-label">
+            <text class="form-item-required" v-if="mode !== 'read'">*</text>
+            关联合同
+          </view>
+          <view class="form-item-input" @tap="onRelateContract">
+            <input
+              class="form-input"
+              type="text"
+              cursor-spacing="16"
+              placeholder="请选择关联合同"
+              v-model="relateContractString"
+              disabled
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
           v-if="mode === 'read' ? number : true"
         >
           <view class="form-item-label">
@@ -24,6 +43,8 @@
             />
           </view>
         </view>
+      </view>
+      <view class="form-container">
         <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? receiver : true"
@@ -79,6 +100,102 @@
           </view>
         </view>
       </view>
+      <block v-for="(item, index) in cates" :key="index">
+        <view class="flex-vertical" v-if="mode === 'read' ? item.id : true">
+          <view class="form-container">
+            <view class="form-item flex-horizontal">
+              <view class="form-item-label">
+                销售品类
+                <text v-if="cates.length > 1">{{ index + 1 }}</text>
+              </view>
+              <view class="form-item-input">
+                <cate-picker
+                  :disabled="mode === 'read'"
+                  :index="index"
+                  @onSelectCate="onSelectCate"
+                />
+              </view>
+              <view
+                class="add-form-item"
+                style="margin-left: 12rpx"
+                @tap="onRemoveCate(index)"
+                v-if="mode !== 'read' && cates.length > 1"
+              >
+                -
+              </view>
+            </view>
+            <view
+              class="form-container"
+              v-if="item['id']"
+              style="margin-top: 0"
+            >
+              <view
+                class="form-item flex-horizontal"
+                v-if="mode === 'read' ? item['amount'] : true"
+                style="margin-right: 0"
+              >
+                <view class="form-item-label"> 销售数量（吨） </view>
+                <view class="form-item-input">
+                  <input
+                    class="form-input"
+                    type="text"
+                    cursor-spacing="16"
+                    placeholder="请输入销售数量"
+                    v-model="item['amount']"
+                    :disabled="mode === 'read'"
+                    @input="onAmountChange($event, item)"
+                  />
+                </view>
+              </view>
+              <view
+                class="form-item flex-horizontal"
+                v-if="mode === 'read' ? item['unitPrice'] : true"
+                style="margin-right: 0"
+              >
+                <view class="form-item-label"> 销售单价（元/吨） </view>
+                <view class="form-item-input">
+                  <input
+                    class="form-input"
+                    type="text"
+                    cursor-spacing="16"
+                    placeholder="请输入销售单价"
+                    v-model="item['unitPrice']"
+                    :disabled="mode === 'read'"
+                    @input="onUnitPriceChange($event, item)"
+                  />
+                </view>
+              </view>
+              <view
+                class="form-item flex-horizontal"
+                v-if="mode === 'read' ? item['price'] : true"
+                style="margin-right: 0"
+              >
+                <view class="form-item-label"> 销售总价（元） </view>
+                <view class="form-item-input">
+                  <input
+                    class="form-input"
+                    type="text"
+                    cursor-spacing="16"
+                    placeholder="请输入销售总价"
+                    v-model="item['price']"
+                    :disabled="mode === 'read'"
+                  />
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+      <view
+        class="form-item flex-horizontal"
+        v-if="mode !== 'read'"
+        style="border-bottom: none"
+      >
+        <view class="form-item-input" style="margin-right: 24rpx">
+          <text class="add-form-text"> 新增品类 </text>
+          <view class="add-form-item" @tap="onAddCate"> + </view>
+        </view>
+      </view>
       <view class="form-container">
         <view
           class="form-item flex-horizontal"
@@ -98,7 +215,7 @@
           </view>
         </view>
       </view>
-      <view class="form-container">
+      <!-- <view class="form-container">
         <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? radio : true"
@@ -161,7 +278,7 @@
             />
           </view>
         </view>
-      </view>
+      </view> -->
       <view class="form-container">
         <view
           class="form-item flex-horizontal"
@@ -181,7 +298,7 @@
         </view>
       </view>
       <add-media-attachment
-        title="附件"
+        title="销售单"
         :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
@@ -208,12 +325,14 @@
 
 <script>
 import LocationPicker from "@/components/public/location_picker";
+import CatePicker from "@/components/public/cate_picker";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
 import { createSaleApi, editSaleApi } from "@/apis/event_apis";
 export default {
   components: {
     LocationPicker,
+    CatePicker,
     BiaoFunDatePicker,
     AddMediaAttachment,
   },
@@ -223,19 +342,22 @@ export default {
       eventId: "",
       saleId: "",
       onNetworking: false,
+      relateContract: {},
+      relateContractString: "",
       number: "",
       receiver: "",
       tel: "",
       location: [],
       locationString: "请选择销售地",
+      cates: [{ id: "", amount: "", unitPrice: "", price: "" }],
       time: "",
       timePickerDefaultValue: "",
       timePickerEndTime: "",
-      radio: "",
-      reTime: "",
-      reTimePickerDefaultValue: "",
-      receiveTime: "",
-      receiveTimePickerDefaultValue: "",
+      // radio: "",
+      // reTime: "",
+      // reTimePickerDefaultValue: "",
+      // receiveTime: "",
+      // receiveTimePickerDefaultValue: "",
       description: "",
       attachments: [],
     };
@@ -258,17 +380,30 @@ export default {
           title: "销售详情",
         });
       }
+      this.relateContract = item.contract;
+      this.relateContractString = item.contract.contractName;
       this.number = item.salesNumber;
       this.receiver = item.consignee;
       this.tel = item.phone;
       this.locationString = item.place ? item.place : "请选择销售地";
       this.time = item.estimatedDate;
       this.timePickerDefaultValue = this.time;
-      this.radio = item.isExecuteContract.toString();
-      this.reTime = item.newEstimatedDate;
-      this.reTimePickerDefaultValue = this.reTime;
-      this.receiveTime = item.receiptDate;
-      this.receiveTimePickerDefaultValue = this.receiveTime;
+      // this.radio = item.isExecuteContract.toString();
+      // this.reTime = item.newEstimatedDate;
+      // this.reTimePickerDefaultValue = this.reTime;
+      // this.receiveTime = item.receiptDate;
+      // this.receiveTimePickerDefaultValue = this.receiveTime;
+      if (item.categories.length) {
+        this.cates = item.categories.map((e) => {
+          return {
+            id: e.categoryId,
+            value: e.category,
+            amount: e.quantity,
+            unitPrice: e.unitPrice,
+            price: e.totalPrice,
+          };
+        });
+      }
       this.description = item.remark;
       this.attachments = item.files.map((e) => {
         return {
@@ -303,6 +438,35 @@ export default {
         (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
         ":" +
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
+    },
+    onRelateContract() {
+      if (this.mode === "read") return;
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/contract/contract_list_page?mode=select&key=relateContract&type=sale&selectedIds=" +
+          JSON.stringify([this.relateContract.id]),
+      });
+    },
+    onSelectCate(e) {
+      if (this.mode === "read") return;
+      this.$set(this.cates, e.index, Object.assign(this.cates[e.index], e));
+      console.log(this.cates[e.index]);
+    },
+    onAddCate() {
+      this.cates.push({ id: "", amount: "", unitPrice: "", price: "" });
+    },
+    onRemoveCate(index) {
+      this.cates.splice(index, 1);
+    },
+    onAmountChange(e, item) {
+      if (item.unitPrice) {
+        item.price = e.detail.value * item.unitPrice;
+      }
+    },
+    onUnitPriceChange(e, item) {
+      if (item.amount) {
+        item.price = e.detail.value * item.amount;
+      }
     },
     onTimeSet(e) {
       this.time = e.f1;
@@ -343,6 +507,13 @@ export default {
       );
     },
     onValidate() {
+      if (!this.relateContractString) {
+        uni.showToast({
+          title: "请选择关联合同",
+          icon: "none",
+        });
+        return false;
+      }
       if (!this.number) {
         uni.showToast({
           title: "请输入销售单编号 自定义标识",
@@ -356,15 +527,17 @@ export default {
       if (!this.onNetworking && this.onValidate()) {
         let payload = {
           businessId: this.eventId,
+          contractId: this.relateContract.id,
           salesNumber: this.number,
           consignee: this.receiver,
           phone: this.tel,
           place:
             this.locationString === "请选择销售地" ? "" : this.locationString,
+          categories: [],
           estimatedDate: this.time,
-          isExecuteContract: this.radio,
-          newEstimatedDate: this.reTime,
-          receiptDate: this.receiveTime,
+          // isExecuteContract: this.radio,
+          // newEstimatedDate: this.reTime,
+          // receiptDate: this.receiveTime,
           remark: this.description,
           files: this.attachments.map((e) => {
             return {
@@ -376,6 +549,17 @@ export default {
             };
           }),
         };
+        for (let item of this.cates) {
+          if (item.id) {
+            payload["categories"].push({
+              category: item.value,
+              categoryId: item.id,
+              quantity: item.amount,
+              unitPrice: item.unitPrice,
+              totalPrice: item.price,
+            });
+          }
+        }
         console.log(payload);
         this.onNetworking = true;
         let response;

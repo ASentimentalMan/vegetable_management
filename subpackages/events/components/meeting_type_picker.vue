@@ -9,7 +9,7 @@
     >
       <text
         class="selected"
-        :class="{ active: selectedStr != '请选择发票类型' }"
+        :class="{ active: selectedStr != '请选择会议类型' }"
         >{{ selectedStr }}</text
       >
     </picker>
@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import { getReceiptTypeListApi } from "@/apis/event_apis";
+import { getMeetingTypeListApi } from "@/apis/event_apis";
 export default {
   data() {
     return {
       range: [],
-      selectedStr: "请选择发票类型",
+      selectedStr: "请选择会议类型",
       sel: 0,
     };
   },
@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     async fetch() {
-      const response = await getReceiptTypeListApi();
+      const response = await getMeetingTypeListApi();
       if (response) {
         this.range = response.data;
       }

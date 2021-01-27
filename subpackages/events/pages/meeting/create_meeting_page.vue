@@ -26,6 +26,19 @@
         </view>
         <view
           class="form-item flex-horizontal"
+          v-if="mode === 'read' ? type.label : true"
+        >
+          <view class="form-item-label"> 会议类型 </view>
+          <view class="form-item-input">
+            <meeting-type-picker
+              ref="meetingTypePicker"
+              @onMeetingTypeChange="onMeetingTypeChange"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+		<view
+          class="form-item flex-horizontal"
           v-if="mode === 'read' ? brief : true"
         >
           <view class="form-item-label">
@@ -79,7 +92,7 @@
         </view>
       </view>
       <add-media-attachment
-        title="附件"
+        title="会议文件"
         :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
@@ -105,10 +118,12 @@
 
 <script>
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
+import meetingTypePicker from "@/subpackages/events/components/meeting_type_picker.vue";
 import { createMeetingApi, editMeetingApi } from "@/apis/event_apis";
 export default {
   components: {
     AddMediaAttachment,
+	meetingTypePicker
   },
   data() {
     return {
@@ -116,6 +131,7 @@ export default {
       eventId: "",
       meetingId: "",
       onNetworking: false,
+      type: {},
       topic: "",
       brief: "",
       result: "",
@@ -159,8 +175,14 @@ export default {
         };
       });
     }
+	if (this.type.label) {
+	   this.$refs.MeetingTypePicker.setSelectedStr(this.type.label);
+	}
   },
   methods: {
+	onMeetingTypeChange(e) {
+		this.type = e;
+	},
     onAttachmentAdd(attachments) {
       this.attachments = this.attachments.concat(attachments);
     },
@@ -192,6 +214,8 @@ export default {
         let payload = {
           businessId: this.eventId,
           title: this.topic,
+		  meetingType: this.type.label ,
+		  meetingTypeId: this.type.id ,
           summary: this.brief,
           consequence: this.result,
           remark: this.description,
