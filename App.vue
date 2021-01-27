@@ -5,20 +5,6 @@ export default {
     console.log("App Launch");
     if (e.query.token) {
       uni.setStorageSync("token", e.query.token);
-    } else {
-      uni.getStorage({
-        key: "userinfo",
-        success: (res) => {
-          if (res) {
-            // this.$store.commit("user/setInfo", res.data);
-          }
-        },
-        fail: (_) => {
-          // uni.reLaunch({
-          //   url: "/subpackages/login/login_home_page",
-          // });
-        },
-      });
     }
   },
   onShow: () => {
@@ -28,8 +14,19 @@ export default {
     console.log("App Hide");
   },
   mounted() {
-    const token = uni.getStorageSync("token");
-    this.setToken(token);
+    uni.getStorage({
+      key: "token",
+      success: (res) => {
+        if (res) {
+          this.setToken(res.data);
+        }
+      },
+      fail: (_) => {
+        uni.reLaunch({
+          url: "/subpackages/login/pages/login_home_page",
+        });
+      },
+    });
   },
   beforeDestroy() {
     uni.removeStorageSync("token");

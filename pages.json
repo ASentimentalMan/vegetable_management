@@ -39,17 +39,17 @@
 		// }
 	],
 	"subPackages": [
-		// {
-		// 	"root": "subpackages/login",
-		// 	"pages": [
-		// 		{
-		// 			"path": "login_home_page",
-		// 			"style": {
-		// 				"navigationStyle": "custom"
-		// 			}
-		// 		}
-		// 	]
-		// },
+		{
+			"root": "subpackages/login",
+			"pages": [
+				{
+					"path": "pages/login_home_page",
+					"style": {
+						"navigationStyle": "custom"
+					}
+				}
+			]
+		},
 		{
 			"root": "subpackages/events",
 			"pages": [
