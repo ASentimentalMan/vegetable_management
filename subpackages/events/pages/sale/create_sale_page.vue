@@ -214,6 +214,23 @@
             />
           </view>
         </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? billingTime : true"
+        >
+          <view class="form-item-label"> 预计开票日期 </view>
+          <view class="form-item-input">
+            <biao-fun-date-picker
+              placeholder="请选择预计开票日期"
+              :defaultValue="timeBillingDefaultValue"
+              start="2019-07-19 09:00"
+              :end="timeBillingEndTime"
+              fields="day"
+              @change="onBillingTimeSet"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
       </view>
       <!-- <view class="form-container">
         <view
@@ -351,8 +368,11 @@ export default {
       locationString: "请选择销售地",
       cates: [{ id: "", amount: "", unitPrice: "", price: "" }],
       time: "",
+      billingTime: "",
       timePickerDefaultValue: "",
       timePickerEndTime: "",
+      timeBillingDefaultValue: "",
+	  timeBillingEndTime: "",
       // radio: "",
       // reTime: "",
       // reTimePickerDefaultValue: "",
@@ -388,6 +408,8 @@ export default {
       this.locationString = item.place ? item.place : "请选择销售地";
       this.time = item.estimatedDate;
       this.timePickerDefaultValue = this.time;
+      this.billingTime = item.billingDate;
+	  this.timeBillingDefaultValue = this.billingTime;
       // this.radio = item.isExecuteContract.toString();
       // this.reTime = item.newEstimatedDate;
       // this.reTimePickerDefaultValue = this.reTime;
@@ -421,11 +443,28 @@ export default {
       });
     }
     this.setTimePickerEndTime();
+    this.setTimeBillEndTime();
   },
   methods: {
     setTimePickerEndTime() {
       const time = new Date();
       this.timePickerEndTime =
+        time.getFullYear() +
+        1 +
+        "-" +
+        (time.getMonth() + 1 > 9
+          ? time.getMonth() + 1
+          : "0" + (time.getMonth() + 1)) +
+        "-" +
+        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
+        " " +
+        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
+        ":" +
+        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
+    },
+    setTimeBillEndTime() {
+      const time = new Date();
+      this.timeBillingEndTime =
         time.getFullYear() +
         1 +
         "-" +
@@ -470,6 +509,9 @@ export default {
     },
     onTimeSet(e) {
       this.time = e.f1;
+    },
+    onBillingTimeSet(e) {
+      this.billingTime = e.f1;
     },
     onReTimeSet(e) {
       this.reTime = e.f1;
@@ -535,6 +577,7 @@ export default {
             this.locationString === "请选择销售地" ? "" : this.locationString,
           categories: [],
           estimatedDate: this.time,
+          billingDate: this.timeBillingEndTime,
           // isExecuteContract: this.radio,
           // newEstimatedDate: this.reTime,
           // receiptDate: this.receiveTime,

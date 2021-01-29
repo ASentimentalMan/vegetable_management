@@ -94,6 +94,40 @@
             />
           </view>
         </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? billingTime : true"
+        >
+          <view class="form-item-label"> 预计开票日期 </view>
+          <view class="form-item-input">
+            <biao-fun-date-picker
+              placeholder="请选择预计开票日期"
+              :defaultValue="timeBillingDefaultValue"
+              start="2019-07-19 09:00"
+              :end="timeBillingEndTime"
+              fields="day"
+              @change="onBillingTimeSet"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="mode === 'read' ? paymentTime : true"
+        >
+          <view class="form-item-label"> 预计付款日期 </view>
+          <view class="form-item-input">
+            <biao-fun-date-picker
+              placeholder="请选择预计付款日期"
+              :defaultValue="timePaymentDefaultValue"
+              start="2019-07-19 09:00"
+              :end="timePaymentEndTime"
+              fields="day"
+              @change="onPaymentTimeSet"
+              :disabled="mode === 'read'"
+            />
+          </view>
+        </view>
       </view>
       <block v-for="(item, index) in cates" :key="index">
         <view class="flex-vertical" v-if="mode === 'read' ? item.id : true">
@@ -258,8 +292,14 @@ export default {
       contact: "",
       tel: "",
       time: "",
+      paymentTime: "",
+      billingTime: "",
       timePickerDefaultValue: "",
       timePickerEndTime: "",
+      timePaymentDefaultValue: "",
+	  timePaymentEndTime: "",
+      timeBillingDefaultValue: "",
+	  timeBillingEndTime: "",
       cates: [{ id: "", amount: "", unitPrice: "", price: "" }],
       description: "",
       attachments: [],
@@ -290,6 +330,10 @@ export default {
       this.tel = item.contactTel;
       this.time = item.purchaseDate;
       this.timePickerDefaultValue = this.time;
+	  this.paymentTime = item.paymentDate;
+      this.timePaymentDefaultValue = item.paymentTime;
+      this.billingTime = item.billingDate;
+      this.timeBillingDefaultValue = this.billingTime;
       if (item.categories.length) {
         this.cates = item.categories.map((e) => {
           return {
@@ -318,11 +362,45 @@ export default {
       });
     }
     this.setTimePickerEndTime();
+    this.setTimePaymentEndTime();
+    this.setTimeBillingEndTime();
   },
   methods: {
     setTimePickerEndTime() {
       const time = new Date();
       this.timePickerEndTime =
+        time.getFullYear() +
+        1 +
+        "-" +
+        (time.getMonth() + 1 > 9
+          ? time.getMonth() + 1
+          : "0" + (time.getMonth() + 1)) +
+        "-" +
+        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
+        " " +
+        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
+        ":" +
+        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
+    },
+    setTimePaymentEndTime() {
+      const time = new Date();
+      this.timePaymentEndTime =
+        time.getFullYear() +
+        1 +
+        "-" +
+        (time.getMonth() + 1 > 9
+          ? time.getMonth() + 1
+          : "0" + (time.getMonth() + 1)) +
+        "-" +
+        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
+        " " +
+        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
+        ":" +
+        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
+    },
+    setTimeBillingEndTime() {
+      const time = new Date();
+      this.timeBillingEndTime =
         time.getFullYear() +
         1 +
         "-" +
@@ -346,6 +424,12 @@ export default {
     },
     onTimeSet(e) {
       this.time = e.f1;
+    },
+    onPaymentTimeSet(e) {
+      this.paymentTime = e.f1;
+    },
+    onBillingTimeSet(e) {
+      this.billingTime = e.f1;
     },
     onSelectCate(e) {
       if (this.mode === "read") return;
@@ -410,6 +494,8 @@ export default {
           contact: this.contact,
           contactTel: this.tel,
           purchaseDate: this.time,
+          paymentDate: this.paymentTime,
+          billingDate: this.billingTime,
           categories: [],
           remark: this.description,
           files: this.attachments.map((e) => {
