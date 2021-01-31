@@ -491,8 +491,10 @@ export default {
       if (item.sales.length) {
         this.relateSale = item.sales;
       }
-      this.relateContract = { id: item.contract.id };
-      this.relateContractString = item.contract.contractName;
+      if (item.contract) {
+        this.relateContract = { id: item.contract.id };
+        this.relateContractString = item.contract.contractName;
+      }
       this.relateCustomer = {};
       this.relateCustomerString = "";
       this.description = item.remark;

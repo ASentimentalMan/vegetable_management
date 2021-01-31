@@ -3,6 +3,15 @@ import { mapMutations } from "vuex";
 export default {
   onLaunch: (e) => {
     console.log("App Launch");
+    // const version = 0;
+    // const edition = uni.getStorageSync("version");
+    // if (edition && edition < version) {
+    //   location.reload();
+    // }
+    // uni.setStorageSync("version", version);
+    try {
+      uni.removeStorageSync("version");
+    } catch (e) {}
     if (e.query.token) {
       uni.setStorageSync("token", e.query.token);
     }
@@ -27,9 +36,6 @@ export default {
         });
       },
     });
-  },
-  beforeDestroy() {
-    uni.removeStorageSync("token");
   },
   methods: {
     ...mapMutations("user", ["setToken"]),
