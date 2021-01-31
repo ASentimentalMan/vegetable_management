@@ -166,7 +166,7 @@ export default {
         let prevPage = pages[pages.length - 2];
         prevPage.$vm[this.key] = item;
         prevPage.$vm[this.key + "String"] = item.contractName;
-        console.log(item);
+        // console.log(item);
         uni.navigateBack();
       } else {
         uni.navigateTo({

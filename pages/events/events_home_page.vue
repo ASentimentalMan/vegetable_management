@@ -1,5 +1,13 @@
 <template>
   <view class="page-container">
+    <uni-nav-bar
+      left-icon="bars"
+      :fixed="true"
+      :shadow="false"
+      @clickLeft="onDrawer"
+    >
+      <view class="uni-navbar-head__title"> 业务清单 </view>
+    </uni-nav-bar>
     <view class="scrollable">
       <view class="list-container flex-vertical flex-jcsb">
         <uni-swipe-action>
@@ -65,6 +73,18 @@
                     >
                       销售 {{ item.businessCount.sales }}
                     </view>
+                    <view
+                      class="item-stastic"
+                      style="background-color: #eff8f8; color: #39a2ac"
+                    >
+                      收款 {{ item.businessCount.receive }}
+                    </view>
+                    <view
+                      class="item-stastic"
+                      style="background-color: #fdf5e9; color: #ef9024"
+                    >
+                      付款 {{ item.businessCount.payment }}
+                    </view>
                   </view>
                 </view>
               </view>
@@ -82,13 +102,24 @@
         </view>
       </view>
     </view>
+    <uni-drawer ref="drawer">
+      <view style="padding: 30rpx">
+        <view class="uni-title">设置</view>
+        <view class="bottom-button-container">
+          <view class="button-container" @tap="onLogOut">
+            <view class="bottom-button" style="background-color: red">
+              退出登录
+            </view>
+          </view>
+        </view>
+      </view>
+    </uni-drawer>
   </view>
 </template>
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
 import { getEventListApi, deleteEventApi } from "@/apis/event_apis";
-import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
     Indicator,
@@ -178,7 +209,7 @@ export default {
       this.fetch();
     },
     goEvent(item) {
-      console.log(item);
+      // console.log(item);
       uni.navigateTo({
         url:
           "/subpackages/events/pages/event/event_detail_page?item=" +
@@ -188,6 +219,15 @@ export default {
     onCreate() {
       uni.navigateTo({
         url: "/subpackages/events/pages/event/create_event_page",
+      });
+    },
+    onDrawer() {
+      this.$refs.drawer.open();
+    },
+    onLogOut() {
+      uni.removeStorageSync("token");
+      uni.reLaunch({
+        url: "/subpackages/login/pages/login_home_page",
       });
     },
     onUniSwipeAction(e, item, index) {

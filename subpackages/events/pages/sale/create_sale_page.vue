@@ -117,11 +117,15 @@
               </view>
               <view
                 class="add-form-item"
-                style="margin-left: 12rpx"
-                @tap="onRemoveCate(index)"
+                style="margin-left: 12rpx; line-height: 1"
                 v-if="mode !== 'read' && cates.length > 1"
               >
-                -
+                <uni-icons
+                  @tap="onRemoveCate(index)"
+                  type="minus"
+                  size="26"
+                  color="red"
+                ></uni-icons>
               </view>
             </view>
             <view
@@ -193,7 +197,14 @@
       >
         <view class="form-item-input" style="margin-right: 24rpx">
           <text class="add-form-text"> 新增品类 </text>
-          <view class="add-form-item" @tap="onAddCate"> + </view>
+          <view class="add-form-item" style="line-height: 1">
+            <uni-icons
+              @tap="onAddCate"
+              type="plus"
+              size="26"
+              color="#2c7cf6"
+            ></uni-icons>
+          </view>
         </view>
       </view>
       <view class="form-container">
@@ -372,7 +383,7 @@ export default {
       timePickerDefaultValue: "",
       timePickerEndTime: "",
       timeBillingDefaultValue: "",
-	  timeBillingEndTime: "",
+      timeBillingEndTime: "",
       // radio: "",
       // reTime: "",
       // reTimePickerDefaultValue: "",
@@ -389,7 +400,7 @@ export default {
     if (e.mode) {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
-      console.log(item);
+      // console.log(item);
       this.saleId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
@@ -409,7 +420,7 @@ export default {
       this.time = item.estimatedDate;
       this.timePickerDefaultValue = this.time;
       this.billingTime = item.billingDate;
-	  this.timeBillingDefaultValue = this.billingTime;
+      this.timeBillingDefaultValue = this.billingTime;
       // this.radio = item.isExecuteContract.toString();
       // this.reTime = item.newEstimatedDate;
       // this.reTimePickerDefaultValue = this.reTime;
@@ -489,7 +500,7 @@ export default {
     onSelectCate(e) {
       if (this.mode === "read") return;
       this.$set(this.cates, e.index, Object.assign(this.cates[e.index], e));
-      console.log(this.cates[e.index]);
+      // console.log(this.cates[e.index]);
     },
     onAddCate() {
       this.cates.push({ id: "", amount: "", unitPrice: "", price: "" });
@@ -603,7 +614,7 @@ export default {
             });
           }
         }
-        console.log(payload);
+        // console.log(payload);
         this.onNetworking = true;
         let response;
         if (this.mode === "create") {

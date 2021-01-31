@@ -370,7 +370,7 @@ export default {
     if (e.mode) {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
-      console.log(item);
+      // console.log(item);
       this.customerId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
@@ -751,11 +751,11 @@ export default {
     },
     async onHandle() {
       if (this.onValidate()) {
-        console.log(this.type);
-        console.log(this.source);
-        console.log(this.level);
-        console.log(this.industry);
-        console.log(this.area);
+        // console.log(this.type);
+        // console.log(this.source);
+        // console.log(this.level);
+        // console.log(this.industry);
+        // console.log(this.area);
         const payload = {
           customerName: this.name,
           // customerNumber: "",

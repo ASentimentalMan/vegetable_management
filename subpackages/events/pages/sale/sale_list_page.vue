@@ -181,7 +181,7 @@ export default {
           let pages = getCurrentPages();
           let prevPage = pages[pages.length - 2];
           this.$set(prevPage.$vm[this.key], this.index, item);
-          console.log(item);
+          // console.log(item);
           uni.navigateBack();
         }
       } else {

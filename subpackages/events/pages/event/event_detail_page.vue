@@ -117,18 +117,21 @@
     </view>
     <view class="options-container">
       <view class="options-item-container">
-        <view class="options-item flex-horizontal flex-aic" @tap="goReceivePayment">
+        <view
+          class="options-item flex-horizontal flex-aic"
+          @tap="goReceivePayment"
+        >
           <view class="options-icon-container">
             <image
               class="options-icon"
-              src="https://dev.ncpgz.com/assets/management/icons/business_fund.png"
+              src="https://dev.ncpgz.com/assets/management/icons/business_receive_payment.png"
             />
           </view>
           <view class="options-text">
             收款
-            <!-- <text class="options-count">
-              ({{ event.businessCount.contract }})
-            </text> -->
+            <text class="options-count">
+              ({{ event.businessCount.receive }})
+            </text>
           </view>
           <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
           </view>
@@ -139,13 +142,33 @@
           <view class="options-icon-container">
             <image
               class="options-icon"
-              src="https://dev.ncpgz.com/assets/management/icons/business_fund.png"
+              src="https://dev.ncpgz.com/assets/management/icons/business_payment.png"
             />
           </view>
           <view class="options-text">
             付款
+            <text class="options-count">
+              ({{ event.businessCount.payment }})
+            </text>
+          </view>
+          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="options-container">
+      <view class="options-item-container">
+        <view class="options-item flex-horizontal flex-aic" @tap="goStatistic">
+          <view class="options-icon-container">
+            <image
+              class="options-icon"
+              src="https://dev.ncpgz.com/assets/management/icons/business_statistic.png"
+            />
+          </view>
+          <view class="options-text">
+            统计
             <!-- <text class="options-count">
-              ({{ event.businessCount.contract }})
+              ({{ event.businessCount.receive }})
             </text> -->
           </view>
           <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
@@ -258,6 +281,13 @@ export default {
       uni.navigateTo({
         url:
           "/subpackages/events/pages/payment/payment_list_page?eventId=" +
+          this.eventId,
+      });
+    },
+    goStatistic() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/statistic/statistic_page?eventId=" +
           this.eventId,
       });
     },

@@ -441,6 +441,16 @@ export const deletePaymentApi = payload => {
   })
 }
 
+// 业务统计
+export const getStatisticApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/business-total",
+    data: payload,
+    token: true
+  })
+}
+
 // 发票类型列表
 export const getReceiptTypeListApi = () => {
   return request_java({

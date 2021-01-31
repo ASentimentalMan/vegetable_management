@@ -57,7 +57,6 @@ import Searcher from "@/components/public/searcher";
 import Sorter from "@/components/public/sorter";
 import Indicator from "@/components/public/indicator";
 import { getContractListApi, deleteContractApi } from "@/apis/event_apis";
-import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
     Searcher,

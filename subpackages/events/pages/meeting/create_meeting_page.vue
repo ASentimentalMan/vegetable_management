@@ -229,7 +229,7 @@ export default {
             };
           }),
         };
-        console.log(payload);
+        // console.log(payload);
         this.onNetworking = true;
         let response;
         if (this.mode === "create") {

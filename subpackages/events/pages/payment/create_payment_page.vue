@@ -128,17 +128,28 @@
             </view>
             <view
               class="add-form-item"
-              style="margin-left: 12rpx"
-              @tap="onRemoveOrder(index)"
+              style="margin-left: 12rpx; line-height: 1"
               v-if="mode !== 'read' && relateOrder.length > 1"
             >
-              -
+              <uni-icons
+                @tap="onRemoveOrder(index)"
+                type="minus"
+                size="26"
+                color="red"
+              ></uni-icons>
             </view>
           </view>
         </block>
         <view class="form-item flex-horizontal" v-if="mode !== 'read'">
           <view class="form-item-input">
-            <view class="add-form-item" @tap="onAddOrder"> + </view>
+            <view class="add-form-item" style="line-height: 1">
+              <uni-icons
+                @tap="onAddOrder"
+                type="plus"
+                size="26"
+                color="#2c7cf6"
+              ></uni-icons>
+            </view>
           </view>
         </view>
       </view>
@@ -361,7 +372,7 @@ export default {
             payload["procureIds"].push(item.id);
           }
         }
-        console.log(payload);
+        // console.log(payload);
         this.onNetworking = true;
         let response;
         if (this.mode === "create") {

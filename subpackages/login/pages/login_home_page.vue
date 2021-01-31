@@ -11,17 +11,11 @@
       <checkbox class="checkbox" :checked="agreed" color="#63bc52" />
       <view class="covenant-content-container">
         <text class="covenant">我已阅读并同意</text>
-        <text class="covenant green" @click="goRouter('service')"
-          >《用户服务协议》</text
-        >
+        <text class="covenant green" @tap="goService">《用户服务协议》</text>
         <text class="covenant">、</text>
-        <text class="covenant green" @click="goRouter('agreement')"
-          >《用户授权协议》</text
-        >
+        <text class="covenant green" @tap="goAgreement">《用户授权协议》</text>
         <text class="covenant">和</text>
-        <text class="covenant green" @click="goRouter('privacy')"
-          >《隐私政策》</text
-        >
+        <text class="covenant green" @tap="goPrivacy">《隐私政策》</text>
         <text class="covenant">。</text>
       </view>
     </checkbox-group>
@@ -51,6 +45,15 @@ export default {
     },
     onAgreedChange() {
       this.agreed = !this.agreed;
+    },
+    goService() {
+      window.open("https://h5.ncpgz.com/covenant/service");
+    },
+    goAgreement() {
+      window.open("https://h5.ncpgz.com/covenant/agreement");
+    },
+    goPrivacy() {
+      window.open("https://h5.ncpgz.com/covenant/privacy");
     },
   },
 };

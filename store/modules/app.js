@@ -12,7 +12,7 @@ const getters = {}
 const mutations = {
   setCates(state, cates) {
     state.cates = cates
-    console.log(state.cates)
+    // console.log(state.cates)
   },
 }
 

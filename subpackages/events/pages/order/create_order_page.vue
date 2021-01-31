@@ -147,11 +147,15 @@
               </view>
               <view
                 class="add-form-item"
-                style="margin-left: 12rpx"
-                @tap="onRemoveCate(index)"
+                style="margin-left: 12rpx; line-height: 1"
                 v-if="mode !== 'read' && cates.length > 1"
               >
-                -
+                <uni-icons
+                  @tap="onRemoveCate(index)"
+                  type="minus"
+                  size="26"
+                  color="red"
+                ></uni-icons>
               </view>
             </view>
             <view
@@ -223,7 +227,14 @@
       >
         <view class="form-item-input" style="margin-right: 24rpx">
           <text class="add-form-text"> 新增品类 </text>
-          <view class="add-form-item" @tap="onAddCate"> + </view>
+          <view class="add-form-item" style="line-height: 1">
+            <uni-icons
+              @tap="onAddCate"
+              type="plus"
+              size="26"
+              color="#2c7cf6"
+            ></uni-icons>
+          </view>
         </view>
       </view>
       <view class="form-container">
@@ -297,9 +308,9 @@ export default {
       timePickerDefaultValue: "",
       timePickerEndTime: "",
       timePaymentDefaultValue: "",
-	  timePaymentEndTime: "",
+      timePaymentEndTime: "",
       timeBillingDefaultValue: "",
-	  timeBillingEndTime: "",
+      timeBillingEndTime: "",
       cates: [{ id: "", amount: "", unitPrice: "", price: "" }],
       description: "",
       attachments: [],
@@ -312,7 +323,7 @@ export default {
     if (e.mode) {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
-      console.log(item);
+      // console.log(item);
       this.orderId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
@@ -330,7 +341,7 @@ export default {
       this.tel = item.contactTel;
       this.time = item.purchaseDate;
       this.timePickerDefaultValue = this.time;
-	  this.paymentTime = item.paymentDate;
+      this.paymentTime = item.paymentDate;
       this.timePaymentDefaultValue = item.paymentTime;
       this.billingTime = item.billingDate;
       this.timeBillingDefaultValue = this.billingTime;
@@ -519,7 +530,7 @@ export default {
             });
           }
         }
-        console.log(payload);
+        // console.log(payload);
         this.onNetworking = true;
         let response;
         if (this.mode === "create") {

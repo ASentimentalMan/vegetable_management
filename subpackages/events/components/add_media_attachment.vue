@@ -6,12 +6,14 @@
           <text class="form-item-label"> {{ title }} </text>
         </view>
         <view class="form-unit-title">
-          <view
-            class="add-form-item"
-            v-if="attachments.length < amount && !disabled"
-            @tap="onAttachmentAdd"
-          >
-            +
+          <view v-if="attachments.length < amount && !disabled">
+            <uni-icons
+              style="line-height: 1"
+              @tap="onAttachmentAdd"
+              type="plus"
+              size="26"
+              color="#2c7cf6"
+            ></uni-icons>
           </view>
         </view>
       </view>
@@ -37,13 +39,14 @@
           <view class="attachment-detail flex-vertical" v-else>
             <view class="attachment-text ellipsis"> {{ item.text }} </view>
           </view>
-          <image
-            class="attachment-remove"
-            @click="onAttachmentRemove(index)"
+          <uni-icons
+            style="margin-right: 6rpx"
+            @tap="onAttachmentRemove(index)"
             v-if="!disabled"
-            src="https://dev.ncpgz.com/assets/icons/store_icon_remove.png"
-            mode="aspectFill"
-          />
+            type="minus"
+            size="26"
+            color="red"
+          ></uni-icons>
         </view>
       </block>
     </view>
@@ -111,8 +114,8 @@ export default {
                 const uploadTask = uni.uploadFile({
                   url:
                     process.env.NODE_ENV === "development"
-                      ? "https://dev.ncpgz.com/test/file/basis-file/upload"
-                      : "https://dev.ncpgz.com/test/file/basis-file/upload",
+                      ? "https://test.ncpgz.com/api/file/basis-file/upload"
+                      : "https://vegetable.ncpgz.com/api/file/basis-file/upload",
                   filePath: this.attachments[i]["blob"],
                   name: "file",
                   formData: {
@@ -193,9 +196,5 @@ export default {
 }
 .attachment-text {
   text-align: left;
-}
-.attachment-remove {
-  width: 40rpx;
-  height: 40rpx;
 }
 </style>

@@ -235,7 +235,7 @@ export default {
     if (e.mode) {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
-      console.log(item);
+      // console.log(item);
       this.contractId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
@@ -293,7 +293,7 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onRadioChange(e) {
-      console.log(e.target.value);
+      // console.log(e.target.value);
       this.type = e.target.value;
     },
     onSelectPartyA() {
