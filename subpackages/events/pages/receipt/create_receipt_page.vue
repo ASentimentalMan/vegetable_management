@@ -498,20 +498,22 @@ export default {
       this.relateCustomer = {};
       this.relateCustomerString = "";
       this.description = item.remark;
-      this.attachments = item.files.map((e) => {
-        return {
-          blob: "",
-          createTime: e.createTime,
-          fileName: e.fileName,
-          fileType: e.fileType,
-          fileUrl: e.fileUrl,
-          id: e.id,
-          originalFileName: e.fileOriginalName,
-          subFileUrl: e.fileSubUrl,
-          text: "",
-          updateTime: e.updateTime,
-        };
-      });
+      if (item.files && item.files.length) {
+        this.attachments = item.files.map((e) => {
+          return {
+            blob: "",
+            createTime: e.createTime,
+            fileName: e.fileName,
+            fileType: e.fileType,
+            fileUrl: e.fileUrl,
+            id: e.id,
+            originalFileName: e.fileOriginalName,
+            subFileUrl: e.fileSubUrl,
+            text: "",
+            updateTime: e.updateTime,
+          };
+        });
+      }
     }
     this.initTimePicker();
   },

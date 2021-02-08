@@ -37,7 +37,7 @@
             />
           </view>
         </view>
-		<view
+        <view
           class="form-item flex-horizontal"
           v-if="mode === 'read' ? brief : true"
         >
@@ -123,7 +123,7 @@ import { createMeetingApi, editMeetingApi } from "@/apis/event_apis";
 export default {
   components: {
     AddMediaAttachment,
-	meetingTypePicker
+    meetingTypePicker,
   },
   data() {
     return {
@@ -160,29 +160,31 @@ export default {
       this.brief = item.summary;
       this.result = item.consequence;
       this.description = item.remark;
-      this.attachments = item.files.map((e) => {
-        return {
-          blob: "",
-          createTime: e.createTime,
-          fileName: e.fileName,
-          fileType: e.fileType,
-          fileUrl: e.fileUrl,
-          id: e.id,
-          originalFileName: e.fileOriginalName,
-          subFileUrl: e.fileSubUrl,
-          text: "",
-          updateTime: e.updateTime,
-        };
-      });
+      if (item.files && item.files.length) {
+        this.attachments = item.files.map((e) => {
+          return {
+            blob: "",
+            createTime: e.createTime,
+            fileName: e.fileName,
+            fileType: e.fileType,
+            fileUrl: e.fileUrl,
+            id: e.id,
+            originalFileName: e.fileOriginalName,
+            subFileUrl: e.fileSubUrl,
+            text: "",
+            updateTime: e.updateTime,
+          };
+        });
+      }
     }
-	if (this.type.label) {
-	   this.$refs.MeetingTypePicker.setSelectedStr(this.type.label);
-	}
+    if (this.type.label) {
+      this.$refs.MeetingTypePicker.setSelectedStr(this.type.label);
+    }
   },
   methods: {
-	onMeetingTypeChange(e) {
-		this.type = e;
-	},
+    onMeetingTypeChange(e) {
+      this.type = e;
+    },
     onAttachmentAdd(attachments) {
       this.attachments = this.attachments.concat(attachments);
     },
@@ -214,8 +216,8 @@ export default {
         let payload = {
           businessId: this.eventId,
           title: this.topic,
-		  meetingType: this.type.label ,
-		  meetingTypeId: this.type.id ,
+          meetingType: this.type.label,
+          meetingTypeId: this.type.id,
           summary: this.brief,
           consequence: this.result,
           remark: this.description,

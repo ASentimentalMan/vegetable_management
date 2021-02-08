@@ -345,7 +345,7 @@ export default {
       this.timePaymentDefaultValue = item.paymentTime;
       this.billingTime = item.billingDate;
       this.timeBillingDefaultValue = this.billingTime;
-      if (item.categories.length) {
+      if (item.categories && item.categories.length) {
         this.cates = item.categories.map((e) => {
           return {
             id: e.categoryId,
@@ -357,20 +357,22 @@ export default {
         });
       }
       this.description = item.remark;
-      this.attachments = item.files.map((e) => {
-        return {
-          blob: "",
-          createTime: e.createTime,
-          fileName: e.fileName,
-          fileType: e.fileType,
-          fileUrl: e.fileUrl,
-          id: e.id,
-          originalFileName: e.fileOriginalName,
-          subFileUrl: e.fileSubUrl,
-          text: "",
-          updateTime: e.updateTime,
-        };
-      });
+      if (item.files && item.files.length) {
+        this.attachments = item.files.map((e) => {
+          return {
+            blob: "",
+            createTime: e.createTime,
+            fileName: e.fileName,
+            fileType: e.fileType,
+            fileUrl: e.fileUrl,
+            id: e.id,
+            originalFileName: e.fileOriginalName,
+            subFileUrl: e.fileSubUrl,
+            text: "",
+            updateTime: e.updateTime,
+          };
+        });
+      }
     }
     this.setTimePickerEndTime();
     this.setTimePaymentEndTime();

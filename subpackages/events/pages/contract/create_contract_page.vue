@@ -258,7 +258,8 @@ export default {
       this.startTimeDefaultValue = this.startTime;
       this.period = item.validPeriod;
       this.description = item.remark;
-      this.attachments = item.files.map((e) => {
+      if (item.files && item.files.length) {
+        this.attachments = item.files.map((e) => {
         return {
           blob: "",
           createTime: e.createTime,
@@ -272,6 +273,7 @@ export default {
           updateTime: e.updateTime,
         };
       });
+      }
     }
     this.initTimePicker();
   },
