@@ -334,8 +334,10 @@ export default {
           title: "采购详情",
         });
       }
-      this.relateContract = item.contract;
-      this.relateContractString = item.contract.contractName;
+      if (item.contract) {
+        this.relateContract = item.contract;
+        this.relateContractString = item.contract.contractName;
+      }
       this.number = item.procureNumber;
       this.contact = item.contact;
       this.tel = item.contactTel;

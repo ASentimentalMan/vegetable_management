@@ -411,8 +411,10 @@ export default {
           title: "销售详情",
         });
       }
-      this.relateContract = item.contract;
-      this.relateContractString = item.contract.contractName;
+      if (item.contract) {
+        this.relateContract = item.contract;
+        this.relateContractString = item.contract.contractName;
+      }
       this.number = item.salesNumber;
       this.receiver = item.consignee;
       this.tel = item.phone;
