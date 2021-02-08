@@ -63,7 +63,13 @@ export default {
       return "loading";
     },
   },
-  onLoad() {
+  onLoad(e) {
+    if (e.startTime) {
+      this.payload["startDate"] = e.startTime;
+    }
+    if (e.endTime) {
+      this.payload["endDate"] = e.endTime;
+    }
     this.fetch();
   },
   onPullDownRefresh() {

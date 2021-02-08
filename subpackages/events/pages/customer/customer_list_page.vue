@@ -131,7 +131,9 @@ export default {
           size: this.pageSize,
         };
         this.onNetworking = true;
-        const response = await getCustomerListApi(payload);
+        const response = await getCustomerListApi(
+          Object.assign(this.payload, payload)
+        );
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {

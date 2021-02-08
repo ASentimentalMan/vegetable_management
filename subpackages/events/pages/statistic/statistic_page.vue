@@ -1,5 +1,12 @@
 <template>
   <view class="page-container">
+    <view style="height: 4px"> </view>
+    <period-day-picker
+      ref="period"
+      @onStartTimeSet="onStartTimeSet"
+      @onEndTimeSet="onEndTimeSet"
+    />
+    <sorter :sorter="sorter" @onSorterTap="onSorterTap" />
     <view class="scrollable">
       <view class="flex-horizontal">
         <view
@@ -55,7 +62,7 @@
             <view class="flex-horizontal" style="margin-top: 6rpx">
               <view class="order-container" style="background-color: #6da2e5">
                 订单数：
-                {{ orderCount === null ? "统计中" : saleContractCount + "笔" }}
+                {{ orderCount === null ? "统计中" : orderCount + "笔" }}
               </view>
               <view class="order-container" style="background-color: #f8bd4b">
                 总金额：
@@ -89,73 +96,47 @@
           </view>
         </view>
       </view>
-      <view class="contract-container flex-vertical" style="margin-top: 24rpx">
-        <view class="title" style="margin-bottom: 24rpx">
-          资金 总付款/总收款
-        </view>
-        <view class="flex-horizontal">
-          <view class="flex-vertical" style="margin-right: 60rpx">
-            <view style="color: #1664f5"> 应付账款 </view>
-            <view class="">
-              {{ shouldPay === null ? "统计中" : shouldPay + "万元" }}
-            </view>
-          </view>
-          <view class="flex-vertical">
-            <view style="color: #6ec1f5"> 应收账款 </view>
-            <view class="">
-              {{ shouldReceive === null ? "统计中" : shouldReceive + "万元" }}
-            </view>
-          </view>
-        </view>
-        <view class="flex-horizontal" style="margin-top: 24rpx">
-          <view class="flex-vertical" style="margin-right: 60rpx">
-            <view style="color: #ee8919"> 未付账款 </view>
-            <view class="">
-              {{ notPay === null ? "统计中" : notPay + "万元" }}
-            </view>
-          </view>
-          <view class="flex-vertical">
-            <view style="color: #f4bc7d"> 未收账款 </view>
-            <view class="">
-              {{ notReceive === null ? "统计中" : notReceive + "万元" }}
-            </view>
-          </view>
-        </view>
-      </view>
     </view>
   </view>
 </template>
 
 <script>
 import PeriodDayPicker from "@/subpackages/events/components/period_day_picker";
+import Sorter from "@/components/public/sorter";
 import { getStatisticApi } from "@/apis/event_apis";
 export default {
   components: {
     PeriodDayPicker,
+    Sorter,
   },
   data() {
     return {
-      eventId: "",
+      sorter: [
+        {
+          label: "本日",
+        },
+        {
+          label: "本周",
+        },
+        {
+          label: "本月",
+        },
+        {
+          label: "本年",
+        },
+      ],
       payload: {},
-      activeIndex: 0,
       orderContractCount: null,
       saleContractCount: null,
       orderCount: null,
       orderPrice: null,
       saleCount: null,
       salePrice: null,
-      shouldPay: null,
-      shouldReceive: null,
-      notPay: null,
-      notReceive: null,
       onNetworking: false,
       onRefreshing: false,
     };
   },
-  onLoad(e) {
-    if (e.eventId) {
-      this.eventId = e.eventId;
-    }
+  onLoad() {
     this.fetch();
   },
   onPullDownRefresh() {
@@ -174,10 +155,6 @@ export default {
           this.orderPrice = response.data.totalPurchaseAmount;
           this.saleCount = response.data.numberOfSalesOrders;
           this.salePrice = response.data.totalSalesAmount;
-          this.shouldPay = response.data.accountsPayable;
-          this.shouldReceive = response.data.accountsReceivable;
-          this.notPay = response.data.unpaidAccounts;
-          this.notReceive = response.data.uncollectedAccounts;
         }
       }
       if (this.onRefreshing) {
@@ -189,27 +166,76 @@ export default {
       this.onRefreshing = true;
       this.fetch();
     },
-    onActiveIndexChange(index) {
-      this.activeIndex = index;
+    onStartTimeSet(e) {
+      this.payload["startDate"] = e;
+      this.onRefresh();
+    },
+    onEndTimeSet(e) {
+      this.payload["endDate"] = e;
+      this.onRefresh();
+    },
+    onSorterTap(index) {
+      const now = new Date();
+      let time;
+      switch (index) {
+        case 0:
+          time = now.getTime() - 1000 * 60 * 60 * 24 * 1;
+          break;
+        case 1:
+          time = now.getTime() - 1000 * 60 * 60 * 24 * 7;
+          break;
+        case 2:
+          time = now.getTime() - 1000 * 60 * 60 * 24 * 30;
+          break;
+        case 3:
+          time = now.getTime() - 1000 * 60 * 60 * 24 * 365;
+          break;
+      }
+      this.$refs.period.setStartTime(time);
+      const tim = new Date(time);
+      this.payload["startDate"] =
+        tim.getFullYear() +
+        "-" +
+        (tim.getMonth() + 1 > 9
+          ? tim.getMonth() + 1
+          : "0" + (tim.getMonth() + 1)) +
+        "-" +
+        (tim.getDate() > 9 ? tim.getDate() : "0" + tim.getDate());
+      this.onRefresh();
     },
     goContract(type) {
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/statistic/statistic_contract_list_page?type=" +
-          type,
-      });
+      let url =
+        "/subpackages/events/pages/statistic/statistic_contract_list_page?type=" +
+        type;
+      if (this.payload["startDate"]) {
+        url += "&startTime=" + this.payload["startDate"];
+      }
+      if (this.payload["endDate"]) {
+        url += "&endTime=" + this.payload["endDate"];
+      }
+      uni.navigateTo({ url });
     },
     goOrder() {
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/statistic/statistic_order_list_page?type=",
-      });
+      let url =
+        "/subpackages/events/pages/statistic/statistic_order_list_page?type=";
+      if (this.payload["startDate"]) {
+        url += "&startTime=" + this.payload["startDate"];
+      }
+      if (this.payload["endDate"]) {
+        url += "&endTime=" + this.payload["endDate"];
+      }
+      uni.navigateTo({ url });
     },
     goSale() {
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/statistic/statistic_sale_list_page?type=",
-      });
+      let url =
+        "/subpackages/events/pages/statistic/statistic_sale_list_page?type=";
+      if (this.payload["startDate"]) {
+        url += "&startTime=" + this.payload["startDate"];
+      }
+      if (this.payload["endDate"]) {
+        url += "&endTime=" + this.payload["endDate"];
+      }
+      uni.navigateTo({ url });
     },
   },
 };

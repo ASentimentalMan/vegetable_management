@@ -50,7 +50,7 @@ export default {
       pageSize: 20,
       hasMore: true,
       onNetworking: false,
-      onRefreshing: false
+      onRefreshing: false,
     };
   },
   computed: {
@@ -64,6 +64,7 @@ export default {
     },
   },
   onLoad(e) {
+    console.log(e);
     if (e.type) {
       this.payload["contractType"] = e.type;
       if (e.type === "procure") {
@@ -75,6 +76,12 @@ export default {
           title: "销售合同列表",
         });
       }
+    }
+    if (e.startTime) {
+      this.payload["startDate"] = e.startTime;
+    }
+    if (e.endTime) {
+      this.payload["endDate"] = e.endTime;
     }
     this.fetch();
   },

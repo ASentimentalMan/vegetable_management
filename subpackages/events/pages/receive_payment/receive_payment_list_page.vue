@@ -58,7 +58,10 @@
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
-import { getReceivePaymentListApi, deleteReceivePaymentApi } from "@/apis/event_apis";
+import {
+  getReceivePaymentListApi,
+  deleteReceivePaymentApi,
+} from "@/apis/event_apis";
 import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
@@ -135,7 +138,9 @@ export default {
           businessId: this.eventId,
         };
         this.onNetworking = true;
-        const response = await getReceivePaymentListApi(payload);
+        const response = await getReceivePaymentListApi(
+          Object.assign(this.payload, payload)
+        );
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {

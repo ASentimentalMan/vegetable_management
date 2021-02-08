@@ -156,7 +156,6 @@
         </view>
       </view>
     </view>
-    
   </view>
 </template>
 
@@ -201,7 +200,9 @@ export default {
           businessId: this.eventId,
         };
         this.onNetworking = true;
-        const response = await getEventCountApi(payload);
+        const response = await getEventCountApi(
+          Object.assign(this.payload, payload)
+        );
         this.onNetworking = false;
         if (response) {
           this.event.businessCount = response.data;

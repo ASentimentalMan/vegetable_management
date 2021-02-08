@@ -69,7 +69,14 @@ export default {
       return "loading";
     },
   },
-  onLoad() {
+  onLoad(e) {
+    console.log(e);
+    if (e.startTime) {
+      this.payload["startDate"] = e.startTime;
+    }
+    if (e.endTime) {
+      this.payload["endDate"] = e.endTime;
+    }
     this.fetch();
   },
   onPullDownRefresh() {
@@ -86,7 +93,9 @@ export default {
           size: this.pageSize,
         };
         this.onNetworking = true;
-        const response = await getAllSaleListApi(payload);
+        const response = await getAllSaleListApi(
+          Object.assign(this.payload, payload)
+        );
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {

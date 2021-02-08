@@ -124,7 +124,9 @@ export default {
           businessId: this.eventId,
         };
         this.onNetworking = true;
-        const response = await getReceiptListApi(payload);
+        const response = await getReceiptListApi(
+          Object.assign(this.payload, payload)
+        );
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {

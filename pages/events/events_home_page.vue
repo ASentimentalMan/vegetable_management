@@ -130,6 +130,27 @@
               </view> -->
             </view>
           </view>
+          <view class="options-item-container">
+            <view class="options-item flex-horizontal flex-aic" @tap="goFund">
+              <view class="options-icon-container">
+                <image
+                  class="options-icon"
+                  src="https://dev.ncpgz.com/assets/management/icons/business_fund.png"
+                />
+              </view>
+              <view class="options-text">
+                当前资金
+                <!-- <text class="options-count">
+                  ({{ event.businessCount.receive }})
+                </text> -->
+              </view>
+              <!-- <view
+                class="iconfont icon-down-tongyong-copy"
+                style="color: #cccccc"
+              >
+              </view> -->
+            </view>
+          </view>
         </view>
         <view class="bottom-button-container">
           <view class="button-container" @tap="onLogOut">
@@ -209,7 +230,9 @@ export default {
           size: this.pageSize,
         };
         this.onNetworking = true;
-        const response = await getEventListApi(payload);
+        const response = await getEventListApi(
+          Object.assign(this.payload, payload)
+        );
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
@@ -291,9 +314,12 @@ export default {
     },
     goStatistic() {
       uni.navigateTo({
-        url:
-          "/subpackages/events/pages/statistic/statistic_page?eventId=" +
-          this.eventId,
+        url: "/subpackages/events/pages/statistic/statistic_page",
+      });
+    },
+    goFund() {
+      uni.navigateTo({
+        url: "/subpackages/events/pages/fund/fund_page",
       });
     },
   },
