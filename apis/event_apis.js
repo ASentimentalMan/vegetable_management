@@ -451,6 +451,38 @@ export const getStatisticApi = payload => {
   })
 }
 
+// 合同统计列表
+export const getAllContractListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/contract-total-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 采购单统计列表
+export const getAllOrderListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/procure-total-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 销售单统计列表
+export const getAllSaleListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/sale-total-page",
+    data: payload,
+    token: true
+  })
+}
+
+
+
 // 发票类型列表
 export const getReceiptTypeListApi = () => {
   return request_java({

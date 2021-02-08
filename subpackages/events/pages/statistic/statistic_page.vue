@@ -1,16 +1,19 @@
 <template>
   <view class="page-container">
-    <!-- <period-day-picker
-      @onStartTimeSet="onStartTimeSet"
-      @onEndTimeSet="onEndTimeSet"
-    /> -->
     <view class="scrollable">
       <view class="flex-horizontal">
-        <view class="contract-container flex-horizontal flex-aic flex-jcsb">
+        <view
+          class="contract-container flex-horizontal flex-aic flex-jcsb"
+          @tap="goContract('procure')"
+        >
           <view class="flex-vertical">
             <view class="label"> 采购合同 </view>
             <view class="count">
-              {{ orderContractCount ? orderContractCount + "份" : "统计中" }}
+              {{
+                orderContractCount === null
+                  ? "统计中"
+                  : orderContractCount + "份"
+              }}
             </view>
           </view>
           <image
@@ -18,11 +21,16 @@
             src="https://dev.ncpgz.com/assets/management/icons/business_contract_order.png"
           />
         </view>
-        <view class="contract-container flex-horizontal flex-aic flex-jcsb">
+        <view
+          class="contract-container flex-horizontal flex-aic flex-jcsb"
+          @tap="goContract('sale')"
+        >
           <view class="flex-vertical">
             <view class="label"> 销售合同 </view>
             <view class="count">
-              {{ saleContractCount ? saleContractCount + "份" : "统计中" }}
+              {{
+                saleContractCount === null ? "统计中" : saleContractCount + "份"
+              }}
             </view>
           </view>
           <image
@@ -36,7 +44,7 @@
         style="margin-top: 24rpx; padding-top: 96rpx; padding-bottom: 48rpx"
       >
         <view class="brand"> 订单总览 </view>
-        <view class="flex-horizontal flex-aic">
+        <view class="flex-horizontal flex-aic" @tap="goOrder">
           <image
             class="contract-icon"
             style="margin-right: 36rpx"
@@ -46,49 +54,41 @@
             <view class="label"> 采购订单情况 </view>
             <view class="flex-horizontal" style="margin-top: 6rpx">
               <view class="order-container" style="background-color: #6da2e5">
-                订单数：{{ orderCount ? orderCount + "笔" : "统计中" }}
+                订单数：
+                {{ orderCount === null ? "统计中" : saleContractCount + "笔" }}
               </view>
               <view class="order-container" style="background-color: #f8bd4b">
-                总金额：{{ orderPrice ? orderPrice + "万元" : "统计中" }}
+                总金额：
+                {{ orderPrice === null ? "统计中" : orderPrice + "万元" }}
               </view>
             </view>
           </view>
         </view>
-        <view class="flex-horizontal flex-aic" style="margin-top: 60rpx">
+        <view
+          class="flex-horizontal flex-aic"
+          style="margin-top: 60rpx"
+          @tap="goSale"
+        >
           <image
             class="contract-icon"
             style="margin-right: 36rpx"
             src="https://dev.ncpgz.com/assets/management/icons/business_sale_status.png"
           />
           <view class="flex-vertical">
-            <view class="label"> 采购订单情况 </view>
+            <view class="label"> 销售订单情况 </view>
             <view class="flex-horizontal" style="margin-top: 6rpx">
               <view class="order-container" style="background-color: #6da2e5">
-                订单数：{{ saleCount ? saleCount + "笔" : "统计中" }}
+                订单数：
+                {{ saleCount === null ? "统计中" : saleCount + "笔" }}
               </view>
               <view class="order-container" style="background-color: #f8bd4b">
-                总金额：{{ salePrice ? salePrice + "万元" : "统计中" }}
+                总金额：
+                {{ salePrice === null ? "统计中" : salePrice + "万元" }}
               </view>
             </view>
           </view>
         </view>
       </view>
-      <!-- <view class="tab-container flex-horizontal flex-jcc">
-        <view
-          class="tab-label"
-          :class="{ active: activeIndex === 0 }"
-          @tap="onActiveIndexChange(0)"
-        >
-          总付款
-        </view>
-        <view
-          class="tab-label"
-          :class="{ active: activeIndex === 1 }"
-          @tap="onActiveIndexChange(1)"
-        >
-          总收款
-        </view>
-      </view> -->
       <view class="contract-container flex-vertical" style="margin-top: 24rpx">
         <view class="title" style="margin-bottom: 24rpx">
           资金 总付款/总收款
@@ -96,21 +96,29 @@
         <view class="flex-horizontal">
           <view class="flex-vertical" style="margin-right: 60rpx">
             <view style="color: #1664f5"> 应付账款 </view>
-            <view class=""> 待统计 </view>
+            <view class="">
+              {{ shouldPay === null ? "统计中" : shouldPay + "万元" }}
+            </view>
           </view>
           <view class="flex-vertical">
-            <view style="color: #6ec1f5"> 应付账款 </view>
-            <view class=""> 待统计 </view>
+            <view style="color: #6ec1f5"> 应收账款 </view>
+            <view class="">
+              {{ shouldReceive === null ? "统计中" : shouldReceive + "万元" }}
+            </view>
           </view>
         </view>
         <view class="flex-horizontal" style="margin-top: 24rpx">
           <view class="flex-vertical" style="margin-right: 60rpx">
-            <view style="color: #ee8919"> 应付账款 </view>
-            <view class=""> 待统计 </view>
+            <view style="color: #ee8919"> 未付账款 </view>
+            <view class="">
+              {{ notPay === null ? "统计中" : notPay + "万元" }}
+            </view>
           </view>
           <view class="flex-vertical">
-            <view style="color: #f4bc7d"> 应付账款 </view>
-            <view class=""> 待统计 </view>
+            <view style="color: #f4bc7d"> 未收账款 </view>
+            <view class="">
+              {{ notReceive === null ? "统计中" : notReceive + "万元" }}
+            </view>
           </view>
         </view>
       </view>
@@ -130,12 +138,16 @@ export default {
       eventId: "",
       payload: {},
       activeIndex: 0,
-      orderContractCount: "",
-      saleContractCount: "",
-      orderCount: "",
-      orderPrice: "",
-      saleCount: "",
-      salePrice: "",
+      orderContractCount: null,
+      saleContractCount: null,
+      orderCount: null,
+      orderPrice: null,
+      saleCount: null,
+      salePrice: null,
+      shouldPay: null,
+      shouldReceive: null,
+      notPay: null,
+      notReceive: null,
       onNetworking: false,
       onRefreshing: false,
     };
@@ -162,21 +174,42 @@ export default {
           this.orderPrice = response.data.totalPurchaseAmount;
           this.saleCount = response.data.numberOfSalesOrders;
           this.salePrice = response.data.totalSalesAmount;
+          this.shouldPay = response.data.accountsPayable;
+          this.shouldReceive = response.data.accountsReceivable;
+          this.notPay = response.data.unpaidAccounts;
+          this.notReceive = response.data.uncollectedAccounts;
         }
       }
       if (this.onRefreshing) {
-          this.onRefreshing = false;
-          uni.stopPullDownRefresh();
-        }
+        this.onRefreshing = false;
+        uni.stopPullDownRefresh();
+      }
     },
     onRefresh() {
       this.onRefreshing = true;
       this.fetch();
     },
-    onStartTimeSet(e) {},
-    onEndTimeSet(e) {},
     onActiveIndexChange(index) {
       this.activeIndex = index;
+    },
+    goContract(type) {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/statistic/statistic_contract_list_page?type=" +
+          type,
+      });
+    },
+    goOrder() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/statistic/statistic_order_list_page?type=",
+      });
+    },
+    goSale() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/statistic/statistic_sale_list_page?type=",
+      });
     },
   },
 };

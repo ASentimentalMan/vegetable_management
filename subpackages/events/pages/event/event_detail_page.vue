@@ -156,26 +156,7 @@
         </view>
       </view>
     </view>
-    <view class="options-container">
-      <view class="options-item-container">
-        <view class="options-item flex-horizontal flex-aic" @tap="goStatistic">
-          <view class="options-icon-container">
-            <image
-              class="options-icon"
-              src="https://dev.ncpgz.com/assets/management/icons/business_statistic.png"
-            />
-          </view>
-          <view class="options-text">
-            统计
-            <!-- <text class="options-count">
-              ({{ event.businessCount.receive }})
-            </text> -->
-          </view>
-          <view class="iconfont icon-down-tongyong-copy" style="color: #cccccc">
-          </view>
-        </view>
-      </view>
-    </view>
+    
   </view>
 </template>
 
@@ -281,13 +262,6 @@ export default {
       uni.navigateTo({
         url:
           "/subpackages/events/pages/payment/payment_list_page?eventId=" +
-          this.eventId,
-      });
-    },
-    goStatistic() {
-      uni.navigateTo({
-        url:
-          "/subpackages/events/pages/statistic/statistic_page?eventId=" +
           this.eventId,
       });
     },

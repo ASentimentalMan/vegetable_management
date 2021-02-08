@@ -105,6 +105,32 @@
     <uni-drawer ref="drawer">
       <view style="padding: 30rpx">
         <view class="uni-title">设置</view>
+        <view class="options-container">
+          <view class="options-item-container">
+            <view
+              class="options-item flex-horizontal flex-aic"
+              @tap="goStatistic"
+            >
+              <view class="options-icon-container">
+                <image
+                  class="options-icon"
+                  src="https://dev.ncpgz.com/assets/management/icons/business_statistic.png"
+                />
+              </view>
+              <view class="options-text">
+                统计
+                <!-- <text class="options-count">
+                  ({{ event.businessCount.receive }})
+                </text> -->
+              </view>
+              <!-- <view
+                class="iconfont icon-down-tongyong-copy"
+                style="color: #cccccc"
+              >
+              </view> -->
+            </view>
+          </view>
+        </view>
         <view class="bottom-button-container">
           <view class="button-container" @tap="onLogOut">
             <view class="bottom-button" style="background-color: red">
@@ -263,6 +289,13 @@ export default {
           break;
       }
     },
+    goStatistic() {
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/statistic/statistic_page?eventId=" +
+          this.eventId,
+      });
+    },
   },
 };
 </script>
@@ -316,5 +349,32 @@ export default {
   border-radius: 12rpx;
   color: white;
   font-size: 24rpx;
+}
+.options-container {
+  margin-top: 24rpx;
+}
+.options-item-container {
+  background-color: #fff;
+}
+.options-item {
+  padding: 24rpx 0;
+}
+.options-item-container:not(:last-child) .options-item {
+  border-bottom: 1px solid #edeeef;
+}
+.options-icon-container {
+  margin-right: 24rpx;
+}
+.options-icon {
+  width: 42rpx;
+  height: 42rpx;
+}
+.options-text {
+  flex: 1;
+}
+.options-count {
+  color: grey;
+  font-size: 28rpx;
+  margin-left: 12rpx;
 }
 </style>
