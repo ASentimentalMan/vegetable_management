@@ -10,7 +10,7 @@ const getters = {}
 const mutations = {
   setToken(state, token) {
     state.token = token;
-    console.log(token)
+    // console.log(token)
   }
 }
 

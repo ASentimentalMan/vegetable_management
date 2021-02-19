@@ -135,7 +135,9 @@ export default {
           businessId: this.eventId,
         };
         this.onNetworking = true;
-        const response = await getMeetingListApi(payload);
+        const response = await getMeetingListApi(
+          Object.assign(this.payload, payload)
+        );
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
@@ -166,7 +168,7 @@ export default {
         let prevPage = pages[pages.length - 2];
         prevPage.$vm[this.key] = item;
         prevPage.$vm[this.key + "String"] = item.contractName;
-        console.log(item);
+        // console.log(item);
         uni.navigateBack();
       } else {
         uni.navigateTo({

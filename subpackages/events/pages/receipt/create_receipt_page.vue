@@ -221,6 +221,100 @@
           </view>
         </view>
       </view>
+      <view class="form-container" v-if="eventType === 'procure'">
+        <block v-for="(item, index) in relateOrder" :key="index">
+          <view
+            class="form-item flex-horizontal"
+            v-if="mode === 'read' ? item.id : true"
+          >
+            <view class="form-item-label">
+              对应采购单
+              <text v-if="relateOrder.length > 1">{{ index + 1 }}</text>
+            </view>
+            <view class="form-item-input" @tap="onSelectOrder(index)">
+              <input
+                class="form-input"
+                type="text"
+                cursor-spacing="16"
+                placeholder="请选择对应采购单"
+                v-model="item.id"
+                disabled
+              />
+            </view>
+            <view
+              class="add-form-item"
+              style="margin-left: 12rpx; line-height: 1"
+              v-if="mode !== 'read' && relateOrder.length > 1"
+            >
+              <uni-icons
+                @tap="onRemoveOrder(index)"
+                type="minus"
+                size="26"
+                color="red"
+              ></uni-icons>
+            </view>
+          </view>
+        </block>
+        <view class="form-item flex-horizontal" v-if="mode !== 'read'">
+          <view class="form-item-input">
+            <view class="add-form-item" style="line-height: 1">
+              <uni-icons
+                @tap="onAddOrder"
+                type="plus"
+                size="26"
+                color="#2c7cf6"
+              ></uni-icons>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="form-container" v-if="eventType === 'sale'">
+        <block v-for="(item, index) in relateSale" :key="index">
+          <view
+            class="form-item flex-horizontal"
+            v-if="mode === 'read' ? item.id : true"
+          >
+            <view class="form-item-label">
+              对应销售单
+              <text v-if="relateSale.length > 1">{{ index + 1 }}</text></view
+            >
+            <view class="form-item-input" @tap="onSelectSale(index)">
+              <input
+                class="form-input"
+                type="text"
+                cursor-spacing="16"
+                placeholder="请选择对应销售单"
+                v-model="item.id"
+                disabled
+              />
+            </view>
+            <view
+              class="add-form-item"
+              style="margin-left: 12rpx; line-height: 1"
+              v-if="mode !== 'read' && relateSale.length > 1"
+            >
+              <uni-icons
+                @tap="onRemoveSale(index)"
+                type="minus"
+                size="26"
+                color="red"
+              ></uni-icons>
+            </view>
+          </view>
+        </block>
+        <view class="form-item flex-horizontal" v-if="mode !== 'read'">
+          <view class="form-item-input">
+            <view class="add-form-item" style="line-height: 1">
+              <uni-icons
+                @tap="onAddSale"
+                type="plus"
+                size="26"
+                color="#2c7cf6"
+              ></uni-icons>
+            </view>
+          </view>
+        </view>
+      </view>
       <view class="form-container">
         <view
           class="form-item flex-horizontal"
@@ -274,7 +368,7 @@
         </view>
       </view>
       <add-media-attachment
-        title="附件"
+        title="发票"
         :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
@@ -334,6 +428,8 @@ export default {
       bank: "",
       bankNumber: "",
       tel: "",
+      relateOrder: [{ id: "" }],
+      relateSale: [{ id: "" }],
       relateContract: {},
       relateContractString: "",
       relateCustomer: {},
@@ -389,25 +485,35 @@ export default {
         ? item.bankAccountNumber.split(",")[1]
         : "";
       this.tel = item.telephone;
-      this.relateContract = { id: item.contract.id };
-      this.relateContractString = item.contract.contractName;
+      if (item.procurements.length) {
+        this.relateOrder = item.procurements;
+      }
+      if (item.sales.length) {
+        this.relateSale = item.sales;
+      }
+      if (item.contract) {
+        this.relateContract = { id: item.contract.id };
+        this.relateContractString = item.contract.contractName;
+      }
       this.relateCustomer = {};
       this.relateCustomerString = "";
       this.description = item.remark;
-      this.attachments = item.files.map((e) => {
-        return {
-          blob: "",
-          createTime: e.createTime,
-          fileName: e.fileName,
-          fileType: e.fileType,
-          fileUrl: e.fileUrl,
-          id: e.id,
-          originalFileName: e.fileOriginalName,
-          subFileUrl: e.fileSubUrl,
-          text: "",
-          updateTime: e.updateTime,
-        };
-      });
+      if (item.files && item.files.length) {
+        this.attachments = item.files.map((e) => {
+          return {
+            blob: "",
+            createTime: e.createTime,
+            fileName: e.fileName,
+            fileType: e.fileType,
+            fileUrl: e.fileUrl,
+            id: e.id,
+            originalFileName: e.fileOriginalName,
+            subFileUrl: e.fileSubUrl,
+            text: "",
+            updateTime: e.updateTime,
+          };
+        });
+      }
     }
     this.initTimePicker();
   },
@@ -455,6 +561,11 @@ export default {
     },
     onEventTypeChange(e) {
       this.eventType = e.target.value;
+      if (e.target.value === "procure") {
+        this.relateSale = [{ id: "" }];
+      } else if (e.target.value === "sale") {
+        this.relateOrder = [{ id: "" }];
+      }
     },
     onSelectFrom() {
       if (this.mode === "read") return;
@@ -484,6 +595,46 @@ export default {
         this.location = location;
         this.locationString = location.map((e) => e.name).join("/");
       }
+    },
+    onAddOrder() {
+      this.relateOrder.push({ id: "" });
+    },
+    onRemoveOrder(index) {
+      this.relateOrder.splice(index, 1);
+    },
+    onSelectOrder(index) {
+      if (this.mode === "read") return;
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/order/order_list_page?mode=select&key=relateOrder&index=" +
+          index +
+          "&selectedIds=" +
+          JSON.stringify(
+            this.relateOrder.map((e) => {
+              return e.id;
+            })
+          ),
+      });
+    },
+    onAddSale() {
+      this.relateSale.push({ id: "" });
+    },
+    onRemoveSale(index) {
+      this.relateSale.splice(index, 1);
+    },
+    onSelectSale(index) {
+      if (this.mode === "read") return;
+      uni.navigateTo({
+        url:
+          "/subpackages/events/pages/sale/sale_list_page?mode=select&key=relateSale&index=" +
+          index +
+          "&selectedIds=" +
+          JSON.stringify(
+            this.relateSale.map((e) => {
+              return e.id;
+            })
+          ),
+      });
     },
     onSelectRelateContract() {
       if (this.mode === "read") return;
@@ -564,6 +715,27 @@ export default {
             };
           }),
         };
+        if (this.eventType === "procure") {
+          let array = [];
+          for (let item of this.relateOrder) {
+            if (item.id) {
+              array.push(item.id);
+            }
+          }
+          if (array.length) {
+            payload["procurementIds"] = array;
+          }
+        } else if (this.eventType === "sale") {
+          let array = [];
+          for (let item of this.relateSale) {
+            if (item.id) {
+              array.push(item.id);
+            }
+          }
+          if (array.length) {
+            payload["saleIds"] = array;
+          }
+        }
         // console.log(payload);
         this.onNetworking = true;
         let response;
@@ -574,7 +746,7 @@ export default {
           response = await editReceiptApi(payload);
         }
         this.onNetworking = false;
-        console.log(response);
+        // console.log(response);
         if (response) {
           this.onRefreshPreviousPage();
           uni.showToast({

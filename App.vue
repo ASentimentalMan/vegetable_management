@@ -3,22 +3,17 @@ import { mapMutations } from "vuex";
 export default {
   onLaunch: (e) => {
     console.log("App Launch");
+    // const version = 0;
+    // const edition = uni.getStorageSync("version");
+    // if (edition && edition < version) {
+    //   location.reload();
+    // }
+    // uni.setStorageSync("version", version);
+    try {
+      uni.removeStorageSync("version");
+    } catch (e) {}
     if (e.query.token) {
       uni.setStorageSync("token", e.query.token);
-    } else {
-      uni.getStorage({
-        key: "userinfo",
-        success: (res) => {
-          if (res) {
-            // this.$store.commit("user/setInfo", res.data);
-          }
-        },
-        fail: (_) => {
-          // uni.reLaunch({
-          //   url: "/subpackages/login/login_home_page",
-          // });
-        },
-      });
     }
   },
   onShow: () => {
@@ -28,11 +23,19 @@ export default {
     console.log("App Hide");
   },
   mounted() {
-    const token = uni.getStorageSync("token");
-    this.setToken(token);
-  },
-  beforeDestroy() {
-    uni.removeStorageSync("token");
+    uni.getStorage({
+      key: "token",
+      success: (res) => {
+        if (res) {
+          this.setToken(res.data);
+        }
+      },
+      fail: (_) => {
+        uni.reLaunch({
+          url: "/subpackages/login/pages/login_home_page",
+        });
+      },
+    });
   },
   methods: {
     ...mapMutations("user", ["setToken"]),

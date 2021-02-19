@@ -222,6 +222,14 @@ export const deleteMeetingApi = payload => {
   })
 }
 
+// 获得会议类型
+export const getMeetingTypeListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/params/dict-data/business-meeting-type"
+  })
+}
+
 // 采购清单
 export const getOrderListApi = payload => {
   return request_java({
@@ -432,6 +440,48 @@ export const deletePaymentApi = payload => {
     token: true
   })
 }
+
+// 业务统计
+export const getStatisticApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/business-total",
+    data: payload,
+    token: true
+  })
+}
+
+// 合同统计列表
+export const getAllContractListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/contract-total-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 采购单统计列表
+export const getAllOrderListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/procure-total-page",
+    data: payload,
+    token: true
+  })
+}
+
+// 销售单统计列表
+export const getAllSaleListApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/info/sale-total-page",
+    data: payload,
+    token: true
+  })
+}
+
+
 
 // 发票类型列表
 export const getReceiptTypeListApi = () => {

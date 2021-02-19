@@ -235,7 +235,7 @@ export default {
     if (e.mode) {
       this.mode = e.mode;
       const item = JSON.parse(e.item);
-      console.log(item);
+      // console.log(item);
       this.contractId = item.id;
       if (this.mode === "edit") {
         uni.setNavigationBarTitle({
@@ -258,7 +258,8 @@ export default {
       this.startTimeDefaultValue = this.startTime;
       this.period = item.validPeriod;
       this.description = item.remark;
-      this.attachments = item.files.map((e) => {
+      if (item.files && item.files.length) {
+        this.attachments = item.files.map((e) => {
         return {
           blob: "",
           createTime: e.createTime,
@@ -272,6 +273,7 @@ export default {
           updateTime: e.updateTime,
         };
       });
+      }
     }
     this.initTimePicker();
   },
@@ -293,7 +295,7 @@ export default {
         (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
     },
     onRadioChange(e) {
-      console.log(e.target.value);
+      // console.log(e.target.value);
       this.type = e.target.value;
     },
     onSelectPartyA() {

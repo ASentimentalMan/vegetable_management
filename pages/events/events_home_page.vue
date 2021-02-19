@@ -1,5 +1,13 @@
 <template>
   <view class="page-container">
+    <uni-nav-bar
+      left-icon="bars"
+      :fixed="true"
+      :shadow="false"
+      @clickLeft="onDrawer"
+    >
+      <view class="uni-navbar-head__title"> 业务清单 </view>
+    </uni-nav-bar>
     <view class="scrollable">
       <view class="list-container flex-vertical flex-jcsb">
         <uni-swipe-action>
@@ -65,6 +73,18 @@
                     >
                       销售 {{ item.businessCount.sales }}
                     </view>
+                    <view
+                      class="item-stastic"
+                      style="background-color: #eff8f8; color: #39a2ac"
+                    >
+                      收款 {{ item.businessCount.receive }}
+                    </view>
+                    <view
+                      class="item-stastic"
+                      style="background-color: #fdf5e9; color: #ef9024"
+                    >
+                      付款 {{ item.businessCount.payment }}
+                    </view>
                   </view>
                 </view>
               </view>
@@ -82,13 +102,71 @@
         </view>
       </view>
     </view>
+    <uni-drawer ref="drawer">
+      <view style="padding: 30rpx">
+        <view class="uni-title">设置</view>
+        <view class="options-container">
+          <view class="options-item-container">
+            <view
+              class="options-item flex-horizontal flex-aic"
+              @tap="goStatistic"
+            >
+              <view class="options-icon-container">
+                <image
+                  class="options-icon"
+                  src="https://dev.ncpgz.com/assets/management/icons/business_statistic.png"
+                />
+              </view>
+              <view class="options-text">
+                统计
+                <!-- <text class="options-count">
+                  ({{ event.businessCount.receive }})
+                </text> -->
+              </view>
+              <!-- <view
+                class="iconfont icon-down-tongyong-copy"
+                style="color: #cccccc"
+              >
+              </view> -->
+            </view>
+          </view>
+          <view class="options-item-container">
+            <view class="options-item flex-horizontal flex-aic" @tap="goFund">
+              <view class="options-icon-container">
+                <image
+                  class="options-icon"
+                  src="https://dev.ncpgz.com/assets/management/icons/business_fund.png"
+                />
+              </view>
+              <view class="options-text">
+                当前资金
+                <!-- <text class="options-count">
+                  ({{ event.businessCount.receive }})
+                </text> -->
+              </view>
+              <!-- <view
+                class="iconfont icon-down-tongyong-copy"
+                style="color: #cccccc"
+              >
+              </view> -->
+            </view>
+          </view>
+        </view>
+        <view class="bottom-button-container">
+          <view class="button-container" @tap="onLogOut">
+            <view class="bottom-button" style="background-color: red">
+              退出登录
+            </view>
+          </view>
+        </view>
+      </view>
+    </uni-drawer>
   </view>
 </template>
 
 <script>
 import Indicator from "@/components/public/indicator.vue";
 import { getEventListApi, deleteEventApi } from "@/apis/event_apis";
-import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
     Indicator,
@@ -152,7 +230,9 @@ export default {
           size: this.pageSize,
         };
         this.onNetworking = true;
-        const response = await getEventListApi(payload);
+        const response = await getEventListApi(
+          Object.assign(this.payload, payload)
+        );
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
@@ -178,7 +258,7 @@ export default {
       this.fetch();
     },
     goEvent(item) {
-      console.log(item);
+      // console.log(item);
       uni.navigateTo({
         url:
           "/subpackages/events/pages/event/event_detail_page?item=" +
@@ -188,6 +268,15 @@ export default {
     onCreate() {
       uni.navigateTo({
         url: "/subpackages/events/pages/event/create_event_page",
+      });
+    },
+    onDrawer() {
+      this.$refs.drawer.open();
+    },
+    onLogOut() {
+      uni.removeStorageSync("token");
+      uni.reLaunch({
+        url: "/subpackages/login/pages/login_home_page",
       });
     },
     onUniSwipeAction(e, item, index) {
@@ -222,6 +311,16 @@ export default {
           });
           break;
       }
+    },
+    goStatistic() {
+      uni.navigateTo({
+        url: "/subpackages/events/pages/statistic/statistic_page",
+      });
+    },
+    goFund() {
+      uni.navigateTo({
+        url: "/subpackages/events/pages/fund/fund_page",
+      });
     },
   },
 };
@@ -276,5 +375,32 @@ export default {
   border-radius: 12rpx;
   color: white;
   font-size: 24rpx;
+}
+.options-container {
+  margin-top: 24rpx;
+}
+.options-item-container {
+  background-color: #fff;
+}
+.options-item {
+  padding: 24rpx 0;
+}
+.options-item-container:not(:last-child) .options-item {
+  border-bottom: 1px solid #edeeef;
+}
+.options-icon-container {
+  margin-right: 24rpx;
+}
+.options-icon {
+  width: 42rpx;
+  height: 42rpx;
+}
+.options-text {
+  flex: 1;
+}
+.options-count {
+  color: grey;
+  font-size: 28rpx;
+  margin-left: 12rpx;
 }
 </style>

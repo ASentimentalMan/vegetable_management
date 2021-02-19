@@ -198,15 +198,9 @@ uni-video {
   line-height: 40rpx;
   margin-right: 12rpx;
 }
-.add-form-item {
+.add-form-item-icon {
   width: 48rpx;
   height: 48rpx;
-  border: 1px solid #2c7cf6;
-  border-radius: 50%;
-  color: #2c7cf6;
-  font-size: 36rpx;
-  text-align: center;
-  line-height: 40rpx;
 }
 .bottom-button-container {
   height: 176rpx;
@@ -237,4 +231,22 @@ uni-video {
   text-overflow: ellipsis;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+}
+.bb {
+  border-bottom: 1px solid #dddddd;
+  transition: border-bottom-color 0.6s ease;
+}
+.uni-navbar-head__title {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 30px;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex: 1;
+  margin-left: -30rpx;
+}
+.uni-navbar--border {
+  border-bottom: none!important;
 }

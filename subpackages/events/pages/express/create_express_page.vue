@@ -108,6 +108,27 @@
         </view>
         <view
           class="form-item flex-horizontal"
+          v-if="
+            mode === 'read'
+              ? locationStartString &&
+                locationStartString !== '请选择发货方地址'
+              : true
+          "
+        >
+          <view class="form-item-label"> 物流发货方地址 </view>
+          <view class="form-item-input" @click="onLocationStartPick">
+            <view
+              :class="{
+                'form-item-placeholder':
+                  locationStartString === '请选择发货方地址',
+              }"
+            >
+              {{ locationStartString }}
+            </view>
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
           v-if="mode === 'read' ? toString : true"
         >
           <view class="form-item-label"> 物流接收方 </view>
@@ -120,6 +141,26 @@
               v-model="toString"
               disabled
             />
+          </view>
+        </view>
+        <view
+          class="form-item flex-horizontal"
+          v-if="
+            mode === 'read'
+              ? locationEndString && locationEndString !== '请选择接收方地址'
+              : true
+          "
+        >
+          <view class="form-item-label"> 物流接收方地址 </view>
+          <view class="form-item-input" @click="onLocationEndPick">
+            <view
+              :class="{
+                'form-item-placeholder':
+                  locationEndString === '请选择接收方地址',
+              }"
+            >
+              {{ locationEndString }}
+            </view>
           </view>
         </view>
       </view>
@@ -221,17 +262,28 @@
             </view>
             <view
               class="add-form-item"
-              style="margin-left: 12rpx"
-              @tap="onRemoveOrder(index)"
+              style="margin-left: 12rpx; line-height: 1"
               v-if="mode !== 'read' && relateOrder.length > 1"
             >
-              -
+              <uni-icons
+                @tap="onRemoveOrder(index)"
+                type="minus"
+                size="26"
+                color="red"
+              ></uni-icons>
             </view>
           </view>
         </block>
         <view class="form-item flex-horizontal" v-if="mode !== 'read'">
           <view class="form-item-input">
-            <view class="add-form-item" @tap="onAddOrder"> + </view>
+            <view class="add-form-item" style="line-height: 1">
+              <uni-icons
+                @tap="onAddOrder"
+                type="plus"
+                size="26"
+                color="#2c7cf6"
+              ></uni-icons>
+            </view>
           </view>
         </view>
       </view>
@@ -257,17 +309,28 @@
             </view>
             <view
               class="add-form-item"
-              style="margin-left: 12rpx"
-              @tap="onRemoveSale(index)"
+              style="margin-left: 12rpx; line-height: 1"
               v-if="mode !== 'read' && relateSale.length > 1"
             >
-              -
+              <uni-icons
+                @tap="onRemoveSale(index)"
+                type="minus"
+                size="26"
+                color="red"
+              ></uni-icons>
             </view>
           </view>
         </block>
         <view class="form-item flex-horizontal" v-if="mode !== 'read'">
           <view class="form-item-input">
-            <view class="add-form-item" @tap="onAddSale"> + </view>
+            <view class="add-form-item" style="line-height: 1">
+              <uni-icons
+                @tap="onAddSale"
+                type="plus"
+                size="26"
+                color="#2c7cf6"
+              ></uni-icons>
+            </view>
           </view>
         </view>
       </view>
@@ -290,7 +353,7 @@
         </view>
       </view>
       <add-media-attachment
-        title="附件"
+        title="物流单"
         :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
@@ -311,15 +374,27 @@
         </view>
       </view>
     </view>
+    <location-picker
+      ref="locationStart"
+      :level="3"
+      @onLocationSet="onLocationStartSet"
+    />
+    <location-picker
+      ref="locationEnd"
+      :level="3"
+      @onLocationSet="onLocationEndSet"
+    />
   </view>
 </template>
 
 <script>
+import LocationPicker from "@/components/public/location_picker";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
 import { createExpressApi, editExpressApi } from "@/apis/event_apis";
 export default {
   components: {
+    LocationPicker,
     BiaoFunDatePicker,
     AddMediaAttachment,
   },
@@ -342,6 +417,8 @@ export default {
       to: {},
       toString: "",
       startTime: "",
+      locationStart: [],
+      locationEnd: [],
       startTimeDefaultValue: "",
       endTime: "",
       endTimeDefaultValue: "",
@@ -350,6 +427,8 @@ export default {
       relateSale: [{ id: "" }],
       description: "",
       attachments: [],
+      locationStartString: "请选择发货方地址",
+      locationEndString: "请选择接收方地址",
     };
   },
   onLoad(e) {
@@ -385,6 +464,12 @@ export default {
       this.startTimeDefaultValue = this.startTime;
       this.endTime = item.endDate ? item.endDate : "";
       this.endTimeDefaultValue = this.endTime;
+      if (item.outputCustomerAddress) {
+        this.locationStartString = item.outputCustomerAddress;
+      }
+      if (item.inputCustomerAddress) {
+        this.locationEndString = item.inputCustomerAddress;
+      }
       if (item.procurements.length) {
         this.relateOrder = item.procurements;
       }
@@ -392,20 +477,22 @@ export default {
         this.relateSale = item.sales;
       }
       this.description = item.remark;
-      this.attachments = item.files.map((e) => {
-        return {
-          blob: "",
-          createTime: e.createTime,
-          fileName: e.fileName,
-          fileType: e.fileType,
-          fileUrl: e.fileUrl,
-          id: e.id,
-          originalFileName: e.fileOriginalName,
-          subFileUrl: e.fileSubUrl,
-          text: "",
-          updateTime: e.updateTime,
-        };
-      });
+      if (item.files && item.files.length) {
+        this.attachments = item.files.map((e) => {
+          return {
+            blob: "",
+            createTime: e.createTime,
+            fileName: e.fileName,
+            fileType: e.fileType,
+            fileUrl: e.fileUrl,
+            id: e.id,
+            originalFileName: e.fileOriginalName,
+            subFileUrl: e.fileSubUrl,
+            text: "",
+            updateTime: e.updateTime,
+          };
+        });
+      }
     }
     this.setTimePickerEndTime();
   },
@@ -417,6 +504,26 @@ export default {
           "/subpackages/events/pages/customer/customer_list_page?mode=select&key=payer&selectedIds=" +
           JSON.stringify([this.payer.id]),
       });
+    },
+    onLocationStartPick() {
+      if (this.mode === "read") return;
+      this.$refs.locationStart.popup();
+    },
+    onLocationEndPick() {
+      if (this.mode === "read") return;
+      this.$refs.locationEnd.popup();
+    },
+    onLocationStartSet(locationStart) {
+      if (locationStart.length) {
+        this.locationStart = locationStart;
+        this.locationStartString = locationStart.map((e) => e.name).join("/");
+      }
+    },
+    onLocationEndSet(locationEnd) {
+      if (locationEnd.length) {
+        this.locationEnd = locationEnd;
+        this.locationEndString = locationEnd.map((e) => e.name).join("/");
+      }
     },
     onRadioChange(e) {
       this.radio = e.target.value;
@@ -556,6 +663,12 @@ export default {
             };
           }),
         };
+        if (this.locationStartString !== "请选择发货方地址") {
+          payload["outputCustomerAddress"] = this.locationStartString;
+        }
+        if (this.locationEndString !== "请选择接收方地址") {
+          payload["inputCustomerAddress"] = this.locationEndString;
+        }
         for (let item of this.relateOrder) {
           if (item.id) {
             payload["procurementIds"].push(item.id);
@@ -566,7 +679,7 @@ export default {
             payload["saleIds"].push(item.id);
           }
         }
-        console.log(payload);
+        // console.log(payload);
         this.onNetworking = true;
         let response;
         if (this.mode === "create") {

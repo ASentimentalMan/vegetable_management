@@ -93,7 +93,7 @@ export default {
     if (e.mode) {
       this.createMode = false;
       const item = JSON.parse(e.item);
-      console.log(item);
+      // console.log(item);
       this.eventId = item.id;
       this.name = item.businessName;
       this.startTime = item.businessStartDate ? item.businessStartDate : "";

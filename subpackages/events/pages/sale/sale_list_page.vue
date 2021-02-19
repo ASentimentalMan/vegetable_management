@@ -144,7 +144,9 @@ export default {
           businessId: this.eventId,
         };
         this.onNetworking = true;
-        const response = await getSaleListApi(payload);
+        const response = await getSaleListApi(
+          Object.assign(this.payload, payload)
+        );
         this.onNetworking = false;
         if (response) {
           if (this.onRefreshing || !this.list.length) {
@@ -181,7 +183,7 @@ export default {
           let pages = getCurrentPages();
           let prevPage = pages[pages.length - 2];
           this.$set(prevPage.$vm[this.key], this.index, item);
-          console.log(item);
+          // console.log(item);
           uni.navigateBack();
         }
       } else {

@@ -1,10 +1,8 @@
 const request_java = (options) => {
   if (process.env.NODE_ENV === 'development') {
-    // options.url = "https://dev.ncpgz.com/test/app" + options.url
-    options.url = "https://dev.ncpgz.com/test/business" + options.url
+    options.url = "https://test.ncpgz.com/api/business" + options.url
   } else {
-    options.url = "https://dev.ncpgz.com/test/business" + options.url
-    // options.url = "https://dev.ncpgz.com/api/business" + options.url
+    options.url = "https://vegetable.ncpgz.com/api/business" + options.url
   }
   return new Promise((resolve, reject) => {
     let payload = {

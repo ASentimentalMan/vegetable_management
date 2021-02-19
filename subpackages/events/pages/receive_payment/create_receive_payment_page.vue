@@ -143,17 +143,28 @@
             </view>
             <view
               class="add-form-item"
-              style="margin-left: 12rpx"
-              @tap="onRemoveSale(index)"
+              style="margin-left: 12rpx; line-height: 1"
               v-if="mode !== 'read' && relateSale.length > 1"
             >
-              -
+              <uni-icons
+                @tap="onRemoveSale(index)"
+                type="minus"
+                size="26"
+                color="red"
+              ></uni-icons>
             </view>
           </view>
         </block>
         <view class="form-item flex-horizontal" v-if="mode !== 'read'">
           <view class="form-item-input">
-            <view class="add-form-item" @tap="onAddSale"> + </view>
+            <view class="add-form-item" style="line-height: 1">
+              <uni-icons
+                @tap="onAddSale"
+                type="plus"
+                size="26"
+                color="#2c7cf6"
+              ></uni-icons>
+            </view>
           </view>
         </view>
       </view>
@@ -176,7 +187,7 @@
         </view>
       </view>
       <add-media-attachment
-        title="附件"
+        title="收款单"
         :disabled="mode === 'read'"
         :attachments="attachments"
         @onAttachmentAdd="onAttachmentAdd"
@@ -257,25 +268,27 @@ export default {
       this.received = item.paidAmount;
       this.receive = item.receiveAmount;
       this.time = item.receiveDate ? item.receiveDate : "";
-      this.timeDefaultValue = this.time
+      this.timeDefaultValue = this.time;
       if (item.sales.length) {
         this.relateSale = item.sales;
       }
       this.description = item.remark;
-      this.attachments = item.files.map((e) => {
-        return {
-          blob: "",
-          createTime: e.createTime,
-          fileName: e.fileName,
-          fileType: e.fileType,
-          fileUrl: e.fileUrl,
-          id: e.id,
-          originalFileName: e.fileOriginalName,
-          subFileUrl: e.fileSubUrl,
-          text: "",
-          updateTime: e.updateTime,
-        };
-      });
+      if (item.files && item.files) {
+        this.attachments = item.files.map((e) => {
+          return {
+            blob: "",
+            createTime: e.createTime,
+            fileName: e.fileName,
+            fileType: e.fileType,
+            fileUrl: e.fileUrl,
+            id: e.id,
+            originalFileName: e.fileOriginalName,
+            subFileUrl: e.fileSubUrl,
+            text: "",
+            updateTime: e.updateTime,
+          };
+        });
+      }
     }
     this.setTimePickerEndTime();
   },
@@ -381,7 +394,7 @@ export default {
             payload["salesIds"].push(item.id);
           }
         }
-        console.log(payload);
+        // console.log(payload);
         this.onNetworking = true;
         let response;
         if (this.mode === "create") {
