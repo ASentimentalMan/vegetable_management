@@ -158,6 +158,32 @@
                 ></uni-icons>
               </view>
             </view>
+            <view class="form-item flex-horizontal">
+              <view class="form-item-label">
+                采购单位
+                <text v-if="cates.length > 1">{{ index + 1 }}</text>
+              </view>
+              <view class="form-item-input">
+                <cate-picker
+                  :disabled="mode === 'read'"
+                  :index="index"
+                  :defaultValue="item.value"
+                  @onSelectCate="onSelectCate"
+                />
+              </view>
+              <view
+                class="add-form-item"
+                style="margin-left: 12rpx; line-height: 1"
+                v-if="mode !== 'read' && cates.length > 1"
+              >
+                <uni-icons
+                  @tap="onRemoveCate(index)"
+                  type="minus"
+                  size="26"
+                  color="red"
+                ></uni-icons>
+              </view>
+            </view>
             <view
               class="form-container"
               v-if="item['id']"
