@@ -159,9 +159,9 @@
         "title" : "贵州蔬菜集团 - 内部管理系统",
         "router" : {
             "mode" : "history",
-            "base" : "/mp/management"
+            "base" : "/mini-program/management"
         },
-        "domain" : "dev.ncpgz.com",
+        "domain" : "beta.ncpgz.com",
         "template" : "./index.html",
         "devServer" : {
             "https" : false
