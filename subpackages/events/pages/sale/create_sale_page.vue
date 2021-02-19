@@ -112,6 +112,7 @@
                 <cate-picker
                   :disabled="mode === 'read'"
                   :index="index"
+                  :defaultValue="item.label"
                   @onSelectCate="onSelectCate"
                 />
               </view>
@@ -138,7 +139,7 @@
                 v-if="mode === 'read' ? item['amount'] : true"
                 style="margin-right: 0"
               >
-                <view class="form-item-label"> 销售数量（吨） </view>
+                <view class="form-item-label"> 销售数量</view>
                 <view class="form-item-input">
                   <input
                     class="form-input"
@@ -153,10 +154,28 @@
               </view>
               <view
                 class="form-item flex-horizontal"
+                v-if="mode === 'read' ? item['unit'] : true"
+                style="margin-right: 0"
+              >
+                <view class="form-item-label"> 销售单位 </view>
+                <view class="form-item-input">
+                  <unit-picker
+                    :disabled="mode === 'read'"
+                    :index="index"
+                    placeholder="请选择销售单位"
+                    :defaultValue="item.unit"
+                    @onUnitChange="onUnitChange"
+                  />
+                </view>
+              </view>
+              <view
+                class="form-item flex-horizontal"
                 v-if="mode === 'read' ? item['unitPrice'] : true"
                 style="margin-right: 0"
               >
-                <view class="form-item-label"> 销售单价（元/吨） </view>
+                <view class="form-item-label">
+                  销售单价<text v-if="item.unit">（元/{{ item.unit }}）</text>
+                </view>
                 <view class="form-item-input">
                   <input
                     class="form-input"
@@ -234,7 +253,7 @@
             <biao-fun-date-picker
               placeholder="请选择预计开票日期"
               :defaultValue="timeBillingDefaultValue"
-              start="2019-07-19 09:00"
+              start="2019-07-19"
               :end="timeBillingEndTime"
               fields="day"
               @change="onBillingTimeSet"
@@ -354,6 +373,7 @@
 <script>
 import LocationPicker from "@/components/public/location_picker";
 import CatePicker from "@/components/public/cate_picker";
+import UnitPicker from "@/subpackages/events/components/unit_picker";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
 import { createSaleApi, editSaleApi } from "@/apis/event_apis";
@@ -361,6 +381,7 @@ export default {
   components: {
     LocationPicker,
     CatePicker,
+    UnitPicker,
     BiaoFunDatePicker,
     AddMediaAttachment,
   },
@@ -377,7 +398,17 @@ export default {
       tel: "",
       location: [],
       locationString: "请选择销售地",
-      cates: [{ id: "", amount: "", unitPrice: "", price: "" }],
+      cates: [
+        {
+          id: "",
+          label: "",
+          amount: "",
+          unit: "",
+          unitId: "",
+          unitPrice: "",
+          price: "",
+        },
+      ],
       time: "",
       billingTime: "",
       timePickerDefaultValue: "",
@@ -420,9 +451,9 @@ export default {
       this.tel = item.phone;
       this.locationString = item.place ? item.place : "请选择销售地";
       this.time = item.estimatedDate;
-      this.timePickerDefaultValue = this.time;
+      this.timePickerDefaultValue = item.time;
       this.billingTime = item.billingDate;
-      this.timeBillingDefaultValue = this.billingTime;
+      this.timeBillingDefaultValue = item.billingTime;
       // this.radio = item.isExecuteContract.toString();
       // this.reTime = item.newEstimatedDate;
       // this.reTimePickerDefaultValue = this.reTime;
@@ -432,8 +463,10 @@ export default {
         this.cates = item.categories.map((e) => {
           return {
             id: e.categoryId,
-            value: e.category,
+            label: e.category,
             amount: e.quantity,
+            unit: e.commodityUnit,
+            unitId: e.commodityUnitId,
             unitPrice: e.unitPrice,
             price: e.totalPrice,
           };
@@ -487,11 +520,7 @@ export default {
           ? time.getMonth() + 1
           : "0" + (time.getMonth() + 1)) +
         "-" +
-        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate()) +
-        " " +
-        (time.getHours() > 9 ? time.getHours() : "0" + time.getHours()) +
-        ":" +
-        (time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes());
+        (time.getDate() > 9 ? time.getDate() : "0" + time.getDate());
     },
     onRelateContract() {
       if (this.mode === "read") return;
@@ -503,11 +532,19 @@ export default {
     },
     onSelectCate(e) {
       if (this.mode === "read") return;
-      this.$set(this.cates, e.index, Object.assign(this.cates[e.index], e));
-      // console.log(this.cates[e.index]);
+      this.cates[e.index]["id"] = e.id
+      this.cates[e.index]["label"] = e.value
     },
     onAddCate() {
-      this.cates.push({ id: "", amount: "", unitPrice: "", price: "" });
+      this.cates.push({
+        id: "",
+        label: "",
+        amount: "",
+        unit: "",
+        unitId: "",
+        unitPrice: "",
+        price: "",
+      });
     },
     onRemoveCate(index) {
       this.cates.splice(index, 1);
@@ -516,6 +553,10 @@ export default {
       if (item.unitPrice) {
         item.price = e.detail.value * item.unitPrice;
       }
+    },
+    onUnitChange(e, index) {
+      this.cates[index].unit = e.label;
+      this.cates[index].unitId = e.id;
     },
     onUnitPriceChange(e, item) {
       if (item.amount) {
@@ -592,7 +633,7 @@ export default {
             this.locationString === "请选择销售地" ? "" : this.locationString,
           categories: [],
           estimatedDate: this.time,
-          billingDate: this.timeBillingEndTime,
+          billingDate: this.billingTime,
           // isExecuteContract: this.radio,
           // newEstimatedDate: this.reTime,
           // receiptDate: this.receiveTime,
@@ -610,8 +651,10 @@ export default {
         for (let item of this.cates) {
           if (item.id) {
             payload["categories"].push({
-              category: item.value,
+              category: item.label,
               categoryId: item.id,
+              commodityUnit: item.unit,
+              commodityUnitId: item.unitId,
               quantity: item.amount,
               unitPrice: item.unitPrice,
               totalPrice: item.price,

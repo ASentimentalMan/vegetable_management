@@ -522,3 +522,14 @@ export const getCustomerIndustryListApi = () => {
     url: "/params/dict-data/sys-customer-industry"
   })
 }
+
+// 采购/销售单位
+export const getUnitListApi = () => {
+  return request_java({
+    method: "GET",
+    url: "/params/dict-data/type-all",
+    data: {
+      type: "business_category_unit"
+    }
+  })
+}

@@ -141,33 +141,7 @@
                 <cate-picker
                   :disabled="mode === 'read'"
                   :index="index"
-                  :defaultValue="item.value"
-                  @onSelectCate="onSelectCate"
-                />
-              </view>
-              <view
-                class="add-form-item"
-                style="margin-left: 12rpx; line-height: 1"
-                v-if="mode !== 'read' && cates.length > 1"
-              >
-                <uni-icons
-                  @tap="onRemoveCate(index)"
-                  type="minus"
-                  size="26"
-                  color="red"
-                ></uni-icons>
-              </view>
-            </view>
-            <view class="form-item flex-horizontal">
-              <view class="form-item-label">
-                采购单位
-                <text v-if="cates.length > 1">{{ index + 1 }}</text>
-              </view>
-              <view class="form-item-input">
-                <cate-picker
-                  :disabled="mode === 'read'"
-                  :index="index"
-                  :defaultValue="item.value"
+                  :defaultValue="item.label"
                   @onSelectCate="onSelectCate"
                 />
               </view>
@@ -194,7 +168,7 @@
                 v-if="mode === 'read' ? item['amount'] : true"
                 style="margin-right: 0"
               >
-                <view class="form-item-label"> 采购数量（吨） </view>
+                <view class="form-item-label"> 采购数量 </view>
                 <view class="form-item-input">
                   <input
                     class="form-input"
@@ -209,10 +183,28 @@
               </view>
               <view
                 class="form-item flex-horizontal"
+                v-if="mode === 'read' ? item['unit'] : true"
+                style="margin-right: 0"
+              >
+                <view class="form-item-label"> 采购单位 </view>
+                <view class="form-item-input">
+                  <unit-picker
+                    :disabled="mode === 'read'"
+                    :index="index"
+                    placeholder="请选择采购单位"
+                    :defaultValue="item.unit"
+                    @onUnitChange="onUnitChange"
+                  />
+                </view>
+              </view>
+              <view
+                class="form-item flex-horizontal"
                 v-if="mode === 'read' ? item['unitPrice'] : true"
                 style="margin-right: 0"
               >
-                <view class="form-item-label"> 采购单价（元/吨） </view>
+                <view class="form-item-label">
+                  采购单价 <text v-if="item.unit">（元/{{ item.unit }}）</text>
+                </view>
                 <view class="form-item-input">
                   <input
                     class="form-input"
@@ -309,12 +301,14 @@
 <script>
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker";
 import CatePicker from "@/components/public/cate_picker";
+import UnitPicker from "@/subpackages/events/components/unit_picker";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
 import { createOrderApi, editOrderApi } from "@/apis/event_apis";
 export default {
   components: {
     BiaoFunDatePicker,
     CatePicker,
+    UnitPicker,
     AddMediaAttachment,
   },
   data() {
@@ -337,7 +331,9 @@ export default {
       timePaymentEndTime: "",
       timeBillingDefaultValue: "",
       timeBillingEndTime: "",
-      cates: [{ id: "", amount: "", unitPrice: "", price: "" }],
+      cates: [
+        { id: "", label:"", amount: "", unit: "", unitId: "", unitPrice: "", price: "" },
+      ],
       description: "",
       attachments: [],
     };
@@ -377,8 +373,10 @@ export default {
         this.cates = item.categories.map((e) => {
           return {
             id: e.categoryId,
-            value: e.category,
+            label: e.category,
             amount: e.quantity,
+            unit: e.commodityUnit,
+            unitId: e.commodityUnitId,
             unitPrice: e.unitPrice,
             price: e.totalPrice,
           };
@@ -474,11 +472,19 @@ export default {
     },
     onSelectCate(e) {
       if (this.mode === "read") return;
-      this.$set(this.cates, e.index, Object.assign(this.cates[e.index], e));
-      console.log(this.cates[e.index]);
+      this.cates[e.index]["id"] = e.id
+      this.cates[e.index]["label"] = e.value
     },
     onAddCate() {
-      this.cates.push({ id: "", amount: "", unitPrice: "", price: "" });
+      this.cates.push({
+        id: "",
+        label:"",
+        amount: "",
+        unit: "",
+        unitId: "",
+        unitPrice: "",
+        price: "",
+      });
     },
     onRemoveCate(index) {
       this.cates.splice(index, 1);
@@ -487,6 +493,10 @@ export default {
       if (item.unitPrice) {
         item.price = e.detail.value * item.unitPrice;
       }
+    },
+    onUnitChange(e, index) {
+      this.cates[index].unit = e.label;
+      this.cates[index].unitId = e.id;
     },
     onUnitPriceChange(e, item) {
       if (item.amount) {
@@ -552,9 +562,11 @@ export default {
         for (let item of this.cates) {
           if (item.id) {
             payload["categories"].push({
-              category: item.value,
+              category: item.label,
               categoryId: item.id,
               quantity: item.amount,
+              commodityUnit: item.unit,
+              commodityUnitId: item.unitId,
               unitPrice: item.unitPrice,
               totalPrice: item.price,
             });

@@ -200,9 +200,7 @@ export default {
           businessId: this.eventId,
         };
         this.onNetworking = true;
-        const response = await getEventCountApi(
-          Object.assign(this.payload, payload)
-        );
+        const response = await getEventCountApi(payload);
         this.onNetworking = false;
         if (response) {
           this.event.businessCount = response.data;
