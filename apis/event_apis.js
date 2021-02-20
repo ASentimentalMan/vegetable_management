@@ -481,7 +481,14 @@ export const getAllSaleListApi = payload => {
   })
 }
 
-
+// 查找农产品（蔬菜、水果）单品
+export const getCateByKeywordsApi = payload => {
+  return request_java({
+    method: "GET",
+    url: "/params/dict-data/search",
+    data: payload
+  })
+}
 
 // 发票类型列表
 export const getReceiptTypeListApi = () => {

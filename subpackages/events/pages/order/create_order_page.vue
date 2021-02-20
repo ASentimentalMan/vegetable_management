@@ -138,11 +138,20 @@
                 <text v-if="cates.length > 1">{{ index + 1 }}</text>
               </view>
               <view class="form-item-input">
-                <cate-picker
+                <!-- <cate-picker
                   :disabled="mode === 'read'"
                   :index="index"
                   :defaultValue="item.label"
                   @onSelectCate="onSelectCate"
+                /> -->
+                <input
+                  class="form-input"
+                  type="text"
+                  cursor-spacing="16"
+                  placeholder="请选择采购品类"
+                  v-model="item['label']"
+                  :disabled="mode === 'read'"
+                  @tap="onCatePick(index)"
                 />
               </view>
               <view
@@ -300,14 +309,14 @@
 
 <script>
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker";
-import CatePicker from "@/components/public/cate_picker";
+// import CatePicker from "@/components/public/cate_picker";
 import UnitPicker from "@/subpackages/events/components/unit_picker";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
 import { createOrderApi, editOrderApi } from "@/apis/event_apis";
 export default {
   components: {
     BiaoFunDatePicker,
-    CatePicker,
+    // CatePicker,
     UnitPicker,
     AddMediaAttachment,
   },
@@ -332,7 +341,15 @@ export default {
       timeBillingDefaultValue: "",
       timeBillingEndTime: "",
       cates: [
-        { id: "", label:"", amount: "", unit: "", unitId: "", unitPrice: "", price: "" },
+        {
+          id: "",
+          label: "",
+          amount: "",
+          unit: "",
+          unitId: "",
+          unitPrice: "",
+          price: "",
+        },
       ],
       description: "",
       attachments: [],
@@ -472,18 +489,25 @@ export default {
     },
     onSelectCate(e) {
       if (this.mode === "read") return;
-      this.cates[e.index]["id"] = e.id
-      this.cates[e.index]["label"] = e.value
+      this.cates[e.index]["id"] = e.id;
+      this.cates[e.index]["label"] = e.value;
     },
     onAddCate() {
       this.cates.push({
         id: "",
-        label:"",
+        label: "",
         amount: "",
         unit: "",
         unitId: "",
         unitPrice: "",
         price: "",
+      });
+    },
+    onCatePick(index) {
+      let pages = getCurrentPages();
+      let route = pages[pages.length - 1].route;
+      uni.navigateTo({
+        url: `/subpackages/cate/pages/cate_home_page?mode=select&key=cates&index=${index}&backpage=${route}`,
       });
     },
     onRemoveCate(index) {

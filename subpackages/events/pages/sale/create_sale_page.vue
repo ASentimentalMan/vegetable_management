@@ -109,11 +109,20 @@
                 <text v-if="cates.length > 1">{{ index + 1 }}</text>
               </view>
               <view class="form-item-input">
-                <cate-picker
+                <!-- <cate-picker
                   :disabled="mode === 'read'"
                   :index="index"
                   :defaultValue="item.label"
                   @onSelectCate="onSelectCate"
+                /> -->
+                <input
+                  class="form-input"
+                  type="text"
+                  cursor-spacing="16"
+                  placeholder="请选择销售品类"
+                  v-model="item['label']"
+                  :disabled="mode === 'read'"
+                  @tap="onCatePick(index)"
                 />
               </view>
               <view
@@ -372,7 +381,7 @@
 
 <script>
 import LocationPicker from "@/components/public/location_picker";
-import CatePicker from "@/components/public/cate_picker";
+// import CatePicker from "@/components/public/cate_picker";
 import UnitPicker from "@/subpackages/events/components/unit_picker";
 import BiaoFunDatePicker from "@/components/biaofun-datetime-picker/biaofun-datetime-picker.vue";
 import AddMediaAttachment from "@/subpackages/events/components/add_media_attachment";
@@ -380,7 +389,7 @@ import { createSaleApi, editSaleApi } from "@/apis/event_apis";
 export default {
   components: {
     LocationPicker,
-    CatePicker,
+    // CatePicker,
     UnitPicker,
     BiaoFunDatePicker,
     AddMediaAttachment,
@@ -544,6 +553,13 @@ export default {
         unitId: "",
         unitPrice: "",
         price: "",
+      });
+    },
+    onCatePick(index) {
+      let pages = getCurrentPages();
+      let route = pages[pages.length - 1].route;
+      uni.navigateTo({
+        url: `/subpackages/cate/pages/cate_home_page?mode=select&key=cates&index=${index}&backpage=${route}`,
       });
     },
     onRemoveCate(index) {

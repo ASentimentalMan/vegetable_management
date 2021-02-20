@@ -1,6 +1,6 @@
 <template>
-  <view class="fake-search-bar-container">
-    <view class="content-container">
+  <view class="fake-search-bar-container" :style="{ backgroundColor: bg }">
+    <view class="content-container" @tap="onSearchTap">
       <view class="component-left">
         <view style="width: 32rpx"> </view>
         <image
@@ -21,13 +21,26 @@ export default {
       type: String,
       default: "贵州农产品/基地",
     },
+    bg: {
+      type: String,
+      default: "transparent",
+    },
   },
+  methods: {
+    onSearchTap() {
+      this.$emit("onSearchTap")
+    }
+  }
 };
 </script>
 
 <style scoped>
 .fake-search-bar-container {
-  width: 100%;
+  width: 100vw;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
 }
 .content-container {
   height: 32px;
@@ -38,6 +51,7 @@ export default {
   background-color: #ecedee;
   position: relative;
   z-index: 1;
+  flex: 1;
 }
 .component-left {
   display: flex;

@@ -293,6 +293,39 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "subpackages/cate",
+			"pages": [
+				{
+					"path": "pages/cate_home_page",
+					"style": {
+						"navigationBarTitleText": "分类",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5"
+					}
+				},
+				{
+					"path": "pages/cate_forth_page",
+					"style": {
+						"navigationBarTitleText": "分类",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5"
+					}
+				},
+				{
+					"path": "pages/cate_search_page",
+					"style": {
+						"navigationBarTitleText": "分类搜索",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColorTop": "#f5f5f5",
+						"backgroundColor": "#f5f5f5",
+						"enablePullDownRefresh": true
+					}
+				}
+			]
 		}
 		// {
 		// 	"root": "subpackages/orgnizaition",
@@ -319,16 +352,22 @@
 		// }
 	],
 	"preloadRule": {
+		"subpackages/login/login_home_page": {
+			"network": "all",
+			"packages": [
+				"subpackages/login"
+			]
+		},
 		"subpackages/events/pages/event/event_detail_page": {
 			"network": "all",
 			"packages": [
 				"subpackages/events"
 			]
 		},
-		"subpackages/login/login_home_page": {
+		"subpackages/cate/cate_home_page": {
 			"network": "all",
 			"packages": [
-				"subpackages/login"
+				"subpackages/cate"
 			]
 		}
 		// "subpackages/contract/contract_home_page": {

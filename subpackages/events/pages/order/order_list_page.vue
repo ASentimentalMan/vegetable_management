@@ -55,7 +55,6 @@
 import Searcher from "@/components/public/searcher";
 import Indicator from "@/components/public/indicator.vue";
 import { getOrderListApi, deleteOrderApi } from "@/apis/event_apis";
-import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
     Searcher,

@@ -57,9 +57,8 @@
 </template>
 
 <script>
-import Indicator from "@/components/public/indicator.vue";
+import Indicator from "@/components/public/indicator";
 import { getPaymentListApi, deletePaymentApi } from "@/apis/event_apis";
-import { objectToQuery } from "@/utils/object_utils";
 export default {
   components: {
     Indicator,
